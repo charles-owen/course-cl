@@ -1,0 +1,76 @@
+div.grade-box {
+  border: 1px solid #c0c0c0;
+}
+
+div.grading {
+  padding: 0 0.5em;
+
+  p.grade {
+    text-align: center;
+    font-size: 1em;
+    border-top: 1px solid #000000;
+    padding-top: 1em;
+  }
+
+  .late {
+    color: red;
+    font-style: italic;
+  }
+
+  a.validator {
+     font-size: 0.8em;
+     font-style: italic;
+     padding-left: 1em;
+   }
+
+  div.rubric {
+    font-size: 0.85em;
+
+    .item,  .items li {
+      color: #8a8a8a;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+
+  table.grading {
+    table-layout:fixed;
+    width: 90%;
+
+    th {
+      font-size: 0.85em;
+    }
+
+    td {
+      text-align: center;
+    }
+
+    td:first-child {
+      text-align: left;
+    }
+
+    th.points {
+      width: 5.5em;
+    }
+
+    input.points {
+      width: 3.5em;
+    }
+  }
+
+  table.quiz-grading {
+    th {
+      font-size: 0.85em;
+      text-align: center;
+    }
+
+    td {
+      text-align: center;
+    }
+  }
+
+  table.narrow {
+    width: auto;
+  }
+
+}

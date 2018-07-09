@@ -1,0 +1,74 @@
+@import '../modules/_colors';
+
+.revised {
+  color: #FF0000;
+  font-size:0.85em;
+}
+
+p.due {
+  text-align:center;
+  font-weight:bold;
+  font-size:1em;
+  padding-left: 10%;
+  padding-right:10%;
+}
+
+span.due {
+  font-size:0.9em;
+  font-style:italic;
+  font-weight:normal;
+}
+
+.task {
+  color:blue;
+}
+
+
+.problem, .problemright {
+  background: $problem;
+  color:black;
+}
+
+
+.scenario, .scenarioright {
+  background: $scenario;
+  color:black;
+
+  a:link, a:visited {
+    color: black;
+  }
+}
+
+p.grade {
+  text-align:center;
+  font-size: 1em;
+}
+
+
+p.shoutout {
+  text-align:center;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
+p.topnotice {
+  display:block;
+  position:absolute;
+  top:0px;
+  right:0px;
+  margin-top:0px;
+  text-align:center;
+  font-size:1.3em;
+  color:red;
+}
+
+p.reading {
+  text-align:center;
+  vertical-align: middle;
+
+  span {
+    padding-left: 0.5em;
+    text-align: left;
+    display: inline-block;
+  }
+}
