@@ -1,42 +1,50 @@
 <template>
-  <div class="cl-member-editor">
-    <div class="content"><div class="full">
-      <p v-if="fetching" class="center">Fetching from server...</p>
+  <div class="cl-member-editor conent">
+    <div class="full">
+
+      <fetcher :fetcher="fetcher"></fetcher>
       <transition name="fade">
-      <div v-if="!fetching">
-      <form @submit.prevent="submit" name="user" id="user">
-        <input type="hidden" name="new" id="new" value="">
-        <fieldset>
-          <legend>{{legend}}</legend>
-          <p>
-            <label>User ID<br>
-            <input :disabled="id!=='new'" ref="userid" type="text" v-model="userId" class="short" size="20" maxlength="30" ></label>
-          </p>
-          <p>
-            <label class="form_text">Name <span class="small">(last, first)</span><br>
-            <input :disabled="fetched" type="text" v-model="name" maxlength="150"></label>
-          </p>
-          <p>
-            <label class="form_text">Email<br>
-            <input :disabled="fetched" ref="email" type="email" v-model="email" maxlength="254" ></label>
-          </p>
-          <div class="roles">
-            <div class="label"><em>Role:</em></div>
-            <div class="options">
-              <label v-for="(roleObj, id) in roles"><input v-model="role" name="role" type="radio" :value="id" :checked="checked(id)"> {{roleObj.name}}</label>
-            </div>
-          </div>
-          <p class="center"><button>Submit</button> <router-link :to="cancel" tag="button">Cancel</router-link></p>
-        </fieldset>
-      </form>
-      </div>
+        <div v-if="!fetcher.fetching">
+          <form @submit.prevent="submit" name="user" id="user">
+            <input type="hidden" name="new" id="new" value="">
+            <fieldset>
+              <legend>{{legend}}</legend>
+              <p>
+                <label>User ID<br>
+                  <input :disabled="id!=='new'" ref="userid" type="text" v-model="userId" class="short" size="20"
+                         maxlength="30"></label>
+              </p>
+              <p>
+                <label class="form_text">Name <span class="small">(last, first)</span><br>
+                  <input :disabled="fetched" type="text" v-model="name" maxlength="150"></label>
+              </p>
+              <p>
+                <label class="form_text">Email<br>
+                  <input :disabled="fetched" ref="email" type="email" v-model="email" maxlength="254"></label>
+              </p>
+              <div class="roles">
+                <div class="label"><em>Role:</em></div>
+                <div class="options">
+                  <label v-for="(roleObj, id) in roles"><input v-model="role" name="role" type="radio" :value="id"
+                                                               :checked="checked(id)"> {{roleObj.name}}</label>
+                </div>
+              </div>
+              <p class="center">
+                <button>Submit</button>
+                <router-link :to="cancel" tag="button">Cancel</router-link>
+              </p>
+            </fieldset>
+          </form>
+        </div>
       </transition>
-    </div></div>
+    </div>
   </div>
 </template>
 
 <script>
-  import {Member} from '../Members/Member.js';
+    import {FetcherVue} from 'users-cl';
+    import {mapState} from 'vuex';
+    import {Member} from '../Members/Member.js';
 
     export default {
         props: ['id'],
@@ -45,14 +53,14 @@
                 cancel: Site.root + 'cl/console/management/course/members',
                 legend: this.id === 'new' ? 'New Member' : 'Edit Member',
                 roles: this.visibleRoles,
+
                 userId: '',
                 name: '',
                 email: '',
                 role: 'T',
-                fetching: true,
                 timer: null,
                 seq: 1,
-                fetched: false    // True if we fetched the name and email from the server...
+                fetched: false
             }
         },
         watch: {
@@ -67,6 +75,13 @@
                 }, 300);
             }
         },
+        computed: mapState({
+            fetcher: state => state.members.fetcher
+
+        }),
+        components: {
+            'fetcher': FetcherVue
+        },
         beforeCreate() {
             let member = new Member();
             let roles = member.getRoles();
@@ -80,53 +95,36 @@
         mounted() {
             if(this.id === 'new') {
                 this.$parent.setTitle(Console.title + ': Add Course Member');
-                this.fetching = false;
                 this.$nextTick(() => {
                     this.$refs.userid.select();
                 })
             } else {
                 this.$parent.setTitle(Console.title + ': Course Member');
-                Site.api.get('/api/course/members', {id: this.id})
-                    .then((response) => {
-                        if(!response.hasError()) {
-                            const data = response.getData('users');
-                            if(data !== null) {
-                                if(data.attributes.length < 1) {
-                                    Site.toast(this, 'Member does not exist');
-                                    setTimeout(() => {
-                                        this.$router.push({name: 'members'});
-                                    }, 3000);
-                                } else {
-                                    let user = new Users.User(data.attributes[0]);
-                                    this.userId = user.userId;
-                                    this.name = user.name !== null ? user.name : '';
-                                    this.email = user.email !== null ? user.email : '';
-                                    this.role = user.role();
-                                    this.fetching = false;
-                                    this.fetched = true;
-                                    this.$nextTick(() => {
-                                        this.$refs.userid.select();
-                                    })
-                                }
-                            }
-
-                        } else {
-                            console.log(response);
-                            Site.toast(this, response);
-                        }
-
+                this.$store.dispatch('members/get', {id: this.id})
+                    .then((user) => {
+                        this.userId = user.userId;
+                        this.name = user.name !== null ? user.name : '';
+                        this.email = user.email !== null ? user.email : '';
+                        this.role = user.role();
+                        this.fetched = true;
+                        this.$nextTick(() => {
+                            this.$refs.userid.select();
+                        })
                     })
-                    .catch((error) => {
-                        console.log(error);
-                        Site.toast(this, error);
-                    });
+                    .catch((msg) => {
+                        Site.toast(this, msg);
+                        setTimeout(() => {
+                            this.$router.push({name: 'members'});
+                        }, 3000);
+                    })
+
             }
 
         },
         methods: {
             checked(role) {
                 return role === this.role;
-                },
+            },
             fetch(userId) {
                 if(this.id !== 'new') {
                     return;
@@ -134,8 +132,6 @@
 
                 userId = userId.trim();
                 if(userId === '') {
-                    //this.name = '';
-                    //this.email = '';
                     this.fetched = false;
                     return;
                 }
@@ -178,7 +174,7 @@
 
             },
             submit() {
-                const member = this.$store.state.users.user.member;
+                const member = this.$store.state.user.user.member;
                 let data = {
                     userId: this.userId,
                     name: this.name,
@@ -192,19 +188,15 @@
                     data.id = this.id;
                 }
 
-                const path = this.id === 'new' ? '/api/course/members/new' : '/api/course/members/update';
-                Site.api.post(path, data)
-                    .then((response) => {
-                        if(!response.hasError()) {
-                            this.$router.push({name: 'members'});
-                        } else {
-                            Site.toast(this, response);
-                        }
-
+                let path = this.id === 'new' ? 'members/new' : 'members/update';
+                this.$store.dispatch(path, data)
+                    .then(() => {
+                        this.$router.push({name: 'members'});
                     })
-                    .catch((error) => {
-                        Site.toast(this, error);
-                    });
+                    .catch((response) => {
+                        console.log(response);
+                        Site.toast(this, response);
+                    })
             }
         }
     }
@@ -229,7 +221,6 @@ div.cl-member-editor {
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
-
 
 form {
   width: 100%;

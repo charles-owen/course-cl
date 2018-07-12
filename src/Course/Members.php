@@ -23,6 +23,27 @@ class Members extends \CL\Tables\Table {
 	}
 
 	/**
+	 * Create an SQL create table command for the members table
+	 * @return string SQL
+	 */
+	function createSQL() {
+		return <<<SQL
+CREATE TABLE if not exists $this->tablename (
+  id       int(11) NOT NULL AUTO_INCREMENT, 
+  userid   int(11) NOT NULL, 
+  semester char(4) NOT NULL, 
+  section  char(3) NOT NULL, 
+  role     char(1) NOT NULL, 
+  created  datetime NOT NULL, 
+  PRIMARY KEY (id), 
+  INDEX (semester), 
+  INDEX (section), 
+  INDEX (role));
+SQL;
+
+	}
+
+	/**
 	 * Get all members with options
 	 */
 	public function query($params = []) {
@@ -59,12 +80,17 @@ from $this->tablename member
 join $usersTable->tablename user
 on member.userid = user.id
 $where->where
-order by `name`, id
+order by `name`, user.id
 SQL;
 
 		if(isset($params['limit'])) {
 			$sql .= "\nlimit ?";
 			$where->append(null, intval($params['limit']), \PDO::PARAM_INT);
+		}
+
+		if(isset($params['offset'])) {
+			$sql .= "\noffset ?";
+			$where->append(null, intval($params['offset']), \PDO::PARAM_INT);
 		}
 
 		//echo $where->sub_sql($sql);
@@ -371,20 +397,4 @@ SQL;
 		return $memberships;
 	}
 
-	function createSQL() {
-		return <<<SQL
-CREATE TABLE if not exists $this->tablename (
-  id       int(11) NOT NULL AUTO_INCREMENT, 
-  userid   int(11) NOT NULL, 
-  semester char(4) NOT NULL, 
-  section  char(3) NOT NULL, 
-  role     char(1) NOT NULL, 
-  created  datetime NOT NULL, 
-  PRIMARY KEY (id), 
-  INDEX (semester), 
-  INDEX (section), 
-  INDEX (role));
-SQL;
-
-	}
 }

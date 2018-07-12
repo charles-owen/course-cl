@@ -29,9 +29,6 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 		}
 
 		switch($params[0]) {
-			case 'sectionselect':
-				return $this->sectionselect($site, $user, $server, $time);
-
 			case 'new':
 				return $this->newMember($site, $user, $server, $time);
 
@@ -40,6 +37,9 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 
 			case 'delete':
 				return $this->delete($site, $user, $server);
+
+			case 'sectionselect':
+				return $this->sectionselect($site, $user, $server, $time);
 
 			case 'drops':
 				return $this->drops($site, $user, $server);
@@ -55,8 +55,7 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 	}
 
 
-	private function drops(Site $site, User $user, Server $server)
-	{
+	private function drops(Site $site, User $user, Server $server) {
 		$this->atLeast($user, User::ADMIN);
 
 		$post = $server->post;
@@ -88,6 +87,10 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 		}
 
 		$params['limit'] = $limit + 1;
+
+		if(!empty($get['offset'])) {
+			$params['offset'] = $get['offset'];
+		}
 
 		if(!empty($get['userId'])) {
 			$params['userId'] = $get['userId'];
@@ -172,7 +175,7 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 		$memberUser = $ret['member'];
 
 		$json = new JsonAPI();
-		$json->addData('member', $memberUser->member->id, $memberUser->data());
+		$json->addData('new-user', $memberUser->member->id, $memberUser->data());
 		return $json;
 	}
 
@@ -200,12 +203,12 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 
 		// Get the current member object
 		$members = new Members($site->db);
-		$user = $members->getAsUser($id);
-		if($user === null) {
+		$memberUser = $members->getAsUser($id);
+		if($memberUser === null) {
 			throw new APIException("Member no longer exists");
 		}
 
-		$member = $user->member;
+		$member = $memberUser->member;
 		$member->semester = $semester;
 		$member->sectionId = $sectionId;
 		$member->role = $role;
@@ -213,6 +216,7 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 		$members->update($member, $time);
 
 		$json = new JsonAPI();
+		$json->addData('updated-user', $memberUser->member->id, $memberUser->data());
 		return $json;
 	}
 
@@ -227,8 +231,7 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 		$members = new Members($site->db);
 		$members->delete($id);
 
-		$json = new JsonAPI();
-		return $json;
+		return new JsonAPI();
 	}
 
 	private function sectionselect(Site $site, User $user, Server $server, $time) {

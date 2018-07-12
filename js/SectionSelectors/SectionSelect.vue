@@ -24,7 +24,8 @@
                         .then((response) => {
                             if (!response.hasError()) {
                                 let user = response.getData('user');
-                                this.$store.commit('users/set', user.attributes);
+                                this.$store.commit('user/set', user.attributes);
+                                this.$store.commit('members/reset');
                                 window.history.go();
                             } else {
                                 Site.toast(this, response);
@@ -38,7 +39,7 @@
             }
         },
         mounted() {
-            const member = this.$store.state.users.user.member;
+            const member = this.$store.state.user.user.member;
             this.selected = member.semester + '/' + member.section;
         }
 

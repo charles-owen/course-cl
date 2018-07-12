@@ -41,7 +41,7 @@
 
               // Closure to capture the file information.
               reader.onload = (e) => {
-                  const member = this.$store.state.users.user.member;
+                  const member = this.$store.state.user.user.member;
                   let data = {
                       file: e.target.result,
                       semester: member.semester,

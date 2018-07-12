@@ -36,11 +36,6 @@ p.grade {
   text-align: center;
   font-size: 1em; }
 
-p.shoutout {
-  text-align: center;
-  font-size: 1.3em;
-  font-weight: bold; }
-
 p.topnotice {
   display: block;
   position: absolute;
