@@ -1,25 +1,25 @@
 <?php
 /**
- * @file Site configuration object for Course
+ * @file
+ * Site configuration object for Course
  */
 
 namespace CL\Course\System;
 
 use CL\Site\Components\InstalledConfig;
-use CL\Site\System\Server;
 
 /**
  * Site configuration object for Course
  */
 class CourseConfig extends InstalledConfig {
-	const SESSION_ID = 'CL_COURSE_SESSION1';
-
 	/**
 	 * Property get magic method
 	 * @param string $key Property name
 	 *
 	 * Properties supported:
-	 * db Database configuration object
+	 * Property | Type | Description
+	 * -------- | ---- | -------
+	 * course | Course | The main Course configuration object
 	 *
 	 * @return null|string
 	 */
@@ -28,9 +28,6 @@ class CourseConfig extends InstalledConfig {
 			case 'course':
 				return $this->course;
 
-			case 'session':
-				return $this->session;
-
 			default:
 				return parent::__get($key);
 		}
@@ -38,8 +35,14 @@ class CourseConfig extends InstalledConfig {
 
 	/**
 	 * Property set magic method
-	 * @param $key Property name
-	 * @param $value Value to set
+	 *
+	 * Properties supported:
+	 * Property | Type | Description
+	 * -------- | ---- | -------
+	 * course | Course | The main Course configuration object
+	 *
+	 * @param string $key Property name
+	 * @param any $value Value to set
 	 */
 	public function __set($key, $value) {
 		switch($key) {
@@ -54,5 +57,4 @@ class CourseConfig extends InstalledConfig {
 	}
 
 	private $course;    ///< The Course object
-	private $session;   ///< The CourseSession object
 }

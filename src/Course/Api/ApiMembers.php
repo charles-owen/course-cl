@@ -14,14 +14,24 @@ use CL\Course\Member;
 /**
  * API Resource for /api/course/members
  */
-class ApiMembers extends \CL\Users\Api\ApiResource {
+class ApiMembers extends \CL\Users\Api\Resource {
 	const QUERY_LIMIT = 500;
 
 	public function __construct() {
 		parent::__construct();
 	}
 
-	public function dispatch(Site $site, Server $server, array $params, $time) {
+	/**
+	 * Dispatch to this component from the router.
+	 * @param Site $site The Site configuration object
+	 * @param Server $server The Server object
+	 * @param array $params Parameters after the path
+	 * @param array $properties Properties from the path, should be empty
+	 * @param $time Time stamp
+	 * @return JsonAPI Result
+	 * @throws APIException On error
+	 */
+	protected function dispatch(Site $site, Server $server, array $params, array $properties, $time) {
 		$user = $this->isUser($site);
 
 		if(count($params) < 1) {
@@ -48,7 +58,7 @@ class ApiMembers extends \CL\Users\Api\ApiResource {
 				$api = new ApiMembersBulk();
 				$params2 = $params;
 				array_shift($params2);
-				return $api->dispatch($site, $server, $params2, $time);
+				return $api->dispatch($site, $server, $params2, $properties, $time);
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);

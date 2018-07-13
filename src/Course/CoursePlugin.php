@@ -13,6 +13,7 @@ use CL\Course\System\CourseTables;
 use CL\Course\Api\ApiCourse;
 use CL\Users\User;
 use CL\Console\ConsoleView;
+use CL\Course\System\SectionSelectorView;
 
 class CoursePlugin extends \CL\Site\Components\Plugin {
 	public function install(Site $site) {
@@ -30,10 +31,16 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 			return $this->postStartup($site, $server, $time);
 		});
 
-		$site->addApi('course', function(Site $site, Server $server, array $params, $time) {
-			$resource = new ApiCourse();
-			return $resource->dispatch($site, $server, $params, $time);
+		$site->addRoute(['sectionselector'], function(Site $site, Server $server, array $params, array $properties, $time) {
+			$view = new SectionSelectorView($site);
+			return $view->vue('sectionselector');
 		});
+
+		$site->addRoute(['api', 'course', '*'], function(Site $site, Server $server, array $params, array $properties, $time) {
+			$resource = new ApiCourse();
+			return $resource->apiDispatch($site, $server, $params, $properties, $time);
+		});
+
 	}
 
 	/**
@@ -107,7 +114,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 					} else {
 						// The data is invalid. This can happen
 						// if a student is removed from a section
-						$redirect = $site->root . '/cl/site/notauthorized.php';
+						$redirect = $site->root . '/cl/notauthorized';
 					}
 				}
 			} else {
@@ -117,12 +124,12 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 				if($user->atLeast(User::ADMIN) && count($course->sections) > 1) {
 					// Admins are allowed to log into any section on
 					// the system, even if they are not a member.
-					$redirect = $site->root . '/cl/course/sectionselector?u=' .
+					$redirect = $site->root . '/cl/sectionselector?u=' .
 						urlencode($server->server['REQUEST_URI']);
 				} else {
 					switch(count($memberships)) {
 						case 0:
-							$redirect = $site->root . '/cl/site/notauthorized.php';
+							$redirect = $site->root . '/cl/notauthorized';
 							break;
 
 						case 1:
@@ -130,7 +137,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 							return null;
 
 						default:
-							$redirect = $site->root . '/cl/course/sectionselector?u=' .
+							$redirect = $site->root . '/cl/sectionselector?u=' .
 								urlencode($server->server['REQUEST_URI']);
 							break;
 					}

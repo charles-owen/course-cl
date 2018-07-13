@@ -11,16 +11,32 @@ use CL\Site\System\Server;
 use CL\Site\Api\JsonAPI;
 use CL\Site\Api\APIException;
 use CL\Users\User;
-use CL\Users\Users;
 use CL\Course\Members;
 use CL\Course\Member;
 
-class ApiMembersBulk extends \CL\Users\Api\ApiResource {
+/**
+ * API resource for reading users in bulk from a file
+ * Path: cl/course/members/bulk
+ */
+class ApiMembersBulk extends \CL\Users\Api\Resource {
+	/**
+	 * ApiMembersBulk constructor
+	 */
 	public function __construct() {
 		parent::__construct();
 	}
 
-	public function dispatch(Site $site, Server $server, array $params, $time) {
+	/**
+	 * Dispatch to this component from the router.
+	 * @param Site $site The Site configuration object
+	 * @param Server $server The Server object
+	 * @param array $params Parameters after the path, should be empty
+	 * @param array $properties Properties from the path, should be empty
+	 * @param $time Time stamp
+	 * @return JsonAPI Result
+	 * @throws APIException On error
+	 */
+	public function dispatch(Site $site, Server $server, array $params, array $properties, $time) {
 		$user = $this->isUser($site);
 
 		if(count($params) < 1) {

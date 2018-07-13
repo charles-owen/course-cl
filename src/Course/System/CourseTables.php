@@ -1,17 +1,20 @@
 <?php
 /**
- * Table maker for Lti tables
+ * Table maker for the Course subsystem tables
  */
 
 namespace CL\Course\System;
 
 use CL\Tables\Config;
 
+/**
+ * Table maker for the Course subsystem tables
+ */
 class CourseTables extends \CL\Tables\TableMaker {
 
 	/**
-	 * SiteTableMaker constructor.
-	 * @param Config $config
+	 * Table maker for the Course subsystem tables
+	 * @param Config $config Database configuration object
 	 */
 	public function __construct(Config $config) {
 		parent::__construct($config);

@@ -34,7 +34,7 @@
           </tr>
         </table>
         <p v-if="users.length == 0" class="centerbox comp center">
-          There are no members currently enrolled in this section.</p>
+          There are currently no members enrolled in this section.</p>
         <bulk-upload v-if="management"></bulk-upload>
 
       </div>
