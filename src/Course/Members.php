@@ -18,7 +18,7 @@ class Members extends \CL\Tables\Table {
 	 * Members constructor.
 	 * @param \CL\Tables\Config $config Database configuration object
 	 */
-	function __construct(\CL\Tables\Config $config) {
+	public function __construct(\CL\Tables\Config $config) {
 		parent::__construct($config, "member");
 	}
 
@@ -26,7 +26,7 @@ class Members extends \CL\Tables\Table {
 	 * Create an SQL create table command for the members table
 	 * @return string SQL
 	 */
-	function createSQL() {
+	public function createSQL() {
 		return <<<SQL
 CREATE TABLE if not exists $this->tablename (
   id       int(11) NOT NULL AUTO_INCREMENT, 
@@ -34,6 +34,7 @@ CREATE TABLE if not exists $this->tablename (
   semester char(4) NOT NULL, 
   section  char(3) NOT NULL, 
   role     char(1) NOT NULL, 
+  metadata mediumtext, 
   created  datetime NOT NULL, 
   PRIMARY KEY (id), 
   INDEX (semester), 
@@ -44,7 +45,10 @@ SQL;
 	}
 
 	/**
-	 * Get all members with options
+	 * Get members with options
+	 *
+	 * Notice: Does not load the user metadata by default. Add 'metadata'=>true to the parameter to
+	 * also load metadata.
 	 */
 	public function query($params = []) {
 		$usersTable = new Users($this->config);
@@ -53,6 +57,10 @@ SQL;
 
 		if(isset($params['id'])) {
 			$where->append('member.id=?', $params['id'], \PDO::PARAM_INT);
+		}
+
+		if(isset($params['userUser'])) {
+			$where->append('user.user=?', $params['userUser']);
 		}
 
 		if(isset($params['userId'])) {
@@ -71,14 +79,42 @@ SQL;
 			$where->append('member.section=?', $params['section']);
 		}
 
-		$sql = <<<SQL
-select user.id as user_id, user.user as user_user, user.email as user_email,
-user.name as user_name, user.role as user_role, user.extra as user_extra, 
-user.created as user_created, member.id as id, member.userid as userid, member.semester as semester,
-member.section as section, member.role as role, member.created as created
-from $this->tablename member
-join $usersTable->tablename user
-on member.userid = user.id
+		if(isset($params['search'])) {
+			$any = false;
+			$split = preg_split('/[\s,\.]/', $params['search']);
+
+			if(count($split) === 1) {
+				$split0 = $split[0];
+
+				$where->nest();
+				$where->append('user.user like ?', "%$split0%", \PDO::PARAM_STR, 'or');
+				$where->append('user.name like ?', "%$split0%", \PDO::PARAM_STR, 'or');
+				$where->unnest();
+
+				$any = true;
+			} else {
+				// Multiple substring can match names only
+				foreach($split as $like) {
+					if(strlen($like) > 0) {
+						$any = true;
+						$where->append('user.name like ?', "%$like%");
+					}
+				}
+			}
+
+
+			if(!$any) {
+				return [];
+			}
+		}
+
+		$meta = isset($params['metadata']) && $params['metadata'] ?
+			', user.metadata as user_metadata, member.metadata as metadata' : '';
+
+		$includeMeta = isset($params['metadata']) && $params['metadata'];
+		$sql = $this->memberUserJoinSQL(null, $includeMeta);
+
+		$sql .= <<<SQL
 $where->where
 order by `name`, user.id
 SQL;
@@ -104,6 +140,32 @@ SQL;
 		}
 
 		return $users;
+	}
+
+	/**
+	 * Construct the SQL for a join of the user and member tables, including all
+	 * content needed to create the User and Member objects.
+	 * @param bool $includeMeta If true, include metadata in the query.
+	 * @return string SQL
+	 */
+	public function memberUserJoinSQL($additional=null, $includeMeta = false) {
+		$usersTable = new Users($this->config);
+		$meta = $includeMeta ? ', user.metadata as user_metadata, member.metadata as metadata' : '';
+
+		$additional = $additional !== null ? ', ' . $additional : '';
+
+		$sql = <<<SQL
+select user.id as user_id, user.user as user_user, user.email as user_email,
+user.name as user_name, user.role as user_role,
+user.created as user_created, member.id as id, member.userid as userid, member.semester as semester,
+member.section as section, member.role as role, member.created as created$meta$additional
+from $this->tablename member
+join $usersTable->tablename user
+on member.userid = user.id
+
+SQL;
+
+		return $sql;
 	}
 
 
@@ -277,6 +339,24 @@ SQL;
 		return true;
 	}
 
+
+	/**
+	 * Write the user meta-data to the table.
+	 * @param User $user The user to write the metadata for
+	 */
+	public function writeMetaData(Member $member) {
+		$pdo = $this->pdo();
+
+		$sql = <<<SQL
+update $this->tablename SET metadata=?
+where id=?
+SQL;
+
+		$stmt = $pdo->prepare($sql);
+		$stmt->execute([$member->metaData->json(), $member->id]);
+	}
+
+
 	/**
 	 * Get a member (just the Member part)
 	 * @param $id
@@ -316,9 +396,9 @@ SQL;
 
 		$sql = <<<SQL
 select user.id as user_id, user.user as user_user, user.email as user_email,
-user.name as user_name, user.role as user_role, user.extra as user_extra, 
+user.name as user_name, user.role as user_role, user.metadata as user_metadata, 
 user.created as user_created, member.id as id, member.userid as userid, member.semester as semester,
-member.section as section, member.role as role, member.created as created
+member.section as section, member.role as role, member.metadata as metadata, member.created as created
 from $this->tablename member
 join $usersTable->tablename user
 on member.userid = user.id

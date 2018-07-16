@@ -1,14 +1,18 @@
 <?php
 /** @file
- * Class the describes one section of a course
+ * Class that describes one section of a course
  */
 
 namespace CL\Course;
 
+use CL\Course\Assignments\Assignments;
 
-/** Describes one section of a course
+/**
+ * Describes one section of a course
+ *
  * One object of type Section is created for each section of
- * a course. These are added using the function Course::add_section() */
+ * a course. These are added using the function Course::addSection()
+ */
 class Section {
 	const Normal = 0;	//!< Section meets as normal class
 	const Online = 1;	//!< Online section
@@ -45,7 +49,11 @@ class Section {
      */
     public function __get($key) {
         switch($key) {
-            case "id":
+	        case 'calendar':
+		        $this->ensureLoaded();
+		        return $this->calendar;
+
+	        case "id":
                 return $this->id;
 
             case "semester":
@@ -63,7 +71,11 @@ class Section {
 	        case 'course':
 	        	return $this->course;
 
-            default:
+	        case 'assignments':
+		        $this->ensureLoaded();
+		        return $this->assignments;
+
+	        default:
                 $trace = debug_backtrace();
                 trigger_error(
                     'Undefined property ' . $key .
@@ -74,59 +86,62 @@ class Section {
         }
     }
 
+
     /**
      * Property set magic method
      * @param $key Property name
      * @param $value Value to set
      */
     public function __set($key, $value) {
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property ' . $key .
-            ' in ' . $trace[0]['file'] .
-            ' on line ' . $trace[0]['line'],
-            E_USER_NOTICE);
+    	switch($key) {
+		    case 'assignments':
+		    	$this->assignments = $value;
+		    	$this->assignments->section = $this;
+		    	break;
+
+		    default:
+			    $trace = debug_backtrace();
+			    trigger_error(
+				    'Undefined property ' . $key .
+				    ' in ' . $trace[0]['file'] .
+				    ' on line ' . $trace[0]['line'],
+				    E_USER_NOTICE);
+			    break;
+	    }
+
     }
 
-	
-	/** The Assignments object */
-	public function getAssignments() {
-		$this->ensure_loaded();
-		return $this->assignments; 
-	}
 
 	/** Ensure the assignments are all loaded */
-	private function ensure_loaded() {
+	private function ensureLoaded() {
 		if($this->assignments === null) {
 			// The assignments are not loaded. Load them now
-			$this->assignments = new Assignments\Assignments($this);
+			$this->assignments = new Assignments();
+			$this->assignments->section = $this;
 
-			// We optionally support assignment files in the form:
-            // assignments.730.php or assignments.740.SS18.php
-            // With or without the semester code.
-			$rootdir = $this->course->get_rootdir();
-            $file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->semester . '.php';
-            $file2 = $rootdir . '/course/assignments.' . $this->id . '.php';
-            if(file_exists($file1)) {
-                $this->assignments->load($file1);
-            } else {
-                $this->assignments->load($file2);
-            }
+
+			$rootdir = $this->course->rootDir;
+            $file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->getSemesterLC() . '.php';
+            $this->assignments->load($file1);
 		}
 	}
 	
-	/** Get an assignmment by tag 
-	 * @param $tag Tag for the assignment */
+	/**
+	 * Get an assignmment by tag
+	 * @param $tag Tag for the assignment
+	 */
 	public function getAssignment($tag) {
 		$assignments = $this->get_assignments();
 		return $assignments->get_assignment($tag);
 	}
 	
-	/** Add a textbook for the course 
-	 * @param $textbook The textbook object to add */
+	/**
+	 * Add a textbook for the course
+	 * @param $textbook The textbook object to add
+	 */
 	public function addTextbook(Textbook $textbook) {
 		if($this->textbooks === null) {
-			$this->textbooks = array();
+			$this->textbooks = [];
 		}
 		
 		$this->textbooks[] = $textbook;
@@ -137,14 +152,16 @@ class Section {
 	 * The textbook objects are not loaded by default, so this
 	 * will load them if necessary. 
 	 * 
-	 * @param $num Textbook number (starting at 1) */
+	 * @param $num Textbook number (starting at 1)
+	 * @return Textbook object
+	 */
 	public function getTextbook($num) {
 		if($this->textbooks === null) {
-			$this->textbooks = array();
+			$this->textbooks = [];
 			
-			$rootdir = $this->course->get_rootdir();
+			$rootdir = $this->course->rootDir;
 			$file = $rootdir . '/course/textbooks.' . 
-				$this->id . '.php';
+				$this->id . '.' . $this->getSemesterLC() . '.php';
 			$function = require($file);
             if(is_callable($function)) {
                 $function($this);
@@ -155,17 +172,13 @@ class Section {
 	}
 
 
-    /** The course section calendar object */
-    public function get_calendar() {
-		$this->ensure_loaded();
-		return $this->calendar;
-	}
-	
-	/** Convert a percentage to a grade based on the 
+
+	/**
+	 * Convert a percentage to a grade based on the
 	 * set section grading scale. 
 	 * @param $score Score (0 to 100)
 	 */
-	public function to_grade($score) {
+	public function toGrade($score) {
 		foreach($this->scale as $scale) {
 			if($score >= $scale[0]) {
 				return $scale[1];
@@ -176,12 +189,35 @@ class Section {
 		return $last[1];
 	}
 
+	/**
+	 * Data to describe this section for sending to clients.
+	 * @return array Containing section data.
+	 */
 	public function data() {
 		return [
 			'id' => $this->id,
 			'semester' => $this->semester,
 			'type' => $this->type
 		];
+	}
+
+	/**
+	 * Get the semester as a lower-case string
+	 * @return string Semester (lower case)
+	 */
+	public function getSemesterLC() {
+		return strtolower($this->semester);
+	}
+
+	/**
+	 * Magic function to disable displaying the section
+	 * @return array Properties to dump
+	 */
+	public function __debugInfo()
+	{
+		$properties = get_object_vars($this);
+		unset($properties['course']);
+		return $properties;
 	}
 
 	private $textbooks = null;		// Any course textbooks		

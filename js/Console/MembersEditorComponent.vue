@@ -110,8 +110,10 @@
             this.$store.commit('members/query', query);
 
             // We reset the users state since we may add users
-            this.$store.commit('users/reset');
-
+            if(this.management) {
+                this.$store.commit('users/reset');
+            }
+console.log('Calling fetch');
             this.$store.dispatch('members/fetch');
         }
     }

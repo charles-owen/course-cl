@@ -17,7 +17,8 @@ class Course {
 	/**
 	 * Construct a course object.
 	 */
-	public function __construct() {
+	public function __construct(\CL\Site\Site $site) {
+		$this->site = $site;
 	}
 
     /**
@@ -47,6 +48,13 @@ class Course {
 
 	        case 'sections':
 	        	return $this->sections;
+
+	        // Convenience functions that duplicate functions from Site:
+	        case 'rootDir':
+	        	return $this->site->rootDir;
+
+	        case 'root':
+	        	return $this->site->root;
 
 	        default:
                 $trace = debug_backtrace();
@@ -95,6 +103,8 @@ class Course {
 		$this->account = $account;
 		$this->name = $name;
 		$this->desc = $desc;
+
+		$this->site->siteName = $name;
 	}
 
 
@@ -154,6 +164,7 @@ class Course {
 	/** Sections collection */
 	public function getSections() {return $this->sections;}
 
+	private $site;      ///< The Site object for this course
 	private $account;	// Account associated with the course (like "cse335")
 	private $name;	    // Course name (like "CSE 335")
 	private $desc;		// Course description (like "Object-oriented Programming")
@@ -162,4 +173,5 @@ class Course {
 	private $section0 = null;		// First section added
 
 	private $gradedispute = null;	///< Grade dispute link content
+
 }

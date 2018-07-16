@@ -122,6 +122,10 @@ class ApiMembers extends \CL\Users\Api\Resource {
 			$params['semester'] = $get['semester'];
 		}
 
+		if(!empty($get['search'])) {
+			$params['search'] = $get['search'];
+		}
+
 		$members = new Members($site->db);
 		$result = $members->query($params);
 		$reply = [];

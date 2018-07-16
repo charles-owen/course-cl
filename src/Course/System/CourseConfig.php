@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Site configuration object for Course
+ * Site configuration object the Course plugin
  */
 
 namespace CL\Course\System;
@@ -9,14 +9,14 @@ namespace CL\Course\System;
 use CL\Site\Components\InstalledConfig;
 
 /**
- * Site configuration object for Course
+ * Site configuration object for the Course plugin
  */
 class CourseConfig extends InstalledConfig {
 	/**
 	 * Property get magic method
 	 * @param string $key Property name
 	 *
-	 * Properties supported:
+	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -------
 	 * course | Course | The main Course configuration object
@@ -36,7 +36,7 @@ class CourseConfig extends InstalledConfig {
 	/**
 	 * Property set magic method
 	 *
-	 * Properties supported:
+	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -------
 	 * course | Course | The main Course configuration object

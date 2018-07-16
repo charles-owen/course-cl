@@ -39,7 +39,7 @@ CourseFactory.create = function(store) {
     }
 
     //
-    // Install the users store modules
+    // Install the course store modules
     //
     if(store !== undefined) {
         store.registerModule('course', StoreModuleCourse);
@@ -50,14 +50,23 @@ CourseFactory.create = function(store) {
     }
 
     //
-    // Register a property 'course' that can be used
-    // to set the course description.
+    // Detect the passed in course definition information
+    // and add it to the store.
     //
-    Object.defineProperty(Course, 'course', {
-        set(value) {
-            store.commit('course/set', value);
-        }
-    });
+
+    let en;
+    if( (en = document.getElementById('cl-course')) !== null) {
+        store.commit('course/set', JSON.parse(en.textContent));
+    }
+
+    //
+    // We have modified the User object so that it will know
+    // how to attach a membership. This means we must reload
+    // the user information so it can create a new object
+    //
+    if( (en = document.getElementById('cl-user')) !== null) {
+        store.commit('user/set', JSON.parse(en.textContent));
+    }
 
     return Course;
 }

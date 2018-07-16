@@ -20,5 +20,6 @@ class CourseTables extends \CL\Tables\TableMaker {
 		parent::__construct($config);
 
 		$this->add(new \CL\Course\Members($config));
+		$this->add(new \CL\Course\Assignments\Grades($config));
 	}
 }

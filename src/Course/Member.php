@@ -6,10 +6,14 @@
 
 namespace CL\Course;
 
+use \CL\Site\MetaData;
+use \CL\Site\MetaDataOwner;
+use \CL\Site\Site;
+
 /**
  * Member of a course
  */
-class Member extends \CL\Users\Membership {
+class Member extends \CL\Users\Membership implements MetaDataOwner {
 	// User role codes in order of access permissions
 	// The roles of Guest, User, Staff, and Admin are
 	// from the basic user roles.
@@ -34,13 +38,32 @@ class Member extends \CL\Users\Membership {
 		parent::__construct();
 
 		if($row !== null) {
-			// Required values
-			$this->id = +$row['id'];
-			$this->userId = $row['userid'];
-			$this->semester = $row['semester'];
-			$this->sectionId = $row['section'];
-			$this->role = $row['role'];
-			$this->created = strtotime($row['created']);
+			if(isset($row['member_id'])) {
+				// Required values
+				$this->id = +$row['member_id'];
+				$this->userId = $row['member_userid'];
+				$this->semester = $row['member_semester'];
+				$this->sectionId = $row['member_section'];
+				$this->role = $row['member_role'];
+				$this->created = strtotime($row['member_created']);
+
+				if(isset($row['member_metadata'])) {
+					$this->metaData = new MetaData($this, $row['member_metadata']);
+				}
+			} else {
+				// Required values
+				$this->id = +$row['id'];
+				$this->userId = $row['userid'];
+				$this->semester = $row['semester'];
+				$this->sectionId = $row['section'];
+				$this->role = $row['role'];
+				$this->created = strtotime($row['created']);
+
+				if(isset($row['metadata'])) {
+					$this->metaData = new MetaData($this, $row['metadata']);
+				}
+			}
+
 		}
 	}
 
@@ -55,7 +78,15 @@ class Member extends \CL\Users\Membership {
 	/**
 	 * Get standard properties for a member.
 	 *
-	 * @param $name Options are:
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * id | int | Internal member ID
+	 * metaData | MetaData | Meta-data for this user
+	 * role | string | User role (see above roles)
+	 * userId | string | Internal user ID
+	 *
+	 * @param string $key Property name
 	 * @return Course|mixed|null|string Property value
 	 */
 	public function __get($key) {
@@ -63,17 +94,27 @@ class Member extends \CL\Users\Membership {
 			case 'id':
 				return $this->id;
 
+			case 'metaData':
+				if($this->metaData === null) {
+					$this->metaData = new MetaData($this);
+				}
+
+				return $this->metaData;
+
+			case 'role':
+				return $this->role;
+
 			case 'userId':
 				return $this->userId;
+
+			// Pending documentation
+
 
 			case 'semester':
 				return $this->semester;
 
 			case 'section':
 				return $this->course->get_section($this->semester, $this->sectionId);
-
-			case 'role':
-				return $this->role;
 
 			case 'sectionId':
 				return $this->sectionId;
@@ -97,6 +138,14 @@ class Member extends \CL\Users\Membership {
 
 	/**
 	 * Property set magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * id | int | Internal member ID
+	 * role | string | User role (see above roles)
+	 * userId | string | Internal user ID
+	 *
 	 * @param $key Property name
 	 * @param $value Value to set
 	 */
@@ -106,20 +155,21 @@ class Member extends \CL\Users\Membership {
 				$this->id = $value;
 				break;
 
+			case 'role':
+				$this->role = $value;
+				break;
+
 			case 'userId':
 				$this->userId = $value;
 				break;
 
+			// Pending documentation
 			case 'semester':
 				$this->semester = $value;
 				break;
 
 			case 'sectionId':
 				$this->sectionId = $value;
-				break;
-
-			case 'role':
-				$this->role = $value;
 				break;
 
 			case 'user':
@@ -212,7 +262,8 @@ class Member extends \CL\Users\Membership {
 	public function inSection($sectionId) {return $this->sectionId === $sectionId;}
 
 
-	/** Get a textbook object
+	/**
+	 * Get a textbook object
 	 *
 	 * This gets the textbook object appropriate for this user
 	 * @param int $num Textbook number (starting at 1)
@@ -221,11 +272,21 @@ class Member extends \CL\Users\Membership {
 		return $this->getSection()->getTextbook($num);
 	}
 
-	/** Assignment for a given user
+	/**
+	 * Assignment for a given user
 	 * @param $tag Assignment tag
 	 * @return Assignment The Assignment object */
 	public function getAssignment($tag) {
 		return $this->section->getAssignment($tag);
+	}
+
+	/**
+	 * Write the meta-data for this member.
+	 * @param Site $site Site object so we can access tables.
+	 */
+	public function writeMetaData(Site $site) {
+		$members = new Members($site->db);
+		$members->writeMetaData($this);
 	}
 
 
@@ -247,4 +308,6 @@ class Member extends \CL\Users\Membership {
 	private $sectionId = null;	// Section id (like 001) for section this user is in
 	private $role = null;
 	private $created = null;
+	private $metaData = null;   ///< Attached meta-data
+
 }

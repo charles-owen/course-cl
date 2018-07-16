@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Factory class for the LTI system
+ * Plugin class for the Course Subsystem
  */
 
 namespace CL\Course;
@@ -15,7 +15,14 @@ use CL\Users\User;
 use CL\Console\ConsoleView;
 use CL\Course\System\SectionSelectorView;
 
+/**
+ * Plugin class for the Course Subsystem
+ */
 class CoursePlugin extends \CL\Site\Components\Plugin {
+	/**
+	 * Install the plugin
+	 * @param Site $site The Site configuration object
+	 */
 	public function install(Site $site) {
 		$site->install("course", new CourseConfig());
 
@@ -62,7 +69,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 
 	public function startup(Site $site, Server $server, $time) {
 		// Create the course object
-		$course = new Course();
+		$course = new Course($site);
 
 		$installer = $site->rootDir . '/course/course.inc.php';
 		if(file_exists($installer)) {
@@ -198,11 +205,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 			$data['sections'] = $sections;
 
 			$json = json_encode($data);
-
-			$consoleView->script = <<<SCRIPT
-Course.course = $json;
-SCRIPT;
-
+			$consoleView->addJSON('cl-course', $json);
 		});
 
 		return null;
