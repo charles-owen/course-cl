@@ -211,20 +211,6 @@ input {
   width: 100px;
 }
 
-div.hot {
-
-  width: 25em;
-  min-height: 45px;
-  margin: 0 auto;
-  background: #ffffff url('images/hot.gif') no-repeat;
-  padding-left: 85px;
-}
-
-div.hot p {
-  margin: 0;
-
-}
-
 @media only screen and (max-width: $wide-width) {
   #main {
     width: 100%;

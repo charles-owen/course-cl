@@ -118,7 +118,7 @@ class Course {
      *
 	 * @returns Section object
 	 */
-	public function addSection($semester, $section, $type) {
+	public function add_section($semester, $section, $type) {
         $obj = new Section($this, $semester, $section, $type);
 		$this->sections[] = $obj;
 		
