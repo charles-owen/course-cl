@@ -6,6 +6,7 @@
 namespace CL\Course;
 
 use \CL\Site\Site;
+use \CL\Users\User;
 
 /**
  * View class for course home page
@@ -19,7 +20,7 @@ class CourseHomeView extends \CL\Course\View {
 	public function __construct(Site $site, array $options=[], $time=null) {
         parent::__construct($site, $options);
 
-        $course = $site->course->course;
+        $course = $site->course;
 
         $this->addCSS("vendor/cl/course/coursehome.css", 100);
         $this->title = $course->desc;
@@ -32,8 +33,8 @@ class CourseHomeView extends \CL\Course\View {
 //
 //		// Determine the section
 //		$this->section = $this->user->get_section();
-//
-//		$this->calendar = $this->add_aux(new CalendarView($course, $user, time()));
+
+		$this->calendar = $this->add_aux(new CalendarView(time()));
 	}
 
 
@@ -85,11 +86,11 @@ class CourseHomeView extends \CL\Course\View {
 //HTML;
 //		return $html;
 //	}
-//
-//	public function present_calendar() {
-//		return $this->calendar->present();
-//	}
-//
+
+	public function present_calendar() {
+		return $this->calendar->present();
+	}
+
 //	public function semesterLong() {
 //	    $semester = $this->user->semester;
 //	    $year = '20' . substr($semester, 2, 2);
@@ -108,38 +109,38 @@ class CourseHomeView extends \CL\Course\View {
 //                return 'Invalid Semester Code!';
 //        }
 //    }
-//
-//	/**
-//	 * Present the Logout button on the home page
-//	 * @return string HTML for hte Interact button
-//	 */
-//	public function logout_button() {
-//		if($this->course->get_auth() === null) {
-//			return '';
-//		}
-//
-//		$libroot = $this->course->get_libroot();
-//		$html = <<<HTML
-//<p class="control"><a href="$libroot/login.php" title="Log Out">
-//<img src="$libroot/images/logout.png" width="100" height="25" alt="Log Out"></a></p>
-//HTML;
-//		return $html;
-//	}
-//
-//	/** The management section of this home page
-//	 * @returns HTML for the management options if staff, empty string otherwise */
-//	public function management_controls() {
-//		$html = '';
-//
-//        /*
-//         * Console Link
-//         */
-//		if($this->user->at_least(User::GRADER)) {
-//			$html .= <<<LINK
-//<p class="control"><a href="lib/manage/console.php"><img src="lib/images/restricted.jpg" width="100" height="74" alt="Restricted Area"></a></p>
-//LINK;
-//		}
-//
+
+	/**
+	 * Present the Logout button on the home page
+	 * @return string HTML for the logout button
+	 */
+	public function logout_button() {
+		$root = $this->site->root;
+		$img = $this->site->img;
+
+		$html = <<<HTML
+<p class="control"><a href="$root/cl/login" title="Log Out">
+<img src="$img/logout.png" width="100" height="25" alt="Log Out"></a></p>
+HTML;
+		return $html;
+	}
+
+	/** The management section of this home page
+	 * @returns HTML for the management options if staff, empty string otherwise */
+	public function management_controls() {
+		$html = '';
+
+        /*
+         * Console Link
+         */
+		if($this->member->atLeast(User::STAFF)) {
+			$img = $this->course->img;
+
+			$html .= <<<LINK
+<p class="control"><a href="cl/console"><img src="$img/restricted.png" width="100" height="74" alt="Restricted Area"></a></p>
+LINK;
+		}
+
 //        /*
 //         * Determine the actual underlying user
 //         */
@@ -216,10 +217,10 @@ class CourseHomeView extends \CL\Course\View {
 //HTML;
 //			$html .= "</script>";
 //		}
-//
-//		return $html;
-//	}
-//
+
+		return $html;
+	}
+
 
 //	/** All assignments for a category
 //	 * @param $tag Assignment category tag
@@ -325,24 +326,26 @@ class CourseHomeView extends \CL\Course\View {
 //
 //		return $html;
 //	}
-//
-//	/** Display items in the tools and resources category
-//	 * that are not available to guests */
-//	public function enrolled_tools() {
+
+	/** Display items in the tools and resources category
+	 * that are not available to guests */
+	public function enrolled_tools() {
+		$html = '';
+
 //		$html = <<<HTML
 //<ul>
 //<li><a href="lib/interact"><img alt="Interact! System" src="lib/images/interact/link.png" height="16" width="82"></a></li>
 //</ul>
 //HTML;
-//
-//		if(!$this->user->is_guest()) {
-//			$html .= <<<HTML
-//<ul>
-//<li><a href="$this->aboutme">About Me and Preferences...</a></li>
-//<li><a href="lib/calendar.php">Personal Calendar</a></li>
-//<li><a href="lib/grading/grades.php">Grades</a></li>
-//HTML;
-//
+
+		if(!$this->user->guest) {
+			$html .= <<<HTML
+<ul>
+<li><a href="$this->aboutme">About Me and Preferences...</a></li>
+<li><a href="lib/calendar.php">Personal Calendar</a></li>
+<li><a href="lib/grading/grades.php">Grades</a></li>
+HTML;
+
 //			// Are there any peer reviews in the assignments?
 //			$assignments = $this->user->get_section()->get_assignments();
 //			if($assignments->are_reviews() ) {
@@ -350,13 +353,13 @@ class CourseHomeView extends \CL\Course\View {
 //<li><a href="lib/review/pending.php">Peer Reviewing</a></li>
 //HTML;
 //			}
-//
-//			$html .= "</ul>";
-//		}
-//
-//		return $html;
-//	}
-//
+
+			$html .= "</ul>";
+		}
+
+		return $html;
+	}
+
 //	/** User is staff member? */
 //	public function is_staff() {
 //		return $this->user->is_staff();
@@ -376,13 +379,13 @@ class CourseHomeView extends \CL\Course\View {
 //	public function get_section_id() {
 //		return $this->section !== null ? $this->section->get_id() : "???";
 //	}
-//
-//	/** Specify a custom aboutme page
-//	 * @param $aboutme Link to about me page */
-//	public function set_aboutme($aboutme) {
-//		$this->aboutme = $aboutme;
-//	}
-//
+
+	/** Specify a custom aboutme page
+	 * @param $aboutme Link to about me page */
+	public function set_aboutme($aboutme) {
+		$this->aboutme = $aboutme;
+	}
+
 //	/**
 //	 * Set an optional page footer text
 //	 * @param $footer Text to put in footer
@@ -395,7 +398,7 @@ class CourseHomeView extends \CL\Course\View {
 //	private $section;	// The Section object
 //    private $time;
 //	private $footer = null;
-//	private $aboutme = "lib/user/aboutme.php";	// Link to aboutme page...
-//	private $calendar;
+	private $aboutme = "lib/user/aboutme.php";	// Link to aboutme page...
+	private $calendar;      ///< The course calendar
 }
 

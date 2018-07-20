@@ -11,7 +11,7 @@ export {MemberSelectorVue};
 // Use the factory to create the Users object
 let Course = global.Course !== undefined ?
     Course :
-    CourseFactory.create(Site.store);
+    CourseFactory.create(Site);
 
 export {Course};
 export default Course;

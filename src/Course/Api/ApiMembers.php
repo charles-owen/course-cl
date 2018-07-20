@@ -165,8 +165,8 @@ class ApiMembers extends \CL\Users\Api\Resource {
 		//
 		// Does the requested section exist?
 		//
-		$course = $site->course->course;
-		$section = $course->getSection($semester, $sectionId);
+		$course = $site->course;
+		$section = $course->get_section($semester, $sectionId);
 		if($section === null) {
 			throw new APIException("Section is invalid");
 		}
@@ -209,8 +209,8 @@ class ApiMembers extends \CL\Users\Api\Resource {
 		//
 		// Does the requested section exist?
 		//
-		$course = $site->course->course;
-		$section = $course->getSection($semester, $sectionId);
+		$course = $site->course;
+		$section = $course->get_section($semester, $sectionId);
 		if($section === null) {
 			throw new APIException("Section is invalid");
 		}

@@ -3,14 +3,9 @@
  * Class that provides support for managing course assignments
  */
 
-namespace CL\Course\Assignments;
+namespace CL\Course;
 
-/**
- * Classes associated with assignments, grading, and submissions
- */
-
-use CL\Course\Section;
-
+use CL\Course\Assignments\AssignmentCategory;
 
 /**
  * Provides support for managing course assignments
@@ -36,8 +31,8 @@ class Assignments {
 
 	/**
 	 * Property get magic method
-	 * @param $key Property name
-	 * @return null|string
+	 * @param string $key Property name
+	 * @return mixed
 	 */
 	public function __get($key) {
 		switch($key) {
@@ -90,11 +85,11 @@ class Assignments {
 	 * Add a grading category for this course
 	 * @param string $tag Assignment category tag
 	 * @param string $name Name of the category
-	 * @param string $points Points to categories to the category
 	 * @return New AssignmentCategory object.
 	 */
-	public function addCategory($tag, $name, $points) {
-		$category = new AssignmentCategory($this, $tag, $name, $points);
+	public function add_category($tag, $name) {
+		$category = $this->course->assignmentFactory->createAssignmentCategory($tag, $name);
+		$category->section = $this->section;
 		$this->categories[] = $category;
 		return $category;
 	}
@@ -106,7 +101,7 @@ class Assignments {
 	 * @param string $tag Tag that identifies the assignment
 	 * @returns Assignment object
 	 */
-	public function getAssignment($tag) {
+	public function get_assignment($tag) {
 		foreach($this->categories as $category) {
 			$assignment = $category->get_assignment($tag);
 			if($assignment != null) {
@@ -122,7 +117,7 @@ class Assignments {
 	 * @param $tag The category tag
 	 * @return AssignmentCategory|null
 	 */
-	public function getCategory($tag) {
+	public function get_category($tag) {
 		foreach($this->categories as $category) {
 			if($category->get_tag() == $tag) {
 				return $category;
@@ -151,7 +146,7 @@ class Assignments {
 	/** Get all assignments that are released and not yet due
 	 * @param $user User to get the assignments for
 	 * @param $time Time to test
-	 * @returns List of Assignment objects */
+	 * @returns array List of Assignment objects */
 	public function getOpenAssignments(\User $user, $time) {
 		$result = array();
 		
@@ -175,7 +170,7 @@ class Assignments {
      * @param $url URL to link event to
      * @param $displayTime If true, display at a time
      */
-    public function addCalendar($name, $date, $url=null, $displayTime=false) {
+    public function add_calendar($name, $date, $url=null, $displayTime=false) {
 		// Must manually call since this may be a recursive call
         $this->section->__get('calendar')->add($name, $date, $url, $displayTime);
     }

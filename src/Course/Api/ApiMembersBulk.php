@@ -59,8 +59,8 @@ class ApiMembersBulk extends \CL\Users\Api\Resource {
 		//
 		// Does the requested section exist?
 		//
-		$course = $site->course->course;
-		$section = $course->getSection($semesterId, $sectionId);
+		$course = $site->course;
+		$section = $course->get_section($semesterId, $sectionId);
 		if($section === null) {
 			throw new APIException("Section is invalid");
 		}

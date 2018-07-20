@@ -5,6 +5,8 @@
 
 namespace CL\Course\Assignments;
 
+use CL\Course\Assignments;
+
 /**
  * Define a graded assignment category
  * 
@@ -13,50 +15,46 @@ namespace CL\Course\Assignments;
  * category */
 class AssignmentCategory {
 	/** Constructor 
-	 * @param Assignments $parent The Assignments object that owns this category
 	 * @param string $tag Tag associated with the assignment category
 	 * @param string $name Category name
-	 * @param string $percent Points assigned to this category */
-	public function __construct(Assignments $parent, $tag, $name, $percent) {
-		$this->parent = $parent;
+	 */
+	public function __construct($tag, $name) {
 		$this->tag = $tag;
 		$this->name = $name;
-		$this->percent = +$percent;
 	}
 	
 	/** Add an assignment to the category 
 	 * @param Assignment $assignment Assignment to add */
 	private function add(Assignment $assignment) {
-		$assignment->set_category($this);
+		$assignment->category = $this;
 		$this->assignments[] = $assignment;
 		return $assignment;
 	}
 	
 	/** Add a conventional assignment
-	 * @param $tag Assignment tag
-	 * @param $name Name of the assignment
-	 * @param $percent Points to for assignment, default divides equally
-     * @param $url URL for the assignment
+	 * @param string $tag Assignment tag
+	 * @param string $name Name of the assignment
+     * @param string $url URL for the assignment (optional)
      * @returns Assignment object */
-	public function addAssignment($tag, $name, $percent=0, $url=null) {
-		$course = $this->parent->course;
-		return $this->add(new Assignment($course, $tag, $name, $percent, $url));
+	public function add_assignment($tag, $name, $url=null) {
+		$assignment = $this->course->assignmentFactory->createAssignment($tag, $name, $url);
+		return $this->add($assignment);
 	}
 	
-	/** Add a step assignment
-	 * @param $tag Assignment tag
-	 * @param $name Name of the assignment
-	 * @param $percent Points to for assignment, default divides equally
-	 * @returns Assignment object */
-	public function addStep($tag, $name, $percent=0) {
-		$course = $this->parent->get_course();
-		return $this->add(new \Step\Step($course, $tag, $name, $percent));
-	}
+//	/** Add a step assignment
+//	 * @param $tag Assignment tag
+//	 * @param $name Name of the assignment
+//	 * @param $percent Points to for assignment, default divides equally
+//	 * @returns Assignment object */
+//	public function add_step($tag, $name, $percent=0) {
+//		$course = $this->parent->course;
+//		return $this->add(new \Step\Step($course, $tag, $name, $percent));
+//	}
 
 	/**
 	 * Property get magic method
-	 * @param $key Property name
-	 * @return null|string
+	 * @param string $key Property name
+	 * @return mixed
 	 */
 	public function __get($key) {
 		switch($key) {
@@ -66,11 +64,14 @@ class AssignmentCategory {
 			case 'tag':
 				return $this->tag;
 
-			case 'percent':
-				return $this->percent;
-
 			case 'assignments':
 				return $this->assignments;
+
+			case 'grading':
+				return $this->grading;
+
+			case 'course':
+				return $this->course;
 
 			case 'section':
 				return $this->section;
@@ -86,8 +87,36 @@ class AssignmentCategory {
 		}
 	}
 
-	
-	/** Compute the grade for this category */
+	/**
+	 * Property set magic method
+	 * @param string $key Property name
+	 * @param string $value Value to set
+	 */
+	public function __set($key, $value)
+	{
+		switch ($key) {
+			case 'grading':
+				$this->grading = $value;
+				break;
+
+			case 'section':
+				$this->section = $value;
+				$this->course = $this->section->course;
+				break;
+
+			default:
+				$trace = debug_backtrace();
+				trigger_error(
+					'Undefined property ' . $key .
+					' in ' . $trace[0]['file'] .
+					' on line ' . $trace[0]['line'],
+					E_USER_NOTICE);
+				break;
+		}
+	}
+
+
+		/** Compute the grade for this category */
 	public function computeGrade(\User $user) {
 		/*
 		 * First, we need to ensure we have a percentage
@@ -185,12 +214,13 @@ class AssignmentCategory {
 	public function dropLowest($drop) {
 		$this->droplowest = $drop;
 	}
-	
-	private $parent;		///< Assignments object that owns this category
+
+	private $course = null;		    ///< Course object
+	private $section = null;        ///< Section we are associated with
 	private $tag;
 	private $name;
-	private $percent;
 	private $droplowest = 0;
-	
+	private $grading = null;    ///< Grading attachment
+
 	private $assignments = array();
 }

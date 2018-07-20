@@ -3,10 +3,11 @@
  * Factory to create the Course object.
  */
 
-import SectionSelector from './SectionSelectors/SectionSelector.js';
-import {Member} from './Members/Member.js';
-import {StoreModuleCourse} from './State/StoreModuleCourse.js';
 import {StoreModuleUsers} from 'users-cl';
+import {Member} from './Members/Member.js';
+
+import SectionSelector from './SectionSelectors/SectionSelector.js';
+import {StoreModuleCourse} from './State/StoreModuleCourse.js';
 
 let CourseFactory = function() {
 }
@@ -18,7 +19,8 @@ let CourseFactory = function() {
  * @param store Vuex store object
  * @returns {Course} object.
  */
-CourseFactory.create = function(store) {
+CourseFactory.create = function(site) {
+
     let Course = function() {
     }
 
@@ -41,32 +43,36 @@ CourseFactory.create = function(store) {
     //
     // Install the course store modules
     //
+    let store = site.store;
     if(store !== undefined) {
         store.registerModule('course', StoreModuleCourse);
         store.registerModule('members', StoreModuleUsers.create(
-           '/api/course/members',
-           (user) => {return user.member.id; }
+            '/api/course/members',
+            (user) => {return user.member.id; }
         ));
     }
 
-    //
-    // Detect the passed in course definition information
-    // and add it to the store.
-    //
+    site.ready(() => {
+        //
+        // Detect the passed in course definition information
+        // and add it to the store.
+        //
 
-    let en;
-    if( (en = document.getElementById('cl-course')) !== null) {
-        store.commit('course/set', JSON.parse(en.textContent));
-    }
+        let en;
+        if( (en = document.getElementById('cl-course')) !== null) {
+            store.commit('course/set', JSON.parse(en.textContent));
+        }
 
-    //
-    // We have modified the User object so that it will know
-    // how to attach a membership. This means we must reload
-    // the user information so it can create a new object
-    //
-    if( (en = document.getElementById('cl-user')) !== null) {
-        store.commit('user/set', JSON.parse(en.textContent));
-    }
+        //
+        // We have modified the User object so that it will know
+        // how to attach a membership. This means we must reload
+        // the user information so it can create a new object
+        //
+        if( (en = document.getElementById('cl-user')) !== null) {
+            store.commit('user/set', JSON.parse(en.textContent));
+        }
+    })
+
 
     return Course;
 }

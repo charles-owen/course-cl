@@ -5,7 +5,6 @@
 
 namespace CL\Course;
 
-use CL\Course\Assignments\Assignments;
 
 /**
  * Describes one section of a course
@@ -61,6 +60,22 @@ class Section {
 
             case 'name':
                 return $this->semester . '/' . $this->id;
+
+	        case 'year':
+	        	return '20' . substr($this->semester, 2, 2);
+
+	        case 'season':
+	        	switch(substr($this->semester, 0, 2)) {
+			        case 'FS':
+			        default:
+			        	return 'Fall';
+
+			        case 'US':
+			        	return 'Summer';
+
+			        case 'SS':
+			        	return 'Spring';
+		        }
 
             case 'summer':
                 return substr($this->semester, 0, 2) === 'US';
@@ -130,7 +145,7 @@ class Section {
 	 * Get an assignmment by tag
 	 * @param $tag Tag for the assignment
 	 */
-	public function getAssignment($tag) {
+	public function get_assignment($tag) {
 		$assignments = $this->get_assignments();
 		return $assignments->get_assignment($tag);
 	}
@@ -139,7 +154,7 @@ class Section {
 	 * Add a textbook for the course
 	 * @param $textbook The textbook object to add
 	 */
-	public function addTextbook(Textbook $textbook) {
+	public function add_textbook(Textbook $textbook) {
 		if($this->textbooks === null) {
 			$this->textbooks = [];
 		}
@@ -155,7 +170,7 @@ class Section {
 	 * @param $num Textbook number (starting at 1)
 	 * @return Textbook object
 	 */
-	public function getTextbook($num) {
+	public function get_textbook($num) {
 		if($this->textbooks === null) {
 			$this->textbooks = [];
 			
@@ -178,7 +193,7 @@ class Section {
 	 * set section grading scale. 
 	 * @param $score Score (0 to 100)
 	 */
-	public function toGrade($score) {
+	public function to_grade($score) {
 		foreach($this->scale as $scale) {
 			if($score >= $scale[0]) {
 				return $scale[1];

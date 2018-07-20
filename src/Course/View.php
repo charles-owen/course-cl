@@ -21,13 +21,24 @@ class View extends \CL\Site\View {
 	public function __construct(Site $site, array $options = []) {
 		parent::__construct($site, $options);
 
+		$this->user = $site->users->user;
+		$this->member = $site->users->user->member;
+		$this->course = $site->course;
+		$this->section = $this->member !== null ? $this->course->get_section($this->member->semester, $this->member->sectionId) : null;
+
 		// Some globals that make page creation easier
-		$GLOBALS['user'] = $site->users->user;
-		$GLOBALS['member'] = $site->users->user->member;
-		$GLOBALS['course'] = $site->course->course;
+		$GLOBALS['user'] = $this->user;
+		$GLOBALS['member'] = $this->member;
+		$GLOBALS['course'] = $this->course;
+		$GLOBALS['section'] = $this->section;
 
 		$this->addCSS('vendor/cl/course/course.css');
 		$this->addJS('users');
 		$this->addJS('course');
 	}
+
+	protected $user;
+	protected $member;
+	protected $course;
+	protected $section;
 }

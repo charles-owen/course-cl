@@ -12,25 +12,21 @@ use CL\Course\Course;
 /**
  * A single assignment in the assignment tracking
  * and grading system.
+ *
+ * This is for basic assignments and can be overridden for
+ * more complex assignments.
  */
 class Assignment {
 	/** Constructor 
-	 * @param Course $course Course this assignment is for
-	 * @param $tag Tag for the assignment for grading tables
-	 * @param $name Assignment name
-	 * @param $percent Amount of category grade to categories to this assignment.
-     * @param $url URL for the assignment
-	 * If set to zero (default), all non-specified points are divided equally. 
+	 * @param string $tag Tag for the assignment
+	 * @param string $name Assignment name
+	 * @param string $url URL for the assignment
 	 */
-	public function __construct(Course $course, $tag, $name, $percent = 0, $url=null) {
-		$this->course = $course;
+	public function __construct($tag, $name, $url=null) {
 		$this->tag = $tag;
 		$this->name = $name;
 		$this->shortname = $name;
-		$this->percent = $percent;
 		$this->url = $url;
-
-		$this->grading = new Grading($this);
 	}
 
     /**
@@ -45,11 +41,17 @@ class Assignment {
             case 'tag':
                 return $this->tag;
 
+	        case 'category':
+	        	return $this->category;
+
             case 'course':
                 return $this->course;
 
             case 'section':
-                return $this->category->get_section();
+                return $this->section;
+
+	        case 'grading':
+		        return $this->grading;
 
             default:
                 $trace = debug_backtrace();
@@ -63,20 +65,37 @@ class Assignment {
     }
 
 
-    /**
-     * Property set magic method
-     * @param $key Property name
-     * @param $value Value to set
-     */
-    public function __set($key, $value) {
-        $trace = debug_backtrace();
-        trigger_error(
-            'Undefined property ' . $key .
-            ' in ' . $trace[0]['file'] .
-            ' on line ' . $trace[0]['line'],
-            E_USER_NOTICE);
-    }
-	
+	/**
+	 * Property set magic method
+	 * @param string $key Property name
+	 * @param string $value Value to set
+	 */
+	public function __set($key, $value)
+	{
+		switch ($key) {
+			case 'grading':
+				$this->grading = $value;
+				break;
+
+			case 'category':
+				$this->category = $value;
+				$this->section = $value->section;
+				$this->course = $value->course;
+				break;
+
+			default:
+				$trace = debug_backtrace();
+				trigger_error(
+					'Undefined property ' . $key .
+					' in ' . $trace[0]['file'] .
+					' on line ' . $trace[0]['line'],
+					E_USER_NOTICE);
+				break;
+		}
+	}
+
+
+
 	/**
 	 * The assignment due date
 	 *
@@ -373,13 +392,7 @@ class Assignment {
 	 * key for the assignment in the system. Strings such as
 	 * "step1" and "exam2" are good choices for the tag. */
 	public function get_tag() {return $this->tag;}
-	
-	/** The assignment category this is a member of */
-	public function get_category() {return $this->category;}
-	
-	/** The assignment category this is a member of 
-	 * @param $category The category to set */
-	public function set_category(AssignmentCategory $category) {$this->category = $category;}
+
 
 
 	/**
@@ -412,13 +425,7 @@ class Assignment {
 
         $this->loaded = true;
     }
-	
-	/** Percentage of points for this assignment */
-	public function get_percent() {return $this->percent;}
-	
-	/** Percentage of points for this assignment 
-	 * @param $percent New percentage */
-	public function set_percent($percent) {$this->percent = $percent;}
+
 
 	/** This function is called whenever a new submission occurs.
 	 *
@@ -561,7 +568,7 @@ class Assignment {
 	protected $tag;				///< Assignment tag
 	private $name;				// Name of the assignment
 	private $shortname;			// Short name for the assignment
-	private $percent;			// Percentage assigned to the assignment
+	protected $url;             ///< URL for the assignment (optional)
 
     /// When the assignment is release.
     /// null (default) means open immediately
@@ -571,13 +578,14 @@ class Assignment {
 	private $due = NULL;		// When the assignment is due
 	private $revised = FALSE;	// Is the due date revised?
 
-	private $category = null;	// Assignment category for this assignment
-	private $grading;			// The Grading object for this assignment
+	protected $category = null;	///< Assignment category for this assignment
+	protected $course = null;	///< Course we are associated with
+	protected $section = null;  ///< Section we are a member of
+
+	private $grading = null;	///< The Grading object for this assignment
     private $loaded = false;    // Is the assignment loaded?
 	private $reviewing = null;		///< Optional PeerReview object for this assignment
 
 	protected $solving = NULL;	///< Optional problem solving document
-	protected $course;			///< Course we are associated with
-    protected $url;             ///< URL for the assignment
 	protected $interact = false;	///< Do we use the Interact system?
 }

@@ -1,0 +1,20 @@
+@import url(~fullcalendar/dist/fullcalendar.css);
+div.cl-calendar {
+  display: none;
+  margin: 1em auto 1em auto;
+  background-color: #eef8ee;
+  padding: 4px 4px 4px 4px; }
+  div.cl-calendar .fc-event {
+    background-color: #005500;
+    font-size: 0.7em; }
+  div.cl-calendar .fc-unthemed .fc-today {
+    background-color: #aaffaa; }
+  div.cl-calendar h2 {
+    border: 0; }
+  div.cl-calendar table {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: none; }
+
+/*# sourceMappingURL=calendar.css.map */

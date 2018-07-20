@@ -20,11 +20,23 @@ use CL\Course\System\SectionSelectorView;
  */
 class CoursePlugin extends \CL\Site\Components\Plugin {
 	/**
+	 * A tag that represents this plugin
+	 * @return string A tag like 'course', 'users', etc.
+	 */
+	public function tag() {return 'course';}
+
+	/**
+	 * Return an array of tags indicating what plugins this one is dependent on.
+	 * @return array of tags this plugin is dependent on
+	 */
+	public function depends() {return ['console', 'users'];}
+
+	/**
 	 * Install the plugin
 	 * @param Site $site The Site configuration object
 	 */
 	public function install(Site $site) {
-		$site->install("course", new CourseConfig());
+		$site->install("course", new Course($site));
 
 		$site->addPreStartup(function(Site $site, Server $server, $time) {
 			return $this->preStartup($site, $server, $time);
@@ -32,7 +44,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 
 		$site->addStartup(function(Site $site, Server $server, $time) {
 			return $this->startup($site, $server, $time);
-		}, 200);
+		});
 
 		$site->addPostStartup(function(Site $site, Server $server, $time) {
 			return $this->postStartup($site, $server, $time);
@@ -68,17 +80,14 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 	}
 
 	public function startup(Site $site, Server $server, $time) {
-		// Create the course object
-		$course = new Course($site);
+		// Get and configure the course object
+		$course = $site->course;
 
 		$installer = $site->rootDir . '/course/course.inc.php';
 		if(file_exists($installer)) {
 			$function = require($installer);
 			$function($course);
 		}
-
-		// Set it in the configuration
-		$site->course->course = $course;
 
 		//
 		// Load the user section membership
@@ -180,7 +189,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 
 		$site->console->addClosure(function(ConsoleView $consoleView) {
 			$site = $consoleView->site;
-			$course = $site->course->course;
+			$course = $site->course;
 			$data = $course->data();
 
 
@@ -195,7 +204,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 				$members = new Members($site->db);
 				$memberships = $members->getByUser($user->id);
 				foreach ($memberships as $membership) {
-					$section = $course->getSection($membership->semester, $membership->sectionId);
+					$section = $course->get_section($membership->semester, $membership->sectionId);
 					if ($section !== null) {
 						$sections[] = $section->data();
 					}

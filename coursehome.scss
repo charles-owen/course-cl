@@ -5,22 +5,11 @@ $menubar-background: #f2f2f2;
 $border-color: #cccccc;
 $main-padding: $margin;
 $mobile-padding: $margin-mobile;
-$sidebar-width: 235px;
-
-body, div {
-  box-sizing: border-box;
-}
+$sidebar-width: 225px;
 
 p {
   text-align: left;
   margin: 1em 0;
-}
-
-h1 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1.5em;
-  font-style: italic;
-  margin: 0;
 }
 
 h2 {
@@ -38,7 +27,7 @@ h2 {
     width: 100%;
     position: relative;
     vertical-align: top;
-    padding: 0 $sidebar-width+$main-padding 0 $main-padding;
+    padding: 0.25em $sidebar-width+$main-padding 0.25em $main-padding;
   }
 
   > div.right {
@@ -47,12 +36,17 @@ h2 {
     right: $sidebar-width+$main-padding;
   }
 
-  .sidebar {
+  div.sidebar {
     position: absolute;
     top: 0;
     right: 0;
     width: $sidebar-width;
     padding: 0 $main-padding 0 0;
+    box-shadow: none;
+
+    iframe {
+      box-shadow: none;
+    }
   }
 
   div.twocol {
@@ -68,7 +62,7 @@ h2 {
   }
 }
 
-#calendar {
+.cl-calendar {
   @extend %shadow;
   width: 100%;
   margin: $main-padding 0 0 0;
@@ -152,13 +146,13 @@ footer {
 }
 
 .lists > ul > li {
-  list-style-image: url('images/bullet1.png');
+  list-style-image: url('img/bullet1.png');
   margin-top: 0px;
   margin-bottom: 0px;
 }
 
 .lists ul li.star {
-  list-style-image: url('images/star.png');
+  list-style-image: url('img/star.png');
   margin-top: 0px;
   margin-bottom: 0px;
 }
@@ -169,13 +163,13 @@ footer {
 }
 
 .lists ol li ul li {
-  list-style-image: url('images/ttbullet.png');
+  list-style-image: url('img/bullet.png');
   margin-top: 0px;
   margin-bottom: 0px;
 }
 
 .lists ul li ul li, .lists ol li ul li.bullet, li.bullet {
-  list-style-image: url('images/bullet.png');
+  list-style-image: url('img/bullet.png');
   margin-top: 0px;
   margin-bottom: 0px;
 }

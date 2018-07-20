@@ -5,6 +5,12 @@
 
 namespace CL\Course;
 
+use CL\Course\Assignments\AssignmentFactory;
+use CL\Users\User;
+
+use CL\Site\Components\InstalledConfig;
+
+
 /**
  * The class Course, which defines a course in the system.
  *
@@ -12,7 +18,7 @@ namespace CL\Course;
  * a given web site and will include information about this
  * particular course offering.
  */
-class Course {
+class Course extends InstalledConfig {
 
 	/**
 	 * Construct a course object.
@@ -24,8 +30,8 @@ class Course {
     /**
      * Get standard properties for a course.
      *
-     * @param $key
-     * @return Course|mixed|null|string Property value
+     * @param string $key
+     * @return mixed Property value
      */
     public function __get($key)
     {
@@ -56,21 +62,27 @@ class Course {
 	        case 'root':
 	        	return $this->site->root;
 
+	        case 'img':
+	        	return $this->site->root . '/vendor/cl/course/img';
+
+	        case 'sections':
+		        return $this->sections;
+
+	        case 'assignmentFactory':
+	        	if($this->assignmentFactory === null) {
+	        		$this->assignmentFactory = new AssignmentFactory();
+		        }
+		        return $this->assignmentFactory;
+
 	        default:
-                $trace = debug_backtrace();
-                trigger_error(
-                    'Undefined property ' . $key .
-                    ' in ' . $trace[0]['file'] .
-                    ' on line ' . $trace[0]['line'],
-                    E_USER_NOTICE);
-                return null;
+                return parent::__get($key);
         }
     }
 
     /**
      * Property set magic method
-     * @param $key Property name
-     * @param $value Value to set
+     * @param string $key Property name
+     * @param mixed $value Value to set
      */
     public function __set($key, $value) {
     	switch($key) {
@@ -79,13 +91,11 @@ class Course {
 		    	$this->gradedispute = $value;
 		    	break;
 
+		    case 'assignmentFactory':
+		    	$this->assignmentFactory = $value;
+
 		    default:
-			    $trace = debug_backtrace();
-			    trigger_error(
-				    'Undefined property ' . $key .
-				    ' in ' . $trace[0]['file'] .
-				    ' on line ' . $trace[0]['line'],
-				    E_USER_NOTICE);
+			    parent::__set($key, $value);
 			    break;
 	    }
 
@@ -143,7 +153,7 @@ class Course {
      * @param string $semester Semester ID (like FS18)
 	 * @param string $sectionId Section number/id (like 001)
 	 * @returns Section|null Reference to section object or null if section number is invalid */
-	public function getSection($semester, $sectionId) {
+	public function get_section($semester, $sectionId) {
 	    foreach($this->sections as $section) {
 	        if($section->semester === $semester && $section->id === $sectionId) {
 	            return $section;
@@ -153,6 +163,24 @@ class Course {
         return null;
     }
 
+	/**
+	 * Get the section for a user.
+	 * @param User $user User we are getting the section for
+	 * @return Section|null
+	 */
+    public function get_section_for(User $user) {
+		$member = $user->member;
+		if($member === null) {
+			return null;
+		}
+
+		return $this->get_section($member->semester, $member->sectionId);
+    }
+
+	/**
+	 * Create basic data representing a course that is send to clients.
+	 * @return array with keys 'account', 'name', desc'
+	 */
     public function data() {
 		return [
 			'account'=> $this->account,
@@ -160,9 +188,7 @@ class Course {
 			'desc' => $this->desc
 		];
     }
-	
-	/** Sections collection */
-	public function getSections() {return $this->sections;}
+
 
 	private $site;      ///< The Site object for this course
 	private $account;	// Account associated with the course (like "cse335")
@@ -172,6 +198,7 @@ class Course {
 	private $sections = [];	        // All sections for this course
 	private $section0 = null;		// First section added
 
-	private $gradedispute = null;	///< Grade dispute link content
+	private $assignmentFactory = null;  ///< Factory object that creates assignment components
+	private $gradedispute = null;	    ///< Grade dispute link content
 
 }

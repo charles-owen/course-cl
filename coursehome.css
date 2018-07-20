@@ -1,21 +1,12 @@
-#calendar, div.twocol div.left, div.twocol div.right {
+.cl-calendar, div.twocol div.left, div.twocol div.right {
   -moz-box-shadow: 3px 3px 8px #ccc;
   -webkit-box-shadow: 3px 3px 8px #ccc;
   box-shadow: 3px 3px 8px #ccc;
   margin-bottom: 1em; }
 
-body, div {
-  box-sizing: border-box; }
-
 p {
   text-align: left;
   margin: 1em 0; }
-
-h1 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1.5em;
-  font-style: italic;
-  margin: 0; }
 
 h2 {
   margin: 0.5em 0; }
@@ -29,17 +20,20 @@ h2 {
     width: 100%;
     position: relative;
     vertical-align: top;
-    padding: 0 245px 0 10px; }
+    padding: 0.25em 235px 0.25em 10px; }
   #main > div.right {
     position: absolute;
     top: 0;
-    right: 245px; }
-  #main .sidebar {
+    right: 235px; }
+  #main div.sidebar {
     position: absolute;
     top: 0;
     right: 0;
-    width: 235px;
-    padding: 0 10px 0 0; }
+    width: 225px;
+    padding: 0 10px 0 0;
+    box-shadow: none; }
+    #main div.sidebar iframe {
+      box-shadow: none; }
   #main div.twocol {
     padding: 10px 0 0 0; }
   #main .control {
@@ -47,13 +41,13 @@ h2 {
     margin: 0.25em 0 0.5em 0;
     width: 100px; }
 
-#calendar {
+.cl-calendar {
   width: 100%;
   margin: 10px 0 0 0;
   background-color: #f2f2f2;
   border: 1px #cccccc solid;
   padding: 6px 4px 0 4px; }
-  #calendar .fc-toolbar {
+  .cl-calendar .fc-toolbar {
     text-align: left;
     padding-left: 0.3rem; }
 
@@ -105,12 +99,12 @@ footer {
     white-space: nowrap; }
 
 .lists > ul > li {
-  list-style-image: url("images/bullet1.png");
+  list-style-image: url("img/bullet1.png");
   margin-top: 0px;
   margin-bottom: 0px; }
 
 .lists ul li.star {
-  list-style-image: url("images/star.png");
+  list-style-image: url("img/star.png");
   margin-top: 0px;
   margin-bottom: 0px; }
 
@@ -119,12 +113,12 @@ footer {
   border: 0px; }
 
 .lists ol li ul li {
-  list-style-image: url("images/ttbullet.png");
+  list-style-image: url("img/bullet.png");
   margin-top: 0px;
   margin-bottom: 0px; }
 
 .lists ul li ul li, .lists ol li ul li.bullet, li.bullet {
-  list-style-image: url("images/bullet.png");
+  list-style-image: url("img/bullet.png");
   margin-top: 0px;
   margin-bottom: 0px; }
 

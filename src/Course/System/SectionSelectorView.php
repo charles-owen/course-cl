@@ -24,7 +24,7 @@ class SectionSelectorView extends \CL\Course\View {
 
 		$user = $site->users->user;
 		if($user->atLeast(User::ADMIN)) {
-			$sections = $site->course->course->getSections();
+			$sections = $site->course->get_sections();
 			$memberships = [];
 			foreach($sections as $section) {
 				$member = new Member(['id'=>0,
@@ -87,23 +87,22 @@ class SectionSelectorView extends \CL\Course\View {
 			}
 
 			$data[] = [
-				'course'=>$site->course->course->name,
-				'desc'=>$site->course->course->desc,
+				'course'=>$site->course->name,
+				'desc'=>$site->course->desc,
 				'semester'=>$member->semester,
 				'section'=>$member->sectionId,
 				'nice'=>$sem . ', ' . '20' . substr($member->semester, 2, 2)
 			];
 		}
 
-		$json = json_encode($data);
-
-		$info = json_encode([
+		$this->addJSON('cl-section-selector', json_encode([
+			'sections' => $data,
 			'before'=>$this->before,
 			'after'=>$this->after
-		]);
+		]));
 
 		$this->script = <<<SCRIPT
-Course.SectionSelector.start($json, $info);
+Course.SectionSelector.start();
 SCRIPT;
 
 	}

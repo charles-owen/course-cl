@@ -113,9 +113,6 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			case 'semester':
 				return $this->semester;
 
-			case 'section':
-				return $this->course->get_section($this->semester, $this->sectionId);
-
 			case 'sectionId':
 				return $this->sectionId;
 
@@ -268,15 +265,15 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * This gets the textbook object appropriate for this user
 	 * @param int $num Textbook number (starting at 1)
 	 * @returns Textbook object for that textbook */
-	public function getTextbook($num) {
-		return $this->getSection()->getTextbook($num);
+	public function get_textbook($num) {
+		return $this->get_section()->getTextbook($num);
 	}
 
 	/**
 	 * Assignment for a given user
 	 * @param $tag Assignment tag
 	 * @return Assignment The Assignment object */
-	public function getAssignment($tag) {
+	public function get_assignment($tag) {
 		return $this->section->getAssignment($tag);
 	}
 
