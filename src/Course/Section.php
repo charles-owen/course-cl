@@ -135,19 +135,22 @@ class Section {
 			$this->assignments->section = $this;
 
 
-			$rootdir = $this->course->rootDir;
-            $file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->getSemesterLC() . '.php';
-            $this->assignments->load($file1);
+			if($this->course->site !== null) {
+				$rootdir = $this->course->site->rootDir;
+				$file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->getSemesterLC() . '.php';
+				$this->assignments->load($file1);
+			}
 		}
 	}
 	
 	/**
 	 * Get an assignmment by tag
-	 * @param $tag Tag for the assignment
+	 * @param string $tag Tag for the assignment
+	 * @return Assignment|null object for the assignment.
 	 */
 	public function get_assignment($tag) {
-		$assignments = $this->get_assignments();
-		return $assignments->get_assignment($tag);
+		$this->ensureLoaded();
+		return $this->assignments->get_assignment($tag);
 	}
 	
 	/**

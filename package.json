@@ -12,6 +12,9 @@
   "dependencies": {
     "site-cl": "^0.0.1",
     "users-cl": "^0.0.1",
-    "console-cl": "^0.0.1"
+    "console-cl": "^0.0.1",
+    "jquery": "^3.3.1",
+    "fullcalendar": "^3.9.0",
+    "axios": "^0.18.0"
   }
 }

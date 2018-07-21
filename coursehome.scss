@@ -65,6 +65,7 @@ h2 {
 .cl-calendar {
   @extend %shadow;
   width: 100%;
+  max-width: 650px;
   margin: $main-padding 0 0 0;
   background-color: $menubar-background;
   border: 1px $border-color solid;
@@ -95,6 +96,10 @@ div.twocol {
     padding: 0;
     width: 50%;
     margin: 0;
+
+    p {
+      padding: $main-padding;
+    }
   }
 
   div.left {

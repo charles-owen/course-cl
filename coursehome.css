@@ -43,6 +43,7 @@ h2 {
 
 .cl-calendar {
   width: 100%;
+  max-width: 650px;
   margin: 10px 0 0 0;
   background-color: #f2f2f2;
   border: 1px #cccccc solid;
@@ -65,6 +66,8 @@ div.twocol {
     padding: 0;
     width: 50%;
     margin: 0; }
+    div.twocol div.left p, div.twocol div.right p {
+      padding: 10px; }
   div.twocol div.left {
     margin-right: 5px; }
   div.twocol div.right {

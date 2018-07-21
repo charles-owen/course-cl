@@ -7,6 +7,7 @@ namespace CL\Course;
 
 use \CL\Site\Site;
 use \CL\Users\User;
+use \CL\Course\Assignment;
 
 /**
  * View class for course home page
@@ -20,36 +21,19 @@ class CourseHomeView extends \CL\Course\View {
 	public function __construct(Site $site, array $options=[], $time=null) {
         parent::__construct($site, $options);
 
-        $course = $site->course;
-
+        $this->time = $time !== null ? $time : time();
         $this->addCSS("vendor/cl/course/coursehome.css", 100);
-        $this->title = $course->desc;
-//        $this->set_title($course->get_desc());
-//
-//		$this->user = $user;
-//		$this->course = $course;
-//        $this->session = &$session;
-//		$this->time = $time === null ? time() : $time;
-//
-//		// Determine the section
-//		$this->section = $this->user->get_section();
+        $this->title = $this->course->desc;
+		$this->addBody('wider');
 
 		$this->calendar = $this->add_aux(new CalendarView(time()));
 	}
 
 
-	//	/** Get the course title for the home page */
-//	public function get_title() {
-//		return $this->course->get_name() . '-' .
-//			$this->get_section_id() . ' ' .
-//			$this->course->get_desc();
-//	}
-//
-
     /**
      * Get standard properties for a page.
      *
-     * @param $key Options are: libroot, root
+     * @param string $key Options are: libroot, root
      * @return Course|mixed|null|string Property value
      */
     public function __get($key)
@@ -65,8 +49,8 @@ class CourseHomeView extends \CL\Course\View {
 
     /**
      * Property set magic method
-     * @param $key Property name
-     * @param $value Value to set
+     * @param string $key Property name
+     * @param mixed $value Value to set
      */
     public function __set($key, $value) {
         parent::__set($key, $value);
@@ -91,24 +75,6 @@ class CourseHomeView extends \CL\Course\View {
 		return $this->calendar->present();
 	}
 
-//	public function semesterLong() {
-//	    $semester = $this->user->semester;
-//	    $year = '20' . substr($semester, 2, 2);
-//
-//	    switch(substr($semester, 0, 2)) {
-//            case 'US':
-//                return 'Summer, ' . $year;
-//
-//            case 'SS':
-//                return 'Spring, ' . $year;
-//
-//            case 'FS':
-//                return 'Fall, ' . $year;
-//
-//            default:
-//                return 'Invalid Semester Code!';
-//        }
-//    }
 
 	/**
 	 * Present the Logout button on the home page
@@ -133,7 +99,7 @@ HTML;
         /*
          * Console Link
          */
-		if($this->member->atLeast(User::STAFF)) {
+		if($this->user->atLeast(User::STAFF)) {
 			$img = $this->course->img;
 
 			$html .= <<<LINK
@@ -222,110 +188,112 @@ LINK;
 	}
 
 
-//	/** All assignments for a category
-//	 * @param $tag Assignment category tag
-//	 * @returns HTML for the assignments*/
-//	public function assignments($tag) {
-//		$category = $this->section->get_assignments()->get_assignment_category($tag);
-//		if($category === null) {
-//			return '<p class="shoutout">Assignment category ' . $tag . ' does not exist</p>';
-//		}
-//
-//		$html = "";
-//		foreach($category->get_assignments() as $assignment) {
-//			if($assignment instanceof \Step\Step) {
-//				$html .= $this->step_link($assignment);
-//			}
-//		}
-//
-//		if($html === '') {
-//			return '<li>Pending...</li>';
-//		}
-//
-//		return $html;
-//	}
-//
-//	/** A step assignment link line
-//	 * @param $step The Step object
-//	 * @return HTML for the link as a li tag */
-//	private function step_link(\Step\Step $step) {
-//		$step->load();
-//		$staff = $this->user->is_staff();
-//		$grader = $this->user->at_least(\User::GRADER);
-//
-//		$html = '';
-//
-//		if($staff || $step->after_release($this->time)) {
-//			$tag = $step->get_tag();
-//			$name = $step->get_stepname();
-//			$released = $step->get_release();
-//			$due = $step->get_due($this->user, $this->time);
-//			$solving = $step->get_solving();
-//
-//			$html .= "<li><A href=\"$tag/\">$name</A>";
-//
-//			if($due !== null) {
-//				$duedate = date('n-d-y', $due);
-//				$html .= <<<HTML
-//<span class="due"> Due <a class="tip">$duedate<span>Assignment Due</span></a>
-//HTML;
-//
-//				$review = $step->get_reviewing();
-//				if($review !== null) {
-//					$reviewDue = date('n-d-y', $review->get_due());
-//					$html .= <<<HTML
-// / <a class="tip">$reviewDue<span>Reviews Due</span></a>
-//HTML;
-//				}
-//
-//				$html .= "</span>";
-//
-//				if($step->is_extension($this->user)) {
-//					$html .= ' <span class="smallred">**extension**</span>';
-//				} else {
-//					if($step->is_duerevised()) {
-//						$html .= ' <span class="smallred">**revised**</span>';
-//					}
-//				}
-//
-//			}
-//
-//
-//			// Display release status for staff
-//			if($staff) {
-//				if($step->after_release($this->time)) {
-//					$html .= ' <span class="staff-note red">**active**</span>';
-//				} else {
-//				    if($step->get_release() !== false) {
-//                        $release = date('n-d-y', $step->get_release());
-//                        $html .= ' <span class="staff-note blu">**releases:&nbsp;' . $release . '**</span>';
-//                    } else {
-//                        $html .= ' <span class="staff-note blu">**no release**</span>';
-//                    }
-//
-//				}
-//			}
-//
-//			if($solving !== null && ($grader || $step->available_due($this->user, $this->time) )) {
-//				// We have a problem solving page
-//				$html .= "<ul><li class=\"bullet\"><a href=\"$solving\">Problem Solving</a>";
-//
-//				if($staff) {
-//					if($step->available_due($this->user, $this->time)) {
-//						$html .= ' <span class="staff-note red">**active**</span>';
-//					} else {
-//						$html .= ' <span class="staff-note blu">**inactive**</span>';
-//					}
-//				}
-//
-//				$html .= '</li></ul>';
-//			}
-//
-//			$html .= '</li>';
-//		}
-//
-//		return $html;
-//	}
+	/**
+	 * All assignments for a category
+	 * @param string $tag Assignment category tag
+	 * @returns string HTML for the assignments
+	 */
+	public function assignments($tag) {
+		$category = $this->section->assignments->get_category($tag);
+		if($category === null) {
+			return '<p class="shoutout">Assignment category ' . $tag . ' does not exist</p>';
+		}
+
+		$html = '<ul>';
+		$assignments = $category->assignments;
+		if(count($assignments) > 0) {
+			foreach($category->assignments as $assignment) {
+				$html .= $this->assignmentLink($assignment);
+			}
+		} else {
+			$html .= '<li>Pending...</li>';
+		}
+
+		$html .= '</ul>';
+		return $html;
+	}
+
+	/** An assignment link line.
+	 * @param Assignment $assignment The assignment object
+	 * @return string HTML for the link as a li tag
+	 */
+	private function assignmentLink(Assignment $assignment) {
+		$assignment->load();
+		$staff = $this->user->atLeast(Member::STAFF);
+		$grader = $this->user->atLeast(Member::GRADER);
+
+		$html = '';
+
+		if($staff || $assignment->after_release($this->time)) {
+			$tag = $assignment->tag;
+			$name = $assignment->name;
+			$due = $assignment->get_due($this->user, $this->time);
+			$solving = $assignment->solving;
+
+			$html .= "<li><A href=\"$tag/\">$name</A>";
+
+			if($due !== null) {
+				$duedate = date('n-d-y', $due);
+				$html .= <<<HTML
+<span class="due"> Due <a class="tip">$duedate<span>Assignment Due</span></a>
+HTML;
+
+				$review = $assignment->get_reviewing();
+				if($review !== null) {
+					$reviewDue = date('n-d-y', $review->get_due());
+					$html .= <<<HTML
+ / <a class="tip">$reviewDue<span>Reviews Due</span></a>
+HTML;
+				}
+
+				$html .= "</span>";
+
+				if($assignment->is_extension($this->user)) {
+					$html .= ' <span class="smallred">**extension**</span>';
+				} else {
+					if($assignment->revised) {
+						$html .= ' <span class="smallred">**revised**</span>';
+					}
+				}
+
+			}
+
+
+			// Display release status for staff
+			if($staff) {
+				if($assignment->after_release($this->time)) {
+					$html .= ' <span class="staff-note red">**active**</span>';
+				} else {
+				    if($assignment->release !== false) {
+                        $release = date('n-d-y', $assignment->release);
+                        $html .= ' <span class="staff-note blu">**releases:&nbsp;' . $release . '**</span>';
+                    } else {
+                        $html .= ' <span class="staff-note blu">**no release**</span>';
+                    }
+
+				}
+			}
+
+			if($solving !== null && ($grader || $assignment->available_due($this->user, $this->time) )) {
+				// We have a problem solving page
+				$html .= "<ul><li class=\"bullet\"><a href=\"$solving\">Problem Solving</a>";
+
+				if($staff) {
+					if($assignment->available_due($this->user, $this->time)) {
+						$html .= ' <span class="staff-note red">**active**</span>';
+					} else {
+						$html .= ' <span class="staff-note blu">**inactive**</span>';
+					}
+				}
+
+				$html .= '</li></ul>';
+			}
+
+			$html .= '</li>';
+		}
+
+		return $html;
+	}
 
 	/** Display items in the tools and resources category
 	 * that are not available to guests */
@@ -360,16 +328,7 @@ HTML;
 		return $html;
 	}
 
-//	/** User is staff member? */
-//	public function is_staff() {
-//		return $this->user->is_staff();
-//	}
-//
-//	/** Get the user object */
-//	public function get_user() {
-//		return $this->user;
-//	}
-//
+
 //	/** The section we are viewing */
 //	public function get_section() {
 //		return $this->section;
@@ -386,18 +345,11 @@ HTML;
 		$this->aboutme = $aboutme;
 	}
 
-//	/**
-//	 * Set an optional page footer text
-//	 * @param $footer Text to put in footer
-//	 */
-//	public function set_footer($footer) {
-//		$this->footer = $footer;
-//	}
-//
-//    private $session;   // The _SESSION array
+
 //	private $section;	// The Section object
-//    private $time;
 //	private $footer = null;
+
+	private $time;          ///< Current time
 	private $aboutme = "lib/user/aboutme.php";	// Link to aboutme page...
 	private $calendar;      ///< The course calendar
 }

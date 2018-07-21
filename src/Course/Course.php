@@ -5,7 +5,7 @@
 
 namespace CL\Course;
 
-use CL\Course\Assignments\AssignmentFactory;
+use CL\Course\Assignments\IAssignmentExtender;
 use CL\Users\User;
 
 use CL\Site\Components\InstalledConfig;
@@ -23,7 +23,7 @@ class Course extends InstalledConfig {
 	/**
 	 * Construct a course object.
 	 */
-	public function __construct(\CL\Site\Site $site) {
+	public function __construct(\CL\Site\Site $site=null) {
 		$this->site = $site;
 	}
 
@@ -68,11 +68,11 @@ class Course extends InstalledConfig {
 	        case 'sections':
 		        return $this->sections;
 
-	        case 'assignmentFactory':
-	        	if($this->assignmentFactory === null) {
-	        		$this->assignmentFactory = new AssignmentFactory();
-		        }
-		        return $this->assignmentFactory;
+	        case 'site':
+	        	return $this->site;
+
+	        case 'assignmentExtenders':
+	        	return $this->assignmentExtenders;
 
 	        default:
                 return parent::__get($key);
@@ -90,9 +90,6 @@ class Course extends InstalledConfig {
 		    case 'gradedispute':
 		    	$this->gradedispute = $value;
 		    	break;
-
-		    case 'assignmentFactory':
-		    	$this->assignmentFactory = $value;
 
 		    default:
 			    parent::__set($key, $value);
@@ -114,7 +111,9 @@ class Course extends InstalledConfig {
 		$this->name = $name;
 		$this->desc = $desc;
 
-		$this->site->siteName = $name;
+		if($this->site !== null) {
+			$this->site->siteName = $name;
+		}
 	}
 
 
@@ -177,6 +176,10 @@ class Course extends InstalledConfig {
 		return $this->get_section($member->semester, $member->sectionId);
     }
 
+    public function addAssignmentExtender(IAssignmentExtender $extender) {
+    	$this->assignmentExtenders[] = $extender;
+    }
+
 	/**
 	 * Create basic data representing a course that is send to clients.
 	 * @return array with keys 'account', 'name', desc'
@@ -190,15 +193,15 @@ class Course extends InstalledConfig {
     }
 
 
-	private $site;      ///< The Site object for this course
+	private $site;                  ///< The Site object for this course
 	private $account;	// Account associated with the course (like "cse335")
 	private $name;	    // Course name (like "CSE 335")
 	private $desc;		// Course description (like "Object-oriented Programming")
 
 	private $sections = [];	        // All sections for this course
 	private $section0 = null;		// First section added
+	private $assignmentExtenders = [];  ///< Array of IAssignment
 
-	private $assignmentFactory = null;  ///< Factory object that creates assignment components
 	private $gradedispute = null;	    ///< Grade dispute link content
 
 }

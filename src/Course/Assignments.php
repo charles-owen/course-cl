@@ -85,11 +85,32 @@ class Assignments {
 	 * Add a grading category for this course
 	 * @param string $tag Assignment category tag
 	 * @param string $name Name of the category
-	 * @return New AssignmentCategory object.
+	 * @param int|null $points Optional points for this category
+	 * @return AssignmentCategory object.
 	 */
-	public function add_category($tag, $name) {
-		$category = $this->course->assignmentFactory->createAssignmentCategory($tag, $name);
-		$category->section = $this->section;
+	public function add_category($tag, $name, $points=null) {
+		$category = new AssignmentCategory($tag, $name);
+		if($this->course !== null) {
+			foreach($this->course->assignmentExtenders as $extender) {
+				$extender->ExtendAssignmentCategory($category);
+			}
+		}
+
+		// Normally I do not like to have anything about grading in this
+		// class at all, but it is very convenient to make the category points
+		// an option rather than requiring the points to be manually added
+		// after object creation.
+		if($points !== null) {
+			$grading = $category->grading;
+			if($grading !== null) {
+				$grading->points = $points;
+			}
+		}
+
+		if($this->section !== null) {
+			$category->section = $this->section;
+		}
+
 		$this->categories[] = $category;
 		return $category;
 	}
@@ -119,7 +140,7 @@ class Assignments {
 	 */
 	public function get_category($tag) {
 		foreach($this->categories as $category) {
-			if($category->get_tag() == $tag) {
+			if($category->tag == $tag) {
 				return $category;
 			}
 		}

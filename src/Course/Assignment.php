@@ -4,10 +4,11 @@
  * and grading system.
  */
  
-namespace CL\Course\Assignments;
+namespace CL\Course;
 
 use CL\Course\Course;
-
+use CL\Users\User;
+use CL\Course\Member;
 
 /**
  * A single assignment in the assignment tracking
@@ -53,6 +54,25 @@ class Assignment {
 	        case 'grading':
 		        return $this->grading;
 
+	        case 'name':
+	        	return $this->name;
+
+	        case 'shortName':
+	        	return $this->shortname;
+
+	        case 'url':
+	        	return $this->url;
+	        
+	        // 	The assignment release date/time
+	        case 'release':
+	        	return $this->release;
+
+	        case 'revised':
+	        	return $this->revised;
+
+	        case 'solving':
+	        	return $this->solving;
+
             default:
                 $trace = debug_backtrace();
                 trigger_error(
@@ -75,12 +95,17 @@ class Assignment {
 		switch ($key) {
 			case 'grading':
 				$this->grading = $value;
+				$this->grading->assignment = $this;
 				break;
 
 			case 'category':
 				$this->category = $value;
 				$this->section = $value->section;
 				$this->course = $value->course;
+				break;
+
+			case 'solving':
+				$this->solving = $value;
 				break;
 
 			default:
@@ -110,10 +135,10 @@ class Assignment {
 		$this->revised = $revised;
 	}
 	
-	/** The assignment due date as PHP time
+	/** The assignment due date as a PHP time
      * @param $user User we want the due date for or null to get the fixed due date
      * @returns Due date or null if none */
-	public function get_due(\User $user=null) {
+	public function get_due(User $user=null) {
 		$due = $this->due;
 
         if($user === null) {
@@ -127,22 +152,22 @@ class Assignment {
 			}
 		}
 
-        // Handle a user extension due date
-        $extdue = $user->get_preferences()->get_extension($this);
-        if($extdue !== null && $extdue > $due) {
-            $due = $extdue;
-        }
+//        // Handle a user extension due date
+//        $extdue = $user->get_preferences()->get_extension($this);
+//        if($extdue !== null && $extdue > $due) {
+//            $due = $extdue;
+//        }
 
 		return $due;
 	}
 	
 	/** This due date is a user due date extension */
-	public function is_extension(\User $user) {
-        // Handle a user extension due date
-        $extdue = $user->get_preferences()->get_extension($this);
-        if($extdue !== null && $extdue > $this->due) {
-            return true;
-        }
+	public function is_extension(User $user) {
+//        // Handle a user extension due date
+//        $extdue = $user->get_preferences()->get_extension($this);
+//        if($extdue !== null && $extdue > $this->due) {
+//            return true;
+//        }
 
         return false;
 	}
@@ -154,7 +179,7 @@ class Assignment {
      * @param $user User we are looking at
 	 * @param $time PHP time, default is current time 
 	 * @returns true if after a specified due date */
-	public function after_due(\User $user, $time=null) {
+	public function after_due(User $user, $time=null) {
 		if($time === null) {
 			$time = time();
 		}
@@ -199,13 +224,11 @@ class Assignment {
 		}
 	}
 	
-	/** The assignment release date as PHP time */
-	public function get_release() {return $this->release;}
-	
+
 	/** Is this assignment active for submission? 
 	 * @param $user User we are testing, default is current user
  	 * @param $time PHP time, default is current time */
-	public function is_open(\User $user, $time=null) {
+	public function is_open(User $user, $time=null) {
 		if($time === null) {
 			$time = time();
 		}
@@ -246,7 +269,7 @@ class Assignment {
 		    return false;
         }
 
-		return $time > $this->release; 
+		return $time >= $this->release;
 	}
 	
 	/** Is this assignment past the due date?
@@ -257,7 +280,7 @@ class Assignment {
 	 * @param $user User
 	 * @param $time Time
 	 * @returns true if available to user */
-	public function available_due($user, $time) {
+	public function available_due(User $user, $time) {
 		if($user->is_guest()) {
 			return false;		
 		}
@@ -287,7 +310,7 @@ class Assignment {
 	 * @param $user User
 	 * @param $time Time
 	 */
-	public function shout_available_due(\User $user, $time=null) {
+	public function shout_available_due(User $user, $time=null) {
 		if($user->is_staff()) {
             if($time === null) {
                 $time = time();
@@ -308,7 +331,7 @@ class Assignment {
 	 * @param $user User
 	 * @param $time Time
 	 */
-	public function shout_available_release(\User $user, $time) {
+	public function shout_available_release(User $user, $time) {
 		if($user->is_staff()) {
 			if($this->after_release($time)) {
 				return '<p class="topnotice">available to students</p>';
@@ -318,40 +341,22 @@ class Assignment {
 		}
 
 	}
-	
-	/** Redirect to a different page if before the due date
-	 * 
-	 * This is used to protect solution documents. 
-	 * Staff is never redirected.
-	 * Guests are always redirected!
-	 * @param $user The user to test
-	 * @param $time Test to test or null for current time
-	 * @param $test True if test mode
-	 */
-	public function protect_due(\User $user, $time=null, $test=false) {
-        if($time === null) {
-            $time = time();
-        }
 
-		if(!$user->is_staff() && !$this->available_due($user, $time)) {
-			return $this->course->redirect("", $test);
-		}
-		
-		return "";
-	}
 	
 	
-	/** Is this assignment available to this user?
+	/**
+	 * Is this assignment available to this user?
 	 * 
 	 * This will return true if the time is after the release date.
 	 * Always available to staff.
 	 *
-	 * @param $user User
-	 * @param $time Time to test
-	 * @returns true if available to user */
-	public function available_release(\User $user, $time) {
-		// Staff never redirected
-		if($user->is_staff()) {
+	 * @param User $user The user to test
+	 * @param int $time Time to test
+	 * @returns true if available to user
+	 */
+	public function available_release(User $user, $time) {
+		// Assignments are always avialable to staff members
+		if($user->atLeast(Member::STAFF)) {
 			return true;
 		}
 		
@@ -372,7 +377,7 @@ class Assignment {
 	 * @param $time Test to test
 	 * @param $test True if test mode
 	 */
-	public function protect_release(\User $user, $time, $test=false) {
+	public function protect_release(User $user, $time, $test=false) {
 		if(!$this->available_release($user, $time)) {
 			return $this->course->redirect("", $test);
 		}
@@ -380,26 +385,6 @@ class Assignment {
 		return "";
 	}
 
-	/** Due date revised? */
-	public function is_duerevised() {return $this->revised;}
-	
-	/** \brief The assignment name */
-	public function get_name() {return $this->name;}
-	
-	/** \brief The assignment tag 
-	 * 
-	 * All assignments get a short string used as a
-	 * key for the assignment in the system. Strings such as
-	 * "step1" and "exam2" are good choices for the tag. */
-	public function get_tag() {return $this->tag;}
-
-
-
-	/**
-	 * The Grading object for this assignment
-	 * @return Grading the Grading object for this assignment
-	 */
-	public function get_grading() {return $this->grading; }
 	
 	/** Load the assignment definition.
 	 *
@@ -431,11 +416,11 @@ class Assignment {
 	 *
 	 * This checks to see if pending review is open on this submission. If so,
 	 * it tells the pending review system so it can test the results
-	 * @param The|\User $user The user the submission is for
+	 * @param The|User $user The user the submission is for
 	 * @param Submission|The $submission The Submission object this is for
 	 * @param $time Submission time
 	 */
-	public function submitted(\User $user, Submission $submission, $time) {
+	public function submitted(User $user, Submission $submission, $time) {
 		if($this->reviewing !== null) {
 			$this->reviewing->submitted($user, $submission, $time);
 		}
@@ -443,7 +428,7 @@ class Assignment {
 	
 	/** Construct the due date HTML for an assignment 
 	 * @returns HTML for the due date */
-	public function due_present(\User $user, $name = null) {
+	public function due_present(User $user, $name = null) {
 		$html = '';
 		
 		if($name === null) {
@@ -474,26 +459,6 @@ class Assignment {
 		$this->name = $name;
 		$this->shortname = $shortName;
 	}
-	
-	/** Get the assignment short name 
-	 * @returns Short name string */
-	public function get_shortname() {return $this->shortname;}
-	
-	/** URL for a problem solving page for this assignment 
-	 * @param $solving Optional problem solving page */
-	public function set_solving($solving) {$this->solving = $solving;}
-	
-	/** URL for a problem solving page for this assignmennt
-	 * @returns URL as a string or null if none */
-	public function get_solving() {return $this->solving;}
-	
-	/** Course this assignment is for */
-	public function get_course() {return $this->course; }
-
-    /** The URL for the assignment */
-    public function get_url() {
-        return $this->url;
-    }
 
     /** File system directory that contains the assignment
      *
@@ -502,24 +467,25 @@ class Assignment {
      * not contain a period, it is assumed that is the directory for the
      * assignment instead.
      *
-     * @returns File system path */
+     * @returns string File system path
+     */
     public function get_dir() {
-        $rootdir = $this->course->get_rootdir();
+        $rootDir = $this->course->rootDir;
 
         if($this->url !== null && strpos($this->url, ".") !== false ) {
-            return $rootdir . '/' . $this->url;
+            return $rootDir . '/' . $this->url;
         }
 
-        return $rootdir . '/' . $this->tag;
+        return $rootDir . '/' . $this->tag;
     }
 
     /**
      * Flag an assignment as looked at.
-     * @param \User $user User doing the looking
+     * @param User $user User doing the looking
      * @param $time Optional time for the look
      * @internal param $
      */
-    public function look(\User $user, $time = null) {
+    public function look(User $user, $time = null) {
         if($time === null) {
             $time = time();
         }
@@ -563,6 +529,19 @@ class Assignment {
      */
 	public function uses_interact() {
 		return $this->interact;
+	}
+
+	/**
+	 * Magic function to disable displaying the section
+	 * @return array Properties to dump
+	 */
+	public function __debugInfo()
+	{
+		$properties = get_object_vars($this);
+		unset($properties['category']);
+		unset($properties['course']);
+		unset($properties['section']);
+		return $properties;
 	}
 
 	protected $tag;				///< Assignment tag

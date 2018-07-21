@@ -37,6 +37,32 @@ class View extends \CL\Site\View {
 		$this->addJS('course');
 	}
 
+	/**
+	 * Property get magic method
+	 * @param $key Property name
+	 * @property-read tablename The table name
+	 * @property-read prefix The table prefix
+	 * @return null|string
+	 */
+	public function __get($key) {
+		switch($key) {
+			case "user":
+				return $this->user;
+
+			case 'member':
+				return $this->member;
+
+			case 'course':
+				return $this->course;
+
+			case 'section':
+				return $this->section;
+
+			default:
+				return parent::__get($key);
+		}
+	}
+
 	protected $user;
 	protected $member;
 	protected $course;

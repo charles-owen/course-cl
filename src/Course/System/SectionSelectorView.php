@@ -24,7 +24,7 @@ class SectionSelectorView extends \CL\Course\View {
 
 		$user = $site->users->user;
 		if($user->atLeast(User::ADMIN)) {
-			$sections = $site->course->get_sections();
+			$sections = $site->course->sections;
 			$memberships = [];
 			foreach($sections as $section) {
 				$member = new Member(['id'=>0,
