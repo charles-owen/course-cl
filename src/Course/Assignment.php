@@ -60,8 +60,11 @@ class Assignment {
 	        case 'shortName':
 	        	return $this->shortname;
 
+	        case 'site':
+	        	return $this->course->site;
+
 	        case 'url':
-	        	return $this->url;
+	        	return $this->course->root . '/' . $this->url;
 	        
 	        // 	The assignment release date/time
 	        case 'release':
@@ -490,8 +493,8 @@ class Assignment {
             $time = time();
         }
 
-        $sectionStatus = new SectionStatus($this->course);
-        $sectionStatus->set_section_status($user, $this, 'look', SectionStatus::DONE, $time);
+	    $sectionStatus = new SectionStatus($this->site->db);
+        $sectionStatus->set($user, $this->tag, 'look', SectionStatus::DONE, $time);
     }
 
 

@@ -16,15 +16,15 @@ class AssignmentView extends \CL\Course\View {
 	/**
 	 * View constructor.
 	 * @param Site $site The Site object
-	 * @param string $assignmentTag Tag for the assignment to view
+	 * @param string $assignTag Tag for the assignment to view
 	 * @param Server|null $server Optional dependency injection of Server
 	 * @param int $time Time we are viewing or null for time()	 */
-	public function __construct(Site $site, $assignmentTag, Server $server = null, $time=null) {
+	public function __construct(Site $site, $assignTag, Server $server = null, $time=null) {
 		parent::__construct($site, []);
 
 		$this->time = $time !== null ? $time : time();
 
-        $this->assignment = $this->section->get_assignment($assignmentTag);
+        $this->assignment = $this->section->get_assignment($assignTag);
         if($this->assignment === null) {
         	$server->redirect($site->root . '/');
 			return;
@@ -49,10 +49,13 @@ class AssignmentView extends \CL\Course\View {
     public function __get($key) {
         switch($key) {
             case "url":
-                return $this->assignment->get_url();
+                return $this->assignment->url;
 
 	        case 'assignment':
 	        	return $this->assignment;
+
+	        case 'tag':
+	        	return $this->assignment->tag;
 
             default:
                 return parent::__get($key);
@@ -138,34 +141,32 @@ class AssignmentView extends \CL\Course\View {
 	/** Display the link for the assignment grading page 
 	 * @param $text Optional text to use in the link. Default is "Assignment Grading Page"
 	 * @param $url Link to the page relative to the root
-	 * @returns HTML for the grading link */
+	 * @returns string HTML for the grading link */
 	public function grading_link($text=null, $url=null) {
 		if($text === null) {
 			$text = "Assignment Grading Page";
 		}
 		
 		if($url === null) {
-			$url = $this->get_url();
+			$url = $this->assignment->url;
 		}
-		
-		$libroot = get_libroot();
-		$root = get_root();
-		$tag = $this->assignment->get_tag();
+
+		$root = $this->site->root;
+		$libroot = $root;
+		$tag = $this->assignment->tag;
 		
 		$html = <<<HTML
-<p class="grade" id="grade"><img src="$libroot/images/grading.png" width="114" height="50" alt=""/>
+<p class="grade" id="grade"><img src="$root/vendor/cl/grades/img/grading.png" width="114" height="50" alt=""/>
 
 HTML;
-		$html .= \Backto::link($text, 
-			"$libroot/grading/assignmentgrade.php?tag=$tag",
-			$this->assignment->get_shortname(),
-			"$url#grade") . '</p>';
+		$html .= \Backto::link($text,
+			"$libroot/grading/assignmentgrade.php?tag=$tag") . '</p>';
 			
 		return $html;
 	}
 
 	public function link($text, $link) {
-		return \Backto::link($text, $link, $this->get_title(), $this->get_url());
+		return \Backto::link($text, $link);
 	}
 
 

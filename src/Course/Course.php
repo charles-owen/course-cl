@@ -5,10 +5,7 @@
 
 namespace CL\Course;
 
-use CL\Course\Assignments\IAssignmentExtender;
 use CL\Users\User;
-
-use CL\Site\Components\InstalledConfig;
 
 
 /**
@@ -18,14 +15,18 @@ use CL\Site\Components\InstalledConfig;
  * a given web site and will include information about this
  * particular course offering.
  */
-class Course extends InstalledConfig {
+class Course extends \CL\Site\Plugin {
+	/**
+	 * A tag that represents this plugin
+	 * @return string A tag like 'course', 'users', etc.
+	 */
+	public function tag() {return 'course';}
 
 	/**
-	 * Construct a course object.
+	 * Return an array of tags indicating what plugins this one is dependent on.
+	 * @return array of tags this plugin is dependent on
 	 */
-	public function __construct(\CL\Site\Site $site=null) {
-		$this->site = $site;
-	}
+	public function depends() {return ['console', 'users'];}
 
     /**
      * Get standard properties for a course.
@@ -71,9 +72,6 @@ class Course extends InstalledConfig {
 	        case 'site':
 	        	return $this->site;
 
-	        case 'assignmentExtenders':
-	        	return $this->assignmentExtenders;
-
 	        default:
                 return parent::__get($key);
         }
@@ -89,6 +87,10 @@ class Course extends InstalledConfig {
 
 		    case 'gradedispute':
 		    	$this->gradedispute = $value;
+		    	break;
+
+		    case 'site':
+		    	$this->site = $value;
 		    	break;
 
 		    default:
@@ -176,9 +178,6 @@ class Course extends InstalledConfig {
 		return $this->get_section($member->semester, $member->sectionId);
     }
 
-    public function addAssignmentExtender(IAssignmentExtender $extender) {
-    	$this->assignmentExtenders[] = $extender;
-    }
 
 	/**
 	 * Create basic data representing a course that is send to clients.
@@ -193,15 +192,14 @@ class Course extends InstalledConfig {
     }
 
 
-	private $site;                  ///< The Site object for this course
-	private $account;	// Account associated with the course (like "cse335")
-	private $name;	    // Course name (like "CSE 335")
-	private $desc;		// Course description (like "Object-oriented Programming")
 
-	private $sections = [];	        // All sections for this course
+	protected $site = null;     ///< The Site object for this course
+	private $account;	        ///< Account associated with the course (like "cse335")
+	private $name;	            ///< Course name (like "CSE 335")
+	private $desc;		        ///< Course description (like "Object-oriented Programming")
+
+	private $sections = [];	    ///< All sections for this course
 	private $section0 = null;		// First section added
-	private $assignmentExtenders = [];  ///< Array of IAssignment
 
 	private $gradedispute = null;	    ///< Grade dispute link content
-
 }

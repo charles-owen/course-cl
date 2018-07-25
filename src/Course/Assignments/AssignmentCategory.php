@@ -31,10 +31,8 @@ class AssignmentCategory {
 	 */
 	public function add(Assignment $assignment) {
 		$assignment->category = $this;
-		if($this->course !== null) {
-			foreach($this->course->assignmentExtenders as $extender) {
-				$extender->extendAssignment($assignment);
-			}
+		if($this->site !== null) {
+			$this->site->amend($assignment);
 		}
 
 		$this->assignments[] = $assignment;
@@ -84,6 +82,9 @@ class AssignmentCategory {
 
 			case 'section':
 				return $this->section;
+
+			case 'site':
+				return $this->course !== null ? $this->course->site : null;
 
 			default:
 				$trace = debug_backtrace();

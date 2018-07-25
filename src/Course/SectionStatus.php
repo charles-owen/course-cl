@@ -30,6 +30,12 @@ class SectionStatus extends \CL\Tables\Table {
 		parent::__construct($config, "sectionstatus");
 	}
 
+	public function validStatus($status) {
+		return $status === SectionStatus::NOTVISITED ||
+			$status === SectionStatus::VISITED ||
+			$status === SectionStatus::DONE;
+	}
+
     /**
      * Function to create an SQL create table command for the submissions table
      * @return string SQL

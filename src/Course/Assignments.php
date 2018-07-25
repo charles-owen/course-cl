@@ -45,6 +45,9 @@ class Assignments {
 			case 'section':
 				return $this->section;
 
+			case 'site':
+				return $this->course !== null ? $this->course->site : null;
+
 			default:
 				$trace = debug_backtrace();
 				trigger_error(
@@ -90,10 +93,8 @@ class Assignments {
 	 */
 	public function add_category($tag, $name, $points=null) {
 		$category = new AssignmentCategory($tag, $name);
-		if($this->course !== null) {
-			foreach($this->course->assignmentExtenders as $extender) {
-				$extender->ExtendAssignmentCategory($category);
-			}
+		if($this->site !== null) {
+			$this->site->amend($category);
 		}
 
 		// Normally I do not like to have anything about grading in this

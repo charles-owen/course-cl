@@ -8,39 +8,24 @@ namespace CL\Course;
 
 use CL\Site\Site;
 use CL\Site\System\Server;
-use CL\Course\System\CourseConfig;
 use CL\Course\System\CourseTables;
 use CL\Course\Api\ApiCourse;
 use CL\Users\User;
 use CL\Console\ConsoleView;
 use CL\Course\System\SectionSelectorView;
+use CL\Site\Router;
 
 /**
  * Plugin class for the Course Subsystem
  */
-class CoursePlugin extends \CL\Site\Components\Plugin {
-	/**
-	 * A tag that represents this plugin
-	 * @return string A tag like 'course', 'users', etc.
-	 */
-	public function tag() {return 'course';}
-
-	/**
-	 * Return an array of tags indicating what plugins this one is dependent on.
-	 * @return array of tags this plugin is dependent on
-	 */
-	public function depends() {return ['console', 'users'];}
-
+class CoursePlugin extends Course {
 	/**
 	 * Install the plugin
 	 * @param Site $site The Site configuration object
 	 */
 	public function install(Site $site) {
-		$site->install("course", new Course($site));
-
-		$site->addPreStartup(function(Site $site, Server $server, $time) {
-			return $this->preStartup($site, $server, $time);
-		});
+		$this->site = $site;
+		$site->install("course", $this);
 
 		$site->addStartup(function(Site $site, Server $server, $time) {
 			return $this->startup($site, $server, $time);
@@ -50,36 +35,31 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 			return $this->postStartup($site, $server, $time);
 		});
 
-		$site->addRoute(['sectionselector'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$view = new SectionSelectorView($site);
-			return $view->vue('sectionselector');
-		});
-
-		$site->addRoute(['api', 'course', '*'], function(Site $site, Server $server, array $params, array $properties, $time) {
-			$resource = new ApiCourse();
-			return $resource->apiDispatch($site, $server, $params, $properties, $time);
-		});
 
 	}
 
 	/**
-	 * Called before we start up.
-	 * @param Site $site
-	 * @param Server $server
-	 * @param int $time Current time
-	 * @return null|string redirect page.
+	 * Amend existing object
+	 * The Router is amended with routes for the select selector page
+	 * and for the course API.
+	 * @param $object Object to amend.
 	 */
-	public function preStartup(Site $site, Server $server, $time)
-	{
-		// Ensure tables exist
-		$members = new Members($site->db);
-		if (!$members->exists()) {
-			$maker = new CourseTables($site->db);
-			$maker->create(false);
+	public function amend($object) {
+		if($object instanceof Router) {
+			$router = $object;
+			$router->addRoute(['sectionselector'], function (Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new SectionSelectorView($site);
+				return $view->vue('sectionselector');
+			});
+
+			$router->addRoute(['api', 'course', '*'], function (Site $site, Server $server, array $params, array $properties, $time) {
+				$resource = new ApiCourse();
+				return $resource->apiDispatch($site, $server, $params, $properties, $time);
+			});
 		}
 	}
 
-	public function startup(Site $site, Server $server, $time) {
+	private function startup(Site $site, Server $server, $time) {
 		// Get and configure the course object
 		$course = $site->course;
 
@@ -90,7 +70,7 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 		}
 
 		//
-		// Load the user section membership
+		// Load the user's section membership
 		//
 		$redirect = null;
 
@@ -219,4 +199,14 @@ class CoursePlugin extends \CL\Site\Components\Plugin {
 
 		return null;
 	}
+
+	/**
+	 * Ensure tables exist for the course subsystem.
+	 * @param Site $site The site configuration component
+	 */
+	public function ensureTables(Site $site) {
+		$maker = new CourseTables($site->db);
+		$maker->create(false);
+	}
+
 }
