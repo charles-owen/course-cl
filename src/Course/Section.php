@@ -86,6 +86,9 @@ class Section {
 	        case 'course':
 	        	return $this->course;
 
+	        case 'site':
+	        	return $this->course !== null ? $this->course->site : null;
+
 	        case 'assignments':
 		        $this->ensureLoaded();
 		        return $this->assignments;
@@ -104,8 +107,8 @@ class Section {
 
     /**
      * Property set magic method
-     * @param $key Property name
-     * @param $value Value to set
+     * @param string $key Property name
+     * @param mixed $value Value to set
      */
     public function __set($key, $value) {
     	switch($key) {
@@ -123,7 +126,6 @@ class Section {
 				    E_USER_NOTICE);
 			    break;
 	    }
-
     }
 
 
@@ -163,6 +165,7 @@ class Section {
 		}
 		
 		$this->textbooks[] = $textbook;
+		$textbook->section = $this;
 	}
 	
 	/** Get a textbook object

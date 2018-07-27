@@ -48,8 +48,10 @@
     import Dialog from 'dialog-cl';
     import {Member} from '../Members/Member.js';
     import {mapState} from 'vuex';
-    import {FetcherVue} from 'users-cl';
     import BulkUploadComponent from './BulkUploadComponent.vue';
+
+    const FetcherVue = Users.FetcherVue;
+
 
     export default {
         props: [
@@ -57,12 +59,12 @@
         ],
         data: function() {
             return {
-                toNew: Site.root + 'cl/console/management/course/member/new',
-                pencil: Site.root + 'vendor/cl/site/img/pencil16.png',
-                deleter: Site.root + 'vendor/cl/site/img/x.png',
-                info: Site.root + 'vendor/cl/site/img/info16.png',
+                toNew: Site.root + '/cl/console/management/course/member/new',
+                pencil: Site.root + '/vendor/cl/site/img/pencil16.png',
+                deleter: Site.root + '/vendor/cl/site/img/x.png',
+                info: Site.root + '/vendor/cl/site/img/info16.png',
                 toUser: function(user) {
-                      return Site.root + 'cl/console/management/course/member/' + user.member.id;
+                      return Site.root + '/cl/console/management/course/member/' + user.member.id;
                 }
             }
         },
@@ -100,7 +102,7 @@
             'fetcher': FetcherVue
         },
         mounted() {
-            this.$parent.setTitle(Console.title + ': Members');
+            this.$parent.setTitle(': Members');
 
             const member = this.$store.state.user.user.member;
             let query = {

@@ -11,7 +11,7 @@
 
   export default {
       data: function() {
-          console.log("Section component data function");
+          console.log(this.$store.state.course);
           return {
               course: this.$store.state.course.course
           }

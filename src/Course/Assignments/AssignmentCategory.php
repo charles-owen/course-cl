@@ -47,16 +47,6 @@ class AssignmentCategory {
 	public function add_assignment($tag, $name, $url=null) {
 		return $this->add(new Assignment($tag, $name, $url));
 	}
-	
-	/** Add a step assignment
-	 *
-	 * This will fail if the step assignment subsystem is not included.
-	 * @param string $tag Assignment tag
-	 * @param string $name Name of the assignment
-	 * @returns Step object */
-	public function add_step($tag, $name, $url=null) {
-		return $this->add(new \CL\Step\Step($tag, $name, $url));
-	}
 
 	/**
 	 * Property get magic method
@@ -143,6 +133,35 @@ class AssignmentCategory {
 
 
 	/**
+	 * __call() is triggered when invoking inaccessible methods in an object context.
+	 * @param string $name Name of non-existent function
+	 * @param array $arguments Arguments to the function call
+	 */
+	public function __call($name, $arguments) {
+		if(isset($this->extensions[$name])) {
+			return $this->extensions[$name]($this, $arguments);
+		} else {
+			$trace = debug_backtrace();
+			trigger_error(
+				'Fatal error: Call to undefined method CL\Course\Assignments\AssignmentCategory::' .
+					$name . '() in ' . $trace[0]['file'] .
+				' on line ' . $trace[0]['line'],
+				E_USER_NOTICE);
+		}
+	}
+
+	/**
+	 * Extend this class by adding a new function.
+	 * This is used by the Step system to add "add_step"
+	 * to the assignment category.
+	 * @param $name Name of the function
+	 * @param $closure Closure to call.
+	 */
+	public function extend($name, $closure) {
+		$this->extensions[$name] = $closure;
+	}
+
+	/**
 	 * Magic function to disable displaying the section
 	 * @return array Properties to dump
 	 */
@@ -159,6 +178,7 @@ class AssignmentCategory {
 	private $tag;
 	private $name;
 	private $grading = null;        ///< Grading attachment
+	private $extensions = [];       ///< Extensions to this object
 
 	private $assignments = array();
 }

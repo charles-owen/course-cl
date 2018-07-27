@@ -10,7 +10,7 @@ import SectionComponent from './SectionComponent.vue';
 let CourseConsole = function() {
 }
 
-Console.title = 'Course Console';
+Console.Console.title = 'Course Console';
 
 Console.tables.add({
     title: 'Course',

@@ -1,19 +1,17 @@
-import './calendar.css';
 import 'fullcalendar';
-
-import {Ready} from 'site-cl';
+import './calendar.css';
 
 import $ from 'jquery';
 
 /**
 * Create a calendar with course events in it.
-* @param sel Selector for the div the calendar is to appear in.
 * The div contains JSON for the events as an array of objects like this:
 * {title: 'Step 1', start: '2018-05-17', url: '/step1'},
 * @constructor
 */
-var Calendar = function (sel) {
-    Ready.go(() => {
+var Calendar = function () {
+    let sel = 'div.cl-calendar';
+    Site.Site.ready(() => {
         let calendars = document.querySelectorAll(sel);
         for(let i=0; i<calendars.length; i++) {
             let calendar = calendars[i];
@@ -32,8 +30,10 @@ var Calendar = function (sel) {
             })
 
             calendar.style.display = 'block';
+            $(calendar).fullCalendar('render');
         }
     });
 }
 
-export default Calendar;
+new Calendar();
+

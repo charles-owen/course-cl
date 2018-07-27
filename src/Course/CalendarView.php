@@ -14,7 +14,7 @@ namespace CL\Course;
 class CalendarView extends \CL\Site\ViewAux {
     /**
      * Constructor
-     * @param $time The time we are viewing
+     * @param int $time The time we are viewing
      */
     public function __construct($time) {
         $this->time = $time;
@@ -29,7 +29,7 @@ class CalendarView extends \CL\Site\ViewAux {
 
 		$view->addJS('calendar');
 		$view->script = <<<SCRIPT
-new Calendar('div.cl-calendar');
+//new Calendar('div.cl-calendar');
 SCRIPT;
 
 

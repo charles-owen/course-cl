@@ -3,11 +3,10 @@
  * Factory to create the Course object.
  */
 
-import {StoreModuleUsers} from 'users-cl';
 import {Member} from './Members/Member.js';
 
-import SectionSelector from './SectionSelectors/SectionSelector.js';
 import {StoreModuleCourse} from './State/StoreModuleCourse.js';
+import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
 
 let CourseFactory = function() {
 }
@@ -24,9 +23,7 @@ CourseFactory.create = function(site) {
     let Course = function() {
     }
 
-    // Exported objects
-    Course.SectionSelector = SectionSelector;
-    Course.Member = Member;
+    console.log('CourseFactory');
 
     //
     // Modify User to add the ability to instantiate
@@ -72,7 +69,6 @@ CourseFactory.create = function(site) {
             store.commit('user/set', JSON.parse(en.textContent));
         }
     })
-
 
     return Course;
 }

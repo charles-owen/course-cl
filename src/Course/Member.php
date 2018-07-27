@@ -260,16 +260,6 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 
 
 	/**
-	 * Get a textbook object
-	 *
-	 * This gets the textbook object appropriate for this user
-	 * @param int $num Textbook number (starting at 1)
-	 * @returns Textbook object for that textbook */
-	public function get_textbook($num) {
-		return $this->get_section()->getTextbook($num);
-	}
-
-	/**
 	 * Assignment for a given user
 	 * @param $tag Assignment tag
 	 * @return Assignment The Assignment object */

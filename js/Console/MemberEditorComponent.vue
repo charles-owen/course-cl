@@ -42,15 +42,16 @@
 </template>
 
 <script>
-    import {FetcherVue} from 'users-cl';
     import {mapState} from 'vuex';
     import {Member} from '../Members/Member.js';
+
+    const FetcherVue = Users.FetcherVue;
 
     export default {
         props: ['id'],
         data: function() {
             return {
-                cancel: Site.root + 'cl/console/management/course/members',
+                cancel: Site.root + '/cl/console/management/course/members',
                 legend: this.id === 'new' ? 'New Member' : 'Edit Member',
                 roles: this.visibleRoles,
 
@@ -94,12 +95,12 @@
         },
         mounted() {
             if(this.id === 'new') {
-                this.$parent.setTitle(Console.title + ': Add Course Member');
+                this.$parent.setTitle(': Add Course Member');
                 this.$nextTick(() => {
                     this.$refs.userid.select();
                 })
             } else {
-                this.$parent.setTitle(Console.title + ': Course Member');
+                this.$parent.setTitle(': Course Member');
                 this.$store.dispatch('members/get', {id: this.id})
                     .then((user) => {
                         this.userId = user.userId;

@@ -1,5 +1,6 @@
 @import url(~fullcalendar/dist/fullcalendar.css);
 div.cl-calendar {
+  display: none;
   margin: 1em auto 1em auto;
   background-color: #eef8ee;
   padding: 4px 4px 4px 4px; }

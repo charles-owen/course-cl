@@ -51,6 +51,28 @@ class Textbook {
 		}
 	}
 
+	/**
+	 * Property set magic method
+	 * @param string $key Property name
+	 * @param mixed $value Value to set
+	 */
+	public function __set($key, $value) {
+		switch($key) {
+			case 'section':
+				$this->section = $value;
+				break;
+
+			default:
+				$trace = debug_backtrace();
+				trigger_error(
+					'Undefined property ' . $key .
+					' in ' . $trace[0]['file'] .
+					' on line ' . $trace[0]['line'],
+					E_USER_NOTICE);
+				break;
+		}
+	}
+
 
 	/** Construct a reading indication
 	 * @param $text Text to include with the reading indication
@@ -58,7 +80,7 @@ class Textbook {
 	 * @return HTML for the reading indication
 	 */
 	public function reading($text, $extraClass=null) {
-		$root = get_root();
+		$root = $this->section->site->root;
 		$image = $this->image;
 		$extra = $extraClass === null ? '' : ' ' . $extraClass;
 		if($image === null) {
@@ -74,6 +96,7 @@ READING;
 		}
 	}
 
+	private $section = null;    ///< Section this textbook is assigned to
 	private $title;		// Textbook title
 	private $authors;	// Authors
 	private $publisher;	
