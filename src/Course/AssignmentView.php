@@ -23,6 +23,7 @@ class AssignmentView extends \CL\Course\View {
 		parent::__construct($site, []);
 
 		$this->time = $time !== null ? $time : time();
+		$server = $server !== null ? $server : new Server();
 
         $this->assignment = $this->section->get_assignment($assignTag);
         if($this->assignment === null) {
@@ -36,18 +37,26 @@ class AssignmentView extends \CL\Course\View {
 		}
 
 		$this->assignment->load();
-		$this->title = $this->assignment->name;
+		$this->setTitle($this->assignment->name);
 	}
 
     /**
      * Property get magic method
-     * @param $key Property name
-     * @property-read tablename The table name
-     * @property-read prefix The table prefix
-     * @return null|string
+     *
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * assignment | Assignment | Assignment we are viewing.
+     * tag | string | Assignment tag
+     * url | string | URL to get to the view
+     *
+     * Plus all properties of CL::Course::View
+     *
+     * @param string $property
+     * @return mixed Property value
      */
-    public function __get($key) {
-        switch($key) {
+    public function __get($property) {
+        switch($property) {
             case "url":
                 return $this->assignment->url;
 
@@ -58,20 +67,22 @@ class AssignmentView extends \CL\Course\View {
 	        	return $this->assignment->tag;
 
             default:
-                return parent::__get($key);
+                return parent::__get($property);
         }
     }
 
     /**
      * PHP set operation
-     **
-     * @param $key Name of the parameter to set
-     * @param $value Value to set
+     *
+     * Plus all properties of CL::Course::View
+	 *
+     * @param string $property Property name
+     * @param mixed $value Value to set
      */
-    public function __set($key, $value) {
-        switch ($key) {
+    public function __set($property, $value) {
+        switch ($property) {
             default:
-                parent::__set($key, $value);
+                parent::__set($property, $value);
                 break;
         }
     }
@@ -165,6 +176,12 @@ HTML;
 		return $html;
 	}
 
+	/**
+	 * Create a link to another page with autoback support.
+	 * @param string $text Text to put in the link
+	 * @param string $link URL relative to this page
+	 * @return string HTML
+	 */
 	public function link($text, $link) {
 		return \Backto::link($text, $link);
 	}

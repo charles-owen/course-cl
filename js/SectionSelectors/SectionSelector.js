@@ -4,17 +4,13 @@ let SectionSelector = function() {
 
 }
 
-SectionSelector.start = function(sections, info, site) {
-
-    if(site === undefined) {
-        site = Site;
-    }
+SectionSelector.start = function(site) {
 
     site.ready(() => {
 
-        let en, sections=[], before='', after='';
-        if( (en = document.getElementById('cl-section-selector')) !== null) {
-            let info = JSON.parse(en.textContent);
+        let element, sections=[], before='', after='';
+        if( (element = document.getElementById('cl-section-selector')) !== null) {
+            let info = JSON.parse(element.textContent);
             sections = info.sections;
             before = info.before;
             after = info.after;
@@ -31,8 +27,10 @@ SectionSelector.start = function(sections, info, site) {
 <site-footer></site-footer>
 </div>`;
 
-        const Header = Site.header.component();
-        const Footer = Site.footer.component();
+        const Header = site.info.header.component();
+        const Footer = site.info.footer.component();
+
+        element = document.querySelector('div.cl-sectionselector');
 
         let router = new Site.VueRouter({
             mode: 'history',
@@ -41,7 +39,7 @@ SectionSelector.start = function(sections, info, site) {
 
         new Vue({
             router,
-            el: '#sectionselector',
+            el: element,
             data: {
                 title: 'Section Selector',
                 before: before,
@@ -82,4 +80,4 @@ SectionSelector.start = function(sections, info, site) {
 
 }
 
-export default SectionSelector;
+SectionSelector.start(Site.Site);

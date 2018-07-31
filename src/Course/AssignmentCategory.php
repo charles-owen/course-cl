@@ -3,9 +3,7 @@
  * Class that defines a graded assignment category 
  */
 
-namespace CL\Course\Assignments;
-
-use CL\Course\Assignment;
+namespace CL\Course;
 
 
 /**
@@ -143,7 +141,7 @@ class AssignmentCategory {
 		} else {
 			$trace = debug_backtrace();
 			trigger_error(
-				'Fatal error: Call to undefined method CL\Course\Assignments\AssignmentCategory::' .
+				'Fatal error: Call to undefined method CL\Course\AssignmentCategory::' .
 					$name . '() in ' . $trace[0]['file'] .
 				' on line ' . $trace[0]['line'],
 				E_USER_NOTICE);
@@ -173,6 +171,23 @@ class AssignmentCategory {
 		return $properties;
 	}
 
+	/**
+	 * Return category assignments in form suitable for sending to client.
+	 * @return array Assignments data
+	 */
+	public function data() {
+		$assignments = [];
+		foreach($this->assignments as $assignment) {
+			$assignments[] = $assignment->data();
+		}
+
+		return [
+			'tag'=>$this->tag,
+			'name'=>$this->name,
+			'assignments'=>$assignments
+		];
+	}
+
 	private $course = null;		    ///< Course object
 	private $section = null;        ///< Section we are associated with
 	private $tag;
@@ -180,5 +195,5 @@ class AssignmentCategory {
 	private $grading = null;        ///< Grading attachment
 	private $extensions = [];       ///< Extensions to this object
 
-	private $assignments = array();
+	private $assignments = [];
 }

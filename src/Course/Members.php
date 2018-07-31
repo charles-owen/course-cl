@@ -145,6 +145,7 @@ SQL;
 	/**
 	 * Construct the SQL for a join of the user and member tables, including all
 	 * content needed to create the User and Member objects.
+	 * @param string $additional Additional fields to select
 	 * @param bool $includeMeta If true, include metadata in the query.
 	 * @return string SQL
 	 */
@@ -175,7 +176,7 @@ SQL;
 	 * @param null $time
 	 * @return bool
 	 */
-	function add(Member $member, $time) {
+	public function add(Member $member, $time) {
 
 		$sql = <<<SQL
 insert into $this->tablename(userid, semester, section, role, created)
@@ -201,7 +202,8 @@ SQL;
 
 	/**
 	 * Add a member to the system, including creating the user if necessary
-	 * @param $params Array with keys: user, name, email, semester, section, role
+	 * @param array $params Array with keys: user, name, email, semester, section, role
+	 * @param int $time Current time.
 	 * @return ['ok'=>true, 'member'=>Member] if successful,
 	 *         ['ok'=>false, 'msg'=>Error Message] if failure
 	 */
@@ -293,6 +295,12 @@ SQL;
 		return $member;
 	}
 
+	/**
+	 * Update the role for a member
+	 * @param int $memberId The member internal ID
+	 * @param string $role New Role (see Member role constants)
+	 * @return bool true if successful
+	 */
 	function updateRole($memberId, $role) {
 		$sql = <<<SQL
 update $this->tablename
@@ -316,7 +324,7 @@ SQL;
 
 	/**
 	 * Delete a member in the table.
-	 * @param Member $member
+	 * @param int $memberId Internal member ID value
 	 * @return bool
 	 */
 	function delete($memberId) {
@@ -342,7 +350,7 @@ SQL;
 
 	/**
 	 * Write the user meta-data to the table.
-	 * @param User $user The user to write the metadata for
+	 * @param Member $member The member to write the metadata for
 	 */
 	public function writeMetaData(Member $member) {
 		$pdo = $this->pdo();
@@ -425,7 +433,14 @@ SQL;
 		return $user;
 	}
 
-	function getBySection($userId, $semester, $sectionId) {
+	/**
+	 * Get a member (only) of a specific semester/section
+	 * @param int $userId The User internal ID
+	 * @param string $semester Semester ID (like FS18)
+	 * @param string $sectionId Section ID (like 001)
+	 * @return Member|null Fetched member.
+	 */
+	public function getBySection($userId, $semester, $sectionId) {
 		$sql = <<<SQL
 select * from $this->tablename
 where userid=? and semester=? and section=?
@@ -448,7 +463,11 @@ SQL;
 		return new Member($row);
 	}
 
-
+	/**
+	 * Get all memberships for a given user
+	 * @param int $userId The User internal ID
+	 * @return array of Member objects.
+	 */
 	function getByUser($userId) {
 		$sql = <<<SQL
 select * from $this->tablename

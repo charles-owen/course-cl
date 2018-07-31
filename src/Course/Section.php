@@ -43,11 +43,11 @@ class Section {
 
     /**
      * Property get magic method
-     * @param $key Property name
+     * @param $property Property name
      * @return null|string
      */
-    public function __get($key) {
-        switch($key) {
+    public function __get($property) {
+        switch($property) {
 	        case 'calendar':
 		        $this->ensureLoaded();
 		        return $this->calendar;
@@ -96,7 +96,7 @@ class Section {
 	        default:
                 $trace = debug_backtrace();
                 trigger_error(
-                    'Undefined property ' . $key .
+                    'Undefined property ' . $property .
                     ' in ' . $trace[0]['file'] .
                     ' on line ' . $trace[0]['line'],
                     E_USER_NOTICE);
@@ -107,11 +107,11 @@ class Section {
 
     /**
      * Property set magic method
-     * @param string $key Property name
+     * @param string $property Property name
      * @param mixed $value Value to set
      */
-    public function __set($key, $value) {
-    	switch($key) {
+    public function __set($property, $value) {
+    	switch($property) {
 		    case 'assignments':
 		    	$this->assignments = $value;
 		    	$this->assignments->section = $this;
@@ -120,7 +120,7 @@ class Section {
 		    default:
 			    $trace = debug_backtrace();
 			    trigger_error(
-				    'Undefined property ' . $key .
+				    'Undefined property ' . $property .
 				    ' in ' . $trace[0]['file'] .
 				    ' on line ' . $trace[0]['line'],
 				    E_USER_NOTICE);
@@ -136,7 +136,6 @@ class Section {
 			$this->assignments = new Assignments();
 			$this->assignments->section = $this;
 
-
 			if($this->course->site !== null) {
 				$rootdir = $this->course->site->rootDir;
 				$file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->getSemesterLC() . '.php';
@@ -148,7 +147,7 @@ class Section {
 	/**
 	 * Get an assignmment by tag
 	 * @param string $tag Tag for the assignment
-	 * @return Assignment|null object for the assignment.
+	 * @return Assignment object
 	 */
 	public function get_assignment($tag) {
 		$this->ensureLoaded();
@@ -215,11 +214,16 @@ class Section {
 	 * @return array Containing section data.
 	 */
 	public function data() {
-		return [
+		$this->ensureLoaded();
+
+		$data = [
 			'id' => $this->id,
 			'semester' => $this->semester,
-			'type' => $this->type
+			'type' => $this->type,
+			'assignments' => $this->assignments->data()
 		];
+
+		return $data;
 	}
 
 	/**
@@ -240,6 +244,7 @@ class Section {
 		unset($properties['course']);
 		return $properties;
 	}
+
 
 	private $textbooks = null;		// Any course textbooks		
 	private $assignments = null;	// Course assignments

@@ -3,10 +3,11 @@
  * Class that describes a course in the system.
  */
 
+/// Classes in the Course subsystem
 namespace CL\Course;
 
 use CL\Users\User;
-
+use CL\Site\Site;
 
 /**
  * The class Course, which defines a course in the system.
@@ -31,27 +32,35 @@ class Course extends \CL\Site\Plugin {
     /**
      * Get standard properties for a course.
      *
-     * @param string $key
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * account | string | Account course runs under, like 'cse335'. Serves as a course tag.
+     * desc | string | Course description.
+     * gradedispute | string | HTML for the grade dispute link for grading pages
+     * name | string | Name of the course, like 'CSE 335'.
+     *
+     * @param string $property
      * @return mixed Property value
      */
-    public function __get($key)
+    public function __get($property)
     {
-        switch ($key) {
-        	// Name of the course, like 'CSE 335'
+        switch ($property) {
+	        case 'account':
+		        return $this->account;
+
+	        case 'desc':
+		        return $this->desc;
+
+	        case 'gradedispute':
+		        return $this->gradedispute;
+
 	        case 'name':
 	        	return $this->name;
 
-	        // Course description
-	        case 'desc':
-	        	return $this->desc;
-
-	        // Account course runs under, like 'cse335'
-	        case 'account':
-	        	return $this->account;
-
-	        // HTML for the grade dispute link for grading pages
-	        case 'gradedispute':
-	        	return $this->gradedispute;
+	        //
+	        // Pending documentation:
+	        //
 
 	        case 'sections':
 	        	return $this->sections;
@@ -73,18 +82,24 @@ class Course extends \CL\Site\Plugin {
 	        	return $this->site;
 
 	        default:
-                return parent::__get($key);
+                return parent::__get($property);
         }
     }
 
     /**
      * Property set magic method
-     * @param string $key Property name
+     *
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * gradedispute | string | HTML for the grade dispute link for grading pages
+     * site | Site | The Site object
+	 *
+     * @param string $property Property name
      * @param mixed $value Value to set
      */
-    public function __set($key, $value) {
-    	switch($key) {
-
+    public function __set($property, $value) {
+    	switch($property) {
 		    case 'gradedispute':
 		    	$this->gradedispute = $value;
 		    	break;
@@ -94,7 +109,7 @@ class Course extends \CL\Site\Plugin {
 		    	break;
 
 		    default:
-			    parent::__set($key, $value);
+			    parent::__set($property, $value);
 			    break;
 	    }
 
@@ -192,6 +207,14 @@ class Course extends \CL\Site\Plugin {
     }
 
 
+	/**
+	 * Install the plugin
+	 * @param Site $site The Site configuration object
+	 */
+	public function install(Site $site) {
+		$this->site = $site;
+		$site->install("course", $this);
+	}
 
 	protected $site = null;     ///< The Site object for this course
 	private $account;	        ///< Account associated with the course (like "cse335")

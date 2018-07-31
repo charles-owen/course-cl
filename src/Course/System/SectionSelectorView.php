@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * View class for the session selector page
+ * View class for the course section selector page
  */
 
 namespace CL\Course\System;
@@ -12,15 +12,24 @@ use CL\Users\User;
 use CL\Course\Member;
 use CL\Course\Members;
 
+/**
+ * View class for the course section selector page
+ */
 class SectionSelectorView extends \CL\Course\View {
-
+	/**
+	 * SectionSelectorView constructor.
+	 * @param Site $site Site object
+	 */
 	public function __construct(Site $site) {
 		parent::__construct($site, ['open-section']);
+
+		$this->after = '<p class="centerbox secondb">You are indicated as a member of more than one
+section of this course. Please select the section you wish to log in to.</p>';
 
 		//
 		// Allow for section selector page customization
 		//
-		$this->optionalFileApply('/course/sectionselector.inc.php');
+		$this->decorApply('sectionselector.decor.php');
 
 		$user = $site->users->user;
 		if($user->atLeast(User::ADMIN)) {
@@ -100,25 +109,33 @@ class SectionSelectorView extends \CL\Course\View {
 			'before'=>$this->before,
 			'after'=>$this->after
 		]));
-
-		$this->script = <<<SCRIPT
-Course.SectionSelector.start();
-SCRIPT;
-
 	}
 
-	public function __set($key, $value) {
-		switch($key) {
+	/**
+	 * Property set magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * before | string | Content (HTML) to display before the section selector
+	 * after | string | Content (HTML) to display after the section selector
+	 *
+	 * @param string $property Property name
+	 * @param mixed $value Value to set
+	 * @return mixed
+	 */
+	public function __set($property, $value) {
+		switch($property) {
 			case 'before':
-				$this->before = $value;
+				$this->before .= $value;
 				break;
 
 			case 'after':
-				$this->after = $value;
+				$this->after .= $value;
 				break;
 
 			default:
-				parent::__set($key, $value);
+				parent::__set($property, $value);
 		}
 	}
 

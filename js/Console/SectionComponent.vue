@@ -11,7 +11,6 @@
 
   export default {
       data: function() {
-          console.log(this.$store.state.course);
           return {
               course: this.$store.state.course.course
           }

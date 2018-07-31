@@ -9,10 +9,10 @@ namespace CL\Course;
 use CL\Course\Course;
 use CL\Users\User;
 use CL\Course\Member;
+use \Closure;
 
 /**
- * A single assignment in the assignment tracking
- * and grading system.
+ * A single assignment in the assignment tracking system.
  *
  * This is for basic assignments and can be overridden for
  * more complex assignments.
@@ -33,20 +33,31 @@ class Assignment {
     /**
      * Get standard properties for an assignment.
      *
-     * @param $key Options are: course, tag
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * tag | string | Assignment tag
+     *
+     * @param string $property Property to get
      * @return Course|mixed|null|string Property value
      */
-    public function __get($key)
+    public function __get($property)
     {
-        switch ($key) {
+        switch ($property) {
             case 'tag':
                 return $this->tag;
 
+	        //
+	        // Documentation pending
+	        //
 	        case 'category':
 	        	return $this->category;
 
             case 'course':
                 return $this->course;
+
+	        case 'dir':
+	        	return $this->get_dir();
 
             case 'section':
                 return $this->section;
@@ -77,9 +88,13 @@ class Assignment {
 	        	return $this->solving;
 
             default:
+	            if(isset($this->properties[$property])) {
+		            return $this->properties[$property];
+	            }
+
                 $trace = debug_backtrace();
                 trigger_error(
-                    'Undefined property ' . $key .
+                    'Undefined property ' . $property .
                     ' in ' . $trace[0]['file'] .
                     ' on line ' . $trace[0]['line'],
                     E_USER_NOTICE);
@@ -90,12 +105,20 @@ class Assignment {
 
 	/**
 	 * Property set magic method
-	 * @param string $key Property name
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * category | AssignmentCategory | AssignmentCategory for this assignment
+	 * grading | Grading | Add a grading object to assignment
+	 * solving | string | Path to problem solving page
+	 *
+	 * @param string $property Property to set
 	 * @param string $value Value to set
 	 */
-	public function __set($key, $value)
+	public function __set($property, $value)
 	{
-		switch ($key) {
+		switch ($property) {
 			case 'grading':
 				$this->grading = $value;
 				$this->grading->assignment = $this;
@@ -112,9 +135,14 @@ class Assignment {
 				break;
 
 			default:
+				if(isset($this->properties[$property])) {
+					$this->properties[$property] = $value;
+					break;
+				}
+
 				$trace = debug_backtrace();
 				trigger_error(
-					'Undefined property ' . $key .
+					'Undefined property ' . $property .
 					' in ' . $trace[0]['file'] .
 					' on line ' . $trace[0]['line'],
 					E_USER_NOTICE);
@@ -236,8 +264,8 @@ class Assignment {
 			$time = time();
 		}
 
-		// Never active for guests
-		if($user->is_guest()) {
+		// Never open for guests
+		if($user->guest) {
 			return false;		
 		}
 		
@@ -284,7 +312,7 @@ class Assignment {
 	 * @param $time Time
 	 * @returns true if available to user */
 	public function available_due(User $user, $time) {
-		if($user->is_guest()) {
+		if($user->guest) {
 			return false;		
 		}
 		
@@ -547,9 +575,81 @@ class Assignment {
 		return $properties;
 	}
 
+	/**
+	 * __call() is triggered when invoking inaccessible methods in an object context.
+	 * @param string $name Name of non-existent function
+	 * @param array $arguments Arguments to the function call
+	 */
+	public function __call($name, $arguments) {
+		if(isset($this->extensions[$name])) {
+			return $this->extensions[$name]($this, $arguments);
+		} else {
+			$trace = debug_backtrace();
+			trigger_error(
+				'Fatal error: Call to undefined method CL\Course\Assignment::' .
+				$name . '() in ' . $trace[0]['file'] .
+				' on line ' . $trace[0]['line'],
+				E_USER_NOTICE);
+		}
+	}
+
+	/**
+	 * Extend this class by adding a new function.
+	 * This is used by the Step system to add "add_step"
+	 * to the assignment category.
+	 * @param string $name Name of the function
+	 * @param Closure $closure Closure to call.
+	 */
+	public function extend($name, $closure) {
+		$this->extensions[$name] = $closure;
+	}
+
+	/**
+	 * Add a custom property to this object.
+	 *
+	 * If called like this:
+	 *
+	 *   $assignment->addProperty('quiz', false)
+	 *
+	 * The __get and __set magic methods will now
+	 * recognized a property 'quiz' with the initial
+	 * value of false.
+	 *
+	 * @param string $name Property name
+	 * @param mixed $value Initial value
+	 * @param boolean $data If true the property will be sent to clients
+	 */
+	public function addProperty($name, $value, $data=false) {
+		$this->properties[$name] = $value;
+		if($data) {
+			$this->dataProperties[$name] = $data;
+		}
+	}
+
+	/**
+	 * Create data suitable for JSON to send to runtime
+	 * @return array
+	 */
+	public function data() {
+		$this->load();
+
+		$data = [
+			'tag'=>$this->tag,
+			'name'=>$this->name,
+			'shortname'=>$this->shortname,
+			'url'=>$this->__get('url')
+		];
+
+		foreach($this->dataProperties as $name => $propertyData) {
+			$data[$name] = $this->properties[$name];
+		}
+
+		return $data;
+	}
+
 	protected $tag;				///< Assignment tag
-	private $name;				// Name of the assignment
-	private $shortname;			// Short name for the assignment
+	private $name;				///< Name of the assignment
+	private $shortname;			///< Short name for the assignment
 	protected $url;             ///< URL for the assignment (optional)
 
     /// When the assignment is release.
@@ -563,6 +663,7 @@ class Assignment {
 	protected $category = null;	///< Assignment category for this assignment
 	protected $course = null;	///< Course we are associated with
 	protected $section = null;  ///< Section we are a member of
+	private $extensions = [];   ///< Extensions to this object
 
 	private $grading = null;	///< The Grading object for this assignment
     private $loaded = false;    // Is the assignment loaded?
@@ -570,4 +671,7 @@ class Assignment {
 
 	protected $solving = NULL;	///< Optional problem solving document
 	protected $interact = false;	///< Do we use the Interact system?
+
+	private $properties = [];   ///< Custom properties
+	private $dataProperties = [];   ///< Custom data associated with properties
 }

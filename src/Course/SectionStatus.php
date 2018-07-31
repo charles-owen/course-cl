@@ -30,6 +30,12 @@ class SectionStatus extends \CL\Tables\Table {
 		parent::__construct($config, "sectionstatus");
 	}
 
+	/**
+	 * Validator for section status values. Checks that the value is
+	 * one of the valid section status constants.
+	 * @param string $status Status to check
+	 * @return bool true if valid
+	 */
 	public function validStatus($status) {
 		return $status === SectionStatus::NOTVISITED ||
 			$status === SectionStatus::VISITED ||
@@ -136,11 +142,19 @@ SQL;
     }
 
     /**
-     * Get the status for all users for an assignment
+     *
      * @param string $assignTag The assignment tag
-     * @returns array result. First level key is the member ID, second level key is assignment section,
-     * third level keys: look, date, status
+
      */
+
+	/**
+	 * Get the status for all users for an assignment
+	 * @param string $semester Semester code
+	 * @param string $sectionId Section id
+	 * @param string $assignTag Assignment tag
+	 * @returns array result. First level key is the member ID, second level key is assignment section,
+	 * third level keys: look, date, status
+	 */
     public function get_statuses_assignment($semester, $sectionId, $assignTag) {
         $pdo = $this->pdo();
 

@@ -13,11 +13,13 @@ use \CL\Course\Assignment;
  * View class for course home page
  */
 class CourseHomeView extends \CL\Course\View {
-	/** Constructor
-     * @param $course Course we are displaying
-	 * @param $user Optional user object
-     * @param $session The _SESSION array
-     */
+
+	/**
+	 * CourseHomeView constructor.
+	 * @param Site $site Site object
+	 * @param array $options Options passed to the view
+	 * @param int $time Current time
+	 */
 	public function __construct(Site $site, array $options=[], $time=null) {
         parent::__construct($site, $options);
 
@@ -33,27 +35,27 @@ class CourseHomeView extends \CL\Course\View {
     /**
      * Get standard properties for a page.
      *
-     * @param string $key Options are: libroot, root
+     * @param string $property Options are: libroot, root
      * @return Course|mixed|null|string Property value
      */
-    public function __get($key)
+    public function __get($property)
     {
-        switch ($key) {
+        switch ($property) {
 
 
             default:
-                return parent::__get($key);
+                return parent::__get($property);
         }
     }
 
 
     /**
      * Property set magic method
-     * @param string $key Property name
+     * @param string $property Property name
      * @param mixed $value Value to set
      */
-    public function __set($key, $value) {
-        parent::__set($key, $value);
+    public function __set($property, $value) {
+        parent::__set($property, $value);
     }
 
 

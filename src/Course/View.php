@@ -10,7 +10,7 @@ namespace CL\Course;
 use CL\Site\Site;
 
 /**
- * View class for any view that relies on course.css or course.js
+ * View class for any view that relies on course components and globals.
  */
 class View extends \CL\Site\View {
 	/**
@@ -39,32 +39,39 @@ class View extends \CL\Site\View {
 
 	/**
 	 * Property get magic method
-	 * @param $key Property name
-	 * @property-read tablename The table name
-	 * @property-read prefix The table prefix
-	 * @return null|string
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * course | Course | Course object.
+	 * member | Member | Member object for current user.
+	 * section | Section | Section object for current user.
+	 * user | User | User object for current user.
+	 *
+	 * @param string $property
+	 * @return mixed Property value
 	 */
-	public function __get($key) {
-		switch($key) {
+	public function __get($property) {
+		switch($property) {
+			case 'course':
+				return $this->course;
+
 			case "user":
 				return $this->user;
 
 			case 'member':
 				return $this->member;
 
-			case 'course':
-				return $this->course;
-
 			case 'section':
 				return $this->section;
 
 			default:
-				return parent::__get($key);
+				return parent::__get($property);
 		}
 	}
 
-	protected $user;
-	protected $member;
-	protected $course;
-	protected $section;
+	protected $user;    ///< User object for current user
+	protected $member;  ///< Member object for current user
+	protected $course;  ///< Course object
+	protected $section; ///< Section object for current user
 }

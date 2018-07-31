@@ -115,7 +115,7 @@
             if(this.management) {
                 this.$store.commit('users/reset');
             }
-console.log('Calling fetch');
+
             this.$store.dispatch('members/fetch');
         }
     }

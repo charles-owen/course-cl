@@ -28,8 +28,8 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	const ADMIN = 'A';      ///< Admin
 
 	const JWT_ID = 'member_id'; ///< Field to use in JWT for member ID
-	const JWT_SEMESTER = 'member_semester';
-	const JWT_SECTION = 'member_section';
+	const JWT_SEMESTER = 'member_semester'; ///< Field to use in JWT for a semester indicator
+	const JWT_SECTION = 'member_section';   ///< Field to use in JWT for a section indicator
 
 	/** Constructor
 	 * @param array $row Contents of the row in the table for this user
@@ -86,11 +86,11 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * role | string | User role (see above roles)
 	 * userId | string | Internal user ID
 	 *
-	 * @param string $key Property name
+	 * @param string $property Property name
 	 * @return Course|mixed|null|string Property value
 	 */
-	public function __get($key) {
-		switch($key) {
+	public function __get($property) {
+		switch($property) {
 			case 'id':
 				return $this->id;
 
@@ -125,7 +125,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			default:
 				$trace = debug_backtrace();
 				trigger_error(
-					'Undefined property ' . $key .
+					'Undefined property ' . $property .
 					' in ' . $trace[0]['file'] .
 					' on line ' . $trace[0]['line'],
 					E_USER_NOTICE);
@@ -143,11 +143,11 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * role | string | User role (see above roles)
 	 * userId | string | Internal user ID
 	 *
-	 * @param $key Property name
+	 * @param $property Property name
 	 * @param $value Value to set
 	 */
-	public function __set($key, $value) {
-		switch($key) {
+	public function __set($property, $value) {
+		switch($property) {
 			case 'id':
 				$this->id = $value;
 				break;
@@ -170,7 +170,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 				break;
 
 			case 'user':
-				parent::__set($key, $value);
+				parent::__set($property, $value);
 				$value->setJWT(Member::JWT_ID, $this->id);
 				if($this->id === 0) {
 					$value->setJWT(Member::JWT_SEMESTER, $this->semester);
@@ -182,7 +182,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			default:
 				$trace = debug_backtrace();
 				trigger_error(
-					'Undefined property ' . $key .
+					'Undefined property ' . $property .
 					' in ' . $trace[0]['file'] .
 					' on line ' . $trace[0]['line'],
 					E_USER_NOTICE);
@@ -276,7 +276,10 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 		$members->writeMetaData($this);
 	}
 
-
+	/**
+	 * Create an array of data to send to runtime clients.
+	 * @return array Data for client
+	 */
 	public function data() {
 		$data = [
 			'id'=>$this->id,

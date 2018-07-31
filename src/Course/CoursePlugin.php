@@ -24,18 +24,11 @@ class CoursePlugin extends Course {
 	 * @param Site $site The Site configuration object
 	 */
 	public function install(Site $site) {
-		$this->site = $site;
-		$site->install("course", $this);
+		parent::install($site);
 
 		$site->addStartup(function(Site $site, Server $server, $time) {
 			return $this->startup($site, $server, $time);
 		});
-
-		$site->addPostStartup(function(Site $site, Server $server, $time) {
-			return $this->postStartup($site, $server, $time);
-		});
-
-
 	}
 
 	/**
@@ -49,13 +42,45 @@ class CoursePlugin extends Course {
 			$router = $object;
 			$router->addRoute(['sectionselector'], function (Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new SectionSelectorView($site);
-				return $view->vue('sectionselector');
+				return $view->vue('cl-sectionselector');
 			});
 
 			$router->addRoute(['api', 'course', '*'], function (Site $site, Server $server, array $params, array $properties, $time) {
 				$resource = new ApiCourse();
 				return $resource->apiDispatch($site, $server, $params, $properties, $time);
 			});
+		} else if($object instanceof ConsoleView) {
+			$consoleView = $object;
+			$consoleView->addJS('course');
+			$consoleView->addJS('courseconsole');
+
+			$site = $consoleView->site;
+			$course = $site->course;
+			$data = $course->data();
+
+
+			$user = $site->users->user;
+			$sections = [];
+			if ($user->atLeast(User::ADMIN)) {
+				// Admins see all sections
+				foreach ($course->sections as $section) {
+					$sections[] = $section->data();
+				}
+			} else {
+				$members = new Members($site->db);
+				$memberships = $members->getByUser($user->id);
+				foreach ($memberships as $membership) {
+					$section = $course->get_section($membership->semester, $membership->sectionId);
+					if ($section !== null) {
+						$sections[] = $section->data();
+					}
+				}
+			}
+
+			$data['sections'] = $sections;
+
+			$json = json_encode($data);
+			$consoleView->addJSON('cl-course', $json);
 		}
 	}
 
@@ -153,52 +178,6 @@ class CoursePlugin extends Course {
 		return null;
 	}
 
-	/**
-	 * System is started, perform any validation required
-	 * @param Site $site
-	 * @param Server $server
-	 * @param int $time Current time
-	 * @return null|string redirect page.
-	 */
-	private function postStartup(Site $site, Server $server, $time) {
-		//
-		// Install in the control panel
-		//
-		$site->console->addPlugin('course', []);
-		$site->console->addPlugin('courseconsole', ['course', 'usersconsole']);
-
-		$site->console->addClosure(function(ConsoleView $consoleView) {
-			$site = $consoleView->site;
-			$course = $site->course;
-			$data = $course->data();
-
-
-			$user = $site->users->user;
-			$sections = [];
-			if ($user->atLeast(User::ADMIN)) {
-				// Admins see all sections
-				foreach ($course->sections as $section) {
-					$sections[] = $section->data();
-				}
-			} else {
-				$members = new Members($site->db);
-				$memberships = $members->getByUser($user->id);
-				foreach ($memberships as $membership) {
-					$section = $course->get_section($membership->semester, $membership->sectionId);
-					if ($section !== null) {
-						$sections[] = $section->data();
-					}
-				}
-			}
-
-			$data['sections'] = $sections;
-
-			$json = json_encode($data);
-			$consoleView->addJSON('cl-course', $json);
-		});
-
-		return null;
-	}
 
 	/**
 	 * Ensure tables exist for the course subsystem.

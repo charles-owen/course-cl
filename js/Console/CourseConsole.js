@@ -6,8 +6,14 @@
 import MembersEditorComponent from './MembersEditorComponent.vue';
 import MemberEditorComponent from './MemberEditorComponent.vue';
 import SectionComponent from './SectionComponent.vue';
+import AssignmentsComponent from './AssignmentsComponent.vue';
 
 let CourseConsole = function() {
+    this.assignmentLinks = [];
+
+    this.assignmentLink = function(property, name, route) {
+        this.assignmentLinks.push({property: property, name: name, route: route});
+    }
 }
 
 Console.Console.title = 'Course Console';
@@ -20,7 +26,7 @@ Console.tables.add({
 
 Console.components.addOption({
     atLeast: Users.User.STAFF,
-    page: {title: 'Main', route: '', order: 1},
+    page: {title: 'Course', route: '/course', order: 3},
     section: {title: 'Course', order: 5},
     title: 'Members',
     order: 1,
@@ -29,6 +35,19 @@ Console.components.addOption({
         {route: '/course/members', component: MembersEditorComponent, props: {management: false}}
     ]
 });
+
+Console.components.addOption({
+    atLeast: Users.User.STAFF,
+    page: {title: 'Course', route: '/course', order: 3},
+    section: {title: 'Course', order: 5},
+    title: 'Assignments',
+    order: 2,
+    route: '/course/assignments',
+    routes: [
+        {route: '/course/assignments', component: AssignmentsComponent}
+    ]
+});
+
 
 Console.components.addOption({
     atLeast: Users.User.ADMIN,

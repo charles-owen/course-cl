@@ -5,7 +5,7 @@
 
 namespace CL\Course;
 
-use CL\Course\Assignments\AssignmentCategory;
+use CL\Course\AssignmentCategory;
 
 /**
  * Provides support for managing course assignments
@@ -207,6 +207,19 @@ class Assignments {
 		unset($properties['course']);
 		unset($properties['section']);
 		return $properties;
+	}
+
+	/**
+	 * Generate assignment data suitable for sending to client
+	 * @return array Assignment data
+	 */
+	public function data() {
+		$data = [];
+		foreach($this->categories as $category) {
+			$data[] = $category->data();
+		}
+
+		return ['categories' => $data];
 	}
 
 	private $course = null;		    ///< Course object

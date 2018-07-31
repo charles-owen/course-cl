@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * @file
+ * API Resource for /api/course/members
+ */
 namespace CL\Course\Api;
 
 use CL\Site\Site;
@@ -15,8 +18,12 @@ use CL\Course\Member;
  * API Resource for /api/course/members
  */
 class ApiMembers extends \CL\Users\Api\Resource {
+	/// Default query limit for membership queries.
 	const QUERY_LIMIT = 500;
 
+	/**
+	 * ApiMembers constructor.
+	 */
 	public function __construct() {
 		parent::__construct();
 	}
@@ -27,7 +34,7 @@ class ApiMembers extends \CL\Users\Api\Resource {
 	 * @param Server $server The Server object
 	 * @param array $params Parameters after the path
 	 * @param array $properties Properties from the path, should be empty
-	 * @param $time Time stamp
+	 * @param int $time Time stamp
 	 * @return JsonAPI Result
 	 * @throws APIException On error
 	 */
