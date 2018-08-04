@@ -1,9 +1,10 @@
 @import '~fullcalendar/dist/fullcalendar.css';
+@import '~site-cl/sass/modules/colors';
 
 div.cl-calendar {
   display: none;
   margin: 1em auto 1em auto;
-  background-color: #eef8ee;
+  background-color: $very-light-primary;
   padding: 4px 4px 4px 4px;
 
   .fc-event {
@@ -24,6 +25,19 @@ div.cl-calendar {
     -webkit-box-shadow: none;
     box-shadow: none;
     border: none;
+    margin: 0;
+
+    td, th {
+      padding: 0;
+      border: 1px solid #ddd;
+    }
+
+    tr:first-child th {
+      text-align: center;
+      padding: 0;
+    }
+
+
   }
 
 }

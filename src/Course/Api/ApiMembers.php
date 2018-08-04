@@ -17,14 +17,16 @@ use CL\Course\Member;
 /**
  * API Resource for /api/course/members
  */
-class ApiMembers extends \CL\Users\Api\Resource {
+class ApiMembers extends \CL\Users\Api\Resource
+{
 	/// Default query limit for membership queries.
 	const QUERY_LIMIT = 500;
 
 	/**
 	 * ApiMembers constructor.
 	 */
-	public function __construct() {
+	public function __construct()
+	{
 		parent::__construct();
 	}
 
@@ -38,14 +40,15 @@ class ApiMembers extends \CL\Users\Api\Resource {
 	 * @return JsonAPI Result
 	 * @throws APIException On error
 	 */
-	protected function dispatch(Site $site, Server $server, array $params, array $properties, $time) {
+	protected function dispatch(Site $site, Server $server, array $params, array $properties, $time)
+	{
 		$user = $this->isUser($site);
 
-		if(count($params) < 1) {
+		if (count($params) < 1) {
 			return $this->query($site, $user, $server);
 		}
 
-		switch($params[0]) {
+		switch ($params[0]) {
 			case 'new':
 				return $this->newMember($site, $user, $server, $time);
 
@@ -61,6 +64,9 @@ class ApiMembers extends \CL\Users\Api\Resource {
 			case 'drops':
 				return $this->drops($site, $user, $server);
 
+			case 'meta':
+				return $this->meta($site, $user, $server, $params, $time);
+
 			case 'bulk':
 				$api = new ApiMembersBulk();
 				$params2 = $params;
@@ -69,6 +75,82 @@ class ApiMembers extends \CL\Users\Api\Resource {
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+	}
+
+	/**
+	 * GET: /api/course/members/meta/get/:category/:key, post['section'], post['semester']
+	 * Gets all members metadata by category and key
+	 *
+	 * POST: /api/course/members/meta/set/:memberid/:category/:key, post['value']
+	 * Sets a member metadata value
+	 *
+	 * @param Site $site
+	 * @param User $user
+	 * @param Server $server
+	 * @param array $params
+	 * @param $time
+	 * @return JsonAPI object
+	 * @throws APIException
+	 */
+	private function meta(Site $site, User $user, Server $server, array $params, $time) {
+		$this->atLeast($user, Member::TA);
+
+		if (count($params) < 4) {
+			throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+		}
+
+		if ($params[1] === 'get') {
+			return $this->metaGet($site, $user, $server, $params);
+		}
+		if ($params[1] === 'set') {
+			return $this->metaSet($site, $user, $server, $params);
+		}
+
+		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+	}
+
+	private function metaGet(Site $site, User $user, Server $server, array $params) {
+		$get = $server->get;
+		$this->ensure($get, ['semester', 'section']);
+		$semester = $get['semester'];
+		$section = $get['section'];
+		$default = !empty($get['default']) ? $get['default'] : null;
+		$category = $params[2];
+		$key = $params[3];
+
+		$members = new Members($site->db);
+		$all = $members->getAllBySection($semester, $section);
+		$ret = [];
+		foreach($all as $member) {
+			$ret[$member->id] = $member->meta->get($category, $key, $default);
+		}
+
+		$json = new JsonAPI();
+		$json->addData('member-meta', 0, $ret);
+		return $json;
+	}
+
+	private function metaSet(Site $site, User $user, Server $server, array $params) {
+		if (count($params) < 5) {
+			throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+		}
+
+		$post = $server->post;
+		$value = $post['value'];
+
+		$memberId = $params[2];
+		$category = $params[3];
+		$key = $params[4];
+
+		$members = new Members($site->db);
+		$member = $members->get($memberId);
+		if($member === null) {
+			throw new APIException("Member does not exist");
+		}
+
+		$member->meta->set($category, $key, $value);
+		$members->writeMetaData($member);
+		return new JsonAPI();
 	}
 
 
@@ -147,6 +229,19 @@ class ApiMembers extends \CL\Users\Api\Resource {
 
 		$json = new JsonAPI();
 		$json->addData('users', 0, $reply);
+
+		if(!empty($get['prevnext']) && count($result) === 1) {
+			$user = $result[0];
+			$prevs = $members->query(['before'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1]);
+			if(count($prevs) > 0) {
+				$json->addData('prev-user', 0, $prevs[0]->data());
+			}
+
+			$nexts = $members->query(['after'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1]);
+			if(count($nexts) > 0) {
+				$json->addData('next-user', 0, $nexts[0]->data());
+			}
+		}
 
 		// Sequence echo option.
 		if(!empty($get['seq'])) {

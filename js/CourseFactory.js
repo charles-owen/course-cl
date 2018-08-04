@@ -5,8 +5,10 @@
 
 import {Member} from './Members/Member.js';
 
-import {StoreModuleCourse} from './State/StoreModuleCourse.js';
+import {StoreModuleCourse} from './State/StoreModuleCourse';
 import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
+import {SectionSelector} from './SectionSelectors/SectionSelector';
+import {Submission} from './Submission/Submission';
 
 let CourseFactory = function() {
 }
@@ -68,6 +70,13 @@ CourseFactory.create = function(site) {
         if( (en = document.getElementById('cl-user')) !== null) {
             store.commit('user/set', JSON.parse(en.textContent));
         }
+
+
+    })
+
+    site.start(() => {
+        SectionSelector.install(site);
+        Submission.install(site);
     })
 
     return Course;

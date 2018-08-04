@@ -1,0 +1,48 @@
+
+div.cl-submission {
+
+  form {
+    button, input, textarea {
+      color: black;
+    }
+  }
+
+  form.file {
+    @extend %shadow;
+    margin-left:2em;
+    margin-right:2em;
+    border: 1px solid black;
+    padding-top:0.5em;
+    padding-bottom:0.5em;
+    text-align:center;
+    background: white;
+    color: black;
+    font: 9pt helvetica,sans-serif;
+
+    input[type=file] {
+      width: 20em;
+    }
+  }
+
+  figure.cl-preview {
+    @extend %shadow;
+    margin: 1em 0;
+    overflow: auto;
+    border: 1px solid black;
+    text-align: center;
+
+    img {
+      max-width: none;
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      margin: 0;
+    }
+  }
+
+  pre.cl-preview {
+    @extend %shadow;
+    border: thin solid black;
+    min-height: 5em;
+  }
+}

@@ -1,17 +1,21 @@
 <template>
   <div class="content cl-assignments">
+    <div class="full">
     <p>{{section.name}}</p>
     <div v-for="category in section.assignments.categories">
       <h2>{{category.name}}</h2>
       <ul>
-        <li v-for="assignment in category.assignments">{{assignment.name}}
+        <li v-for="assignment in category.assignments" :key="assignment.tag">{{assignment.name}} <span class="links">
+          <router-link :to="extensionsLink + assignment.tag">extensions</router-link>
+          <router-link v-if='assignment.submissions !== undefined' :to="submissionsLink + assignment.tag">submissions</router-link>
           <span v-for="link in assignmentLinks">
             <router-link :to="assignmentLink(assignment, link.route)" v-if="assignment[link.property] !== false">{{link.name}}</router-link>
+          </span>
           </span>
         </li>
       </ul>
     </div>
-
+    </div>
   </div>
 
 </template>
@@ -22,7 +26,9 @@
             return {
                 course: this.$store.state.course.course,
                 section: null,
-                assignmentLinks: Console.course.assignmentLinks
+                assignmentLinks: Console.course.assignmentLinks,
+                extensionsLink: Site.root + '/cl/console/course/extensions/',
+                submissionsLink: Site.root + '/cl/console/course/submissions/'
             }
         },
         created() {
@@ -42,3 +48,11 @@
     }
 
 </script>
+
+<style lang="scss" scoped>
+
+  span.links {
+
+    font-size: 0.85em;
+  }
+</style>

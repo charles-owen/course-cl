@@ -1,7 +1,7 @@
 <template>
-  <div class="section">
+  <div class="cl-section-component">
     <div class="content">
-      <div class="center">{{course.name}} {{course.desc}} <section-select /></div>
+      <div class="full center">{{course.name}} {{course.desc}} <section-select></section-select> <span class="extra"></span></div>
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@
 <style lang="scss" scoped>
 @import '../../../site/sass/modules/_colors';
 
-div.section {
+div.cl-section-component {
   background: $primary;
   color: white;
   margin: 0;

@@ -21,7 +21,7 @@
 <script>
     import Dialog from 'dialog-cl';
     import MemberDropsComponent from './MemberDropsComponent.vue';
-    import {Member} from '../Members/Member.js';
+    import {Member} from '../../Members/Member.js';
     let Vue = Site.Vue;
 
     export default {

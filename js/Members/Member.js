@@ -34,6 +34,25 @@ let Member = function(json) {
 Member.prototype = Object.create(Membership.prototype);
 Member.prototype.constructor = Member;
 
+/**
+ * Get the course section for a member
+ * @param store Vuex store
+ * @returns {*}
+ */
+Member.prototype.getSection = function(store) {
+    return store.getters['course/section'](this.semester, this.section);
+}
+
+/**
+ * Get an assignment for a member
+ * @param store Vuex store
+ * @param assigntag Assignment tag
+ */
+Member.prototype.getAssignment = function(store, assigntag) {
+    const section = this.getSection(store);
+    return section.getAssignment(assigntag);
+}
+
 // The possible member roles
 // Must match values in Member.php
 Member.GUEST = 'G';     ///< Guest user visiting the site

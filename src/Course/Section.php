@@ -29,8 +29,7 @@ class Section {
 		$this->semester = $semester;
 		$this->type = $type;
         $this->calendar = new Calendar($this);
-		
-		
+
 		$this->scale[] = array(89.5, "4.0");
 		$this->scale[] = array(84.5, "3.5");
 		$this->scale[] = array(79.5, "3.0");
@@ -115,6 +114,10 @@ class Section {
 		    case 'assignments':
 		    	$this->assignments = $value;
 		    	$this->assignments->section = $this;
+		    	break;
+
+		    case 'course':
+		    	$this->course = $value;
 		    	break;
 
 		    default:

@@ -12,7 +12,7 @@ use CL\Site\Site;
 /**
  * View class for any view that relies on course components and globals.
  */
-class View extends \CL\Site\View {
+class View extends \CL\Users\View {
 	/**
 	 * View constructor.
 	 * @param Site $site The Site object
@@ -21,19 +21,16 @@ class View extends \CL\Site\View {
 	public function __construct(Site $site, array $options = []) {
 		parent::__construct($site, $options);
 
-		$this->user = $site->users->user;
 		$this->member = $site->users->user->member;
 		$this->course = $site->course;
 		$this->section = $this->member !== null ? $this->course->get_section($this->member->semester, $this->member->sectionId) : null;
 
 		// Some globals that make page creation easier
-		$GLOBALS['user'] = $this->user;
 		$GLOBALS['member'] = $this->member;
 		$GLOBALS['course'] = $this->course;
 		$GLOBALS['section'] = $this->section;
 
 		$this->addCSS('vendor/cl/course/course.css');
-		$this->addJS('users');
 		$this->addJS('course');
 	}
 
@@ -46,7 +43,6 @@ class View extends \CL\Site\View {
 	 * course | Course | Course object.
 	 * member | Member | Member object for current user.
 	 * section | Section | Section object for current user.
-	 * user | User | User object for current user.
 	 *
 	 * @param string $property
 	 * @return mixed Property value
@@ -55,9 +51,6 @@ class View extends \CL\Site\View {
 		switch($property) {
 			case 'course':
 				return $this->course;
-
-			case "user":
-				return $this->user;
 
 			case 'member':
 				return $this->member;
@@ -70,7 +63,6 @@ class View extends \CL\Site\View {
 		}
 	}
 
-	protected $user;    ///< User object for current user
 	protected $member;  ///< Member object for current user
 	protected $course;  ///< Course object
 	protected $section; ///< Section object for current user

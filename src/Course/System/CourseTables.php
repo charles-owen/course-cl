@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Table maker for the Course subsystem tables
  */
 
@@ -21,5 +22,6 @@ class CourseTables extends \CL\Tables\TableMaker {
 
 		$this->add(new \CL\Course\Members($config));
 		$this->add(new \CL\Course\SectionStatus($config));
+		$this->add(new \CL\Course\Submission\Submissions($config));
 	}
 }

@@ -168,7 +168,8 @@ class Course extends \CL\Site\Plugin {
 	/** Section
      * @param string $semester Semester ID (like FS18)
 	 * @param string $sectionId Section number/id (like 001)
-	 * @returns Section|null Reference to section object or null if section number is invalid */
+	 * @returns Section object or null if section number is invalid.
+	 */
 	public function get_section($semester, $sectionId) {
 	    foreach($this->sections as $section) {
 	        if($section->semester === $semester && $section->id === $sectionId) {
@@ -182,7 +183,7 @@ class Course extends \CL\Site\Plugin {
 	/**
 	 * Get the section for a user.
 	 * @param User $user User we are getting the section for
-	 * @return Section|null
+	 * @return Section object or null if no section for this user.
 	 */
     public function get_section_for(User $user) {
 		$member = $user->member;

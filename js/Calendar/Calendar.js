@@ -1,5 +1,5 @@
 import 'fullcalendar';
-import './calendar.css';
+import './_calendar.scss';
 
 import $ from 'jquery';
 

@@ -31,6 +31,9 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	const JWT_SEMESTER = 'member_semester'; ///< Field to use in JWT for a semester indicator
 	const JWT_SECTION = 'member_section';   ///< Field to use in JWT for a section indicator
 
+	/// Name for the extensions MetaDat category
+	const METADATA_EXTENSIONS = 'extensions';
+
 	/** Constructor
 	 * @param array $row Contents of the row in the table for this user
 	 */
@@ -81,9 +84,14 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * created | int | When member was created
 	 * id | int | Internal member ID
+	 * meta | MetaData | Meta-data for this user (alias)
 	 * metaData | MetaData | Meta-data for this user
 	 * role | string | User role (see above roles)
+	 * sectionId | string | Section ID like '001'
+	 * semester | string | Semester code, like 'FS18'
+	 * summer | boolean | true if this is a summer semester
 	 * userId | string | Internal user ID
 	 *
 	 * @param string $property Property name
@@ -91,10 +99,14 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 */
 	public function __get($property) {
 		switch($property) {
+			case 'created':
+				return $this->created;
+
 			case 'id':
 				return $this->id;
 
 			case 'metaData':
+			case 'meta':
 				if($this->metaData === null) {
 					$this->metaData = new MetaData($this);
 				}
@@ -104,23 +116,17 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			case 'role':
 				return $this->role;
 
-			case 'userId':
-				return $this->userId;
-
-			// Pending documentation
-
+			case 'sectionId':
+				return $this->sectionId;
 
 			case 'semester':
 				return $this->semester;
 
-			case 'sectionId':
-				return $this->sectionId;
-
 			case 'summer':
 				return substr($this->semester, 0, 2) === 'US';
 
-			case 'created':
-				return $this->created;
+			case 'userId':
+				return $this->userId;
 
 			default:
 				$trace = debug_backtrace();
@@ -257,15 +263,6 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * @param $sectionId Section to check (as in '001')
 	 * @returns TRUE if user is in section */
 	public function inSection($sectionId) {return $this->sectionId === $sectionId;}
-
-
-	/**
-	 * Assignment for a given user
-	 * @param $tag Assignment tag
-	 * @return Assignment The Assignment object */
-	public function get_assignment($tag) {
-		return $this->section->getAssignment($tag);
-	}
 
 	/**
 	 * Write the meta-data for this member.

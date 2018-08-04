@@ -44,22 +44,25 @@ class Calendar {
 
         $events = $this->events;
 
-//        $categories = $this->section->get_assignments()->get_categories();
-//        foreach($categories as $category) {
-//            foreach($category->get_assignments() as $assignment) {
-//                if(!$user->is_staff() && !$assignment->after_release($time)) {
-//                    continue;
-//                }
-//
-//                $due = $assignment->get_due($user);
-//                $url = $assignment->get_url();
-//                if($due != null) {
-//                    $name = $assignment->get_shortname();
-//                    $events[] = array('name' => $name, 'date' => $due,
-//                        'url' => $url, 'displayTime' => false);
-//                }
-//            }
-//        }
+        $categories = $this->section->assignments->categories;
+        foreach($categories as $category) {
+            foreach($category->assignments as $assignment) {
+                if(!$user->is_staff() && !$assignment->after_release($time)) {
+                    continue;
+                }
+
+                $course = $this->section->course;
+                $root = $course->root;
+
+                $due = $assignment->get_due($user);
+                $url = $assignment->url;
+                if($due != null) {
+                    $name = $assignment->shortName;
+                    $events[] = array('name' => $name, 'date' => $due,
+                        'url' => $url, 'displayTime' => false);
+                }
+            }
+        }
 
         return $events;
     }

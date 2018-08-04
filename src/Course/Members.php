@@ -51,7 +51,7 @@ SQL;
 	 * also load metadata.
 	 */
 	public function query($params = []) {
-		$usersTable = new Users($this->config);
+		$order = '`name`, user.id';
 
 		$where = new \CL\Tables\TableWhere($this);
 
@@ -77,6 +77,28 @@ SQL;
 
 		if(isset($params['section'])) {
 			$where->append('member.section=?', $params['section']);
+		}
+
+		if(!empty($params['after'])) {
+			$where->nest();
+			$where->append('name > ?', $params['after']['name'], \PDO::PARAM_STR);
+			$where->nest('or');
+			$where->append('name = ?', $params['after']['name'], \PDO::PARAM_STR, 'or');
+			$where->append('user.id > ?', $params['after']['userId'], \PDO::PARAM_INT, 'and');
+			$where->unnest();
+			$where->unnest();
+		}
+
+		if(!empty($params['before'])) {
+			$where->nest();
+			$where->append('name < ?', $params['before']['name'], \PDO::PARAM_STR);
+			$where->nest('or');
+			$where->append('name = ?', $params['before']['name'], \PDO::PARAM_STR, 'or');
+			$where->append('user.id < ?', $params['before']['userId'], \PDO::PARAM_INT, 'and');
+			$where->unnest();
+			$where->unnest();
+
+			$order = '`name` desc, user.id desc';
 		}
 
 		if(isset($params['search'])) {
@@ -108,15 +130,12 @@ SQL;
 			}
 		}
 
-		$meta = isset($params['metadata']) && $params['metadata'] ?
-			', user.metadata as user_metadata, member.metadata as metadata' : '';
-
 		$includeMeta = isset($params['metadata']) && $params['metadata'];
 		$sql = $this->memberUserJoinSQL(null, $includeMeta);
 
 		$sql .= <<<SQL
 $where->where
-order by `name`, user.id
+order by $order
 SQL;
 
 		if(isset($params['limit'])) {
@@ -462,6 +481,36 @@ SQL;
 
 		return new Member($row);
 	}
+
+	/**
+	 * Get all members (Member only) for a specific semester/section
+	 * @param $semester Semester code
+	 * @param $sectionId Section ID
+	 * @return array
+	 */
+	public function getAllBySection($semester, $sectionId) {
+		$sql = <<<SQL
+select * from $this->tablename
+where semester=? and section=?
+SQL;
+
+		$stmt = $this->config->pdo->prepare($sql);
+		try {
+			if($stmt->execute([$semester, $sectionId]) === false) {
+				return null;
+			}
+		} catch(\PDOException $exception) {
+			return null;
+		}
+
+		$ret = [];
+		foreach($stmt->fetchAll(\PDO::FETCH_ASSOC) as $row) {
+			$ret[] = new Member($row);
+		}
+
+		return $ret;
+	}
+
 
 	/**
 	 * Get all memberships for a given user

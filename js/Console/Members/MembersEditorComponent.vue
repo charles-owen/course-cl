@@ -46,7 +46,7 @@
 
 <script>
     import Dialog from 'dialog-cl';
-    import {Member} from '../Members/Member.js';
+    import {Member} from '../../Members/Member.js';
     import {mapState} from 'vuex';
     import BulkUploadComponent from './BulkUploadComponent.vue';
 

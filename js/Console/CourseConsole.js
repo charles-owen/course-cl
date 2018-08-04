@@ -3,10 +3,13 @@
  * Course console components
  */
 
-import MembersEditorComponent from './MembersEditorComponent.vue';
-import MemberEditorComponent from './MemberEditorComponent.vue';
+import MembersEditorComponent from './Members/MembersEditorComponent.vue';
+import MemberEditorComponent from './Members/MemberEditorComponent.vue';
 import SectionComponent from './SectionComponent.vue';
 import AssignmentsComponent from './AssignmentsComponent.vue';
+import ExtensionsComponent from './ExtensionsComponent.vue';
+import SubmissionsComponent from './SubmissionsComponent.vue';
+import SubmissionComponent from './SubmissionComponent.vue';
 
 let CourseConsole = function() {
     this.assignmentLinks = [];
@@ -61,6 +64,13 @@ Console.components.addOption({
         {route: '/management/course/member/:id', name: 'member', component: MemberEditorComponent, props: true}
     ]
 });
+
+Console.components.addRoutes([
+    {route: '/course/extensions/:assigntag', component: ExtensionsComponent, props: true},
+    {route: '/course/submissions/:assigntag', component: SubmissionsComponent, props: true},
+    {route: '/course/submissions/:assigntag/:memberid', name: 'submissions', component: SubmissionComponent, props: true}
+]);
+
 
 Console.components.addMainComponent('section-component', SectionComponent, 1);
 

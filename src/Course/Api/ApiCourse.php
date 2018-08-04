@@ -5,6 +5,7 @@
  */
 namespace CL\Course\Api;
 
+use CL\Course\Submission\SubmissionApi;
 use CL\Site\Site;
 use CL\Site\System\Server;
 use CL\Site\Api\APIException;
@@ -41,6 +42,12 @@ class ApiCourse extends \CL\Users\Api\Resource {
 		switch($params[0]) {
 			case 'members':
 				$api = new ApiMembers();
+				$params2 = $params;
+				array_shift($params2);
+				return $api->dispatch($site, $server, $params2, $properties, $time);
+
+			case 'submission':
+				$api = new SubmissionApi();
 				$params2 = $params;
 				array_shift($params2);
 				return $api->dispatch($site, $server, $params2, $properties, $time);

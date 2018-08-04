@@ -14,6 +14,8 @@ use CL\Users\User;
 use CL\Console\ConsoleView;
 use CL\Course\System\SectionSelectorView;
 use CL\Site\Router;
+use CL\Course\Submission\SubmissionDownloadView;
+use CL\Course\Submission\SubmissionImageView;
 
 /**
  * Plugin class for the Course Subsystem
@@ -42,7 +44,22 @@ class CoursePlugin extends Course {
 			$router = $object;
 			$router->addRoute(['sectionselector'], function (Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new SectionSelectorView($site);
-				return $view->vue('cl-sectionselector');
+				return $view->vue();
+			});
+
+			$router->addRoute(['calendar'], function (Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new PersonalCalendarView($site);
+				return $view->whole();
+			});
+
+			$router->addRoute(['submission', 'download', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new SubmissionDownloadView($site, $server, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['submission', 'view', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new SubmissionImageView($site, $server, $properties);
+				return $view->whole();
 			});
 
 			$router->addRoute(['api', 'course', '*'], function (Site $site, Server $server, array $params, array $properties, $time) {
@@ -51,6 +68,7 @@ class CoursePlugin extends Course {
 			});
 		} else if($object instanceof ConsoleView) {
 			$consoleView = $object;
+			$consoleView->addCSS('vendor/cl/course/course.css');
 			$consoleView->addJS('course');
 			$consoleView->addJS('courseconsole');
 

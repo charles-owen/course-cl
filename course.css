@@ -1,3 +1,8 @@
+div.cl-submission form.file, div.cl-submission figure.cl-preview, div.cl-submission pre.cl-preview {
+  -moz-box-shadow: 3px 3px 8px #ccc;
+  -webkit-box-shadow: 3px 3px 8px #ccc;
+  box-shadow: 3px 3px 8px #ccc; }
+
 .advice {
   background-color: #FFCC99;
   color: black;
@@ -98,10 +103,39 @@ div.grading {
   div.grading table.narrow {
     width: auto; }
 
-div.section-select p {
+#cl-section-selector div.cl-selector p {
   text-align: center; }
-div.section-select button {
-  width: 80%;
+  #cl-section-selector div.cl-selector p button {
+    width: 80%;
+    color: black; }
+
+div.cl-submission form button, div.cl-submission form input, div.cl-submission form textarea {
   color: black; }
+div.cl-submission form.file {
+  margin-left: 2em;
+  margin-right: 2em;
+  border: 1px solid black;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  text-align: center;
+  background: white;
+  color: black;
+  font: 9pt helvetica,sans-serif; }
+  div.cl-submission form.file input[type=file] {
+    width: 20em; }
+div.cl-submission figure.cl-preview {
+  margin: 1em 0;
+  overflow: auto;
+  border: 1px solid black;
+  text-align: center; }
+  div.cl-submission figure.cl-preview img {
+    max-width: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    margin: 0; }
+div.cl-submission pre.cl-preview {
+  border: thin solid black;
+  min-height: 5em; }
 
 /*# sourceMappingURL=course.css.map */

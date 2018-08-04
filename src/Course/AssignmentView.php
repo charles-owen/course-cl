@@ -6,6 +6,7 @@
  
 namespace CL\Course;
 
+use CL\Users\User;
 use CL\Site\Site;
 use CL\Site\System\Server;
 
@@ -107,15 +108,14 @@ class AssignmentView extends \CL\Course\View {
 		return $this->assignment->due_present($this->user, $name);
 	}
 	
-	/** Present all submissions and the peer review system if included
-	 * @param $user User to present for or null for current user
-	 * @param $titles An optional array of titles to present for
-	 * the submissions */
-	public function present_submissions(\User $user = null, $titles=null) {
-		if($user === null) {
-			$user = get_user();
-		}
-		
+	/**
+	 * Present all submissions and the peer review system if included
+	 * @param array $titles An optional array of titles to use for
+	 * each of the submissions
+	 * @return string HTML
+	 */
+	public function present_submissions(array $titles=null) {
+		$user = $this->user;
 		$html = '';
 		
 		/*
@@ -124,27 +124,26 @@ class AssignmentView extends \CL\Course\View {
 		$assignment = $this->assignment;
 		$cnt = 0;
 		
-		foreach($assignment->get_grading()->get_submissions() as $submission) {
+		foreach($assignment->submissions->submissions as $submission) {
 			if($titles !== null) {
 				$html .= '<h3>' . $titles[$cnt] . '</h3>';
 				$cnt++;
 			}
-			
-			$view = $submission->create_view();
-			$html .= $view->present($user);
-		}
-		
-		/*
-		 * Display any peer reviews
-		 */
-		if($assignment->get_reviewing() !== null) {
-			$reviewing = $assignment->get_reviewing();
 
-			$html .= '<p class="reviewsappear">Reviews of this assignment appear here.</p>';
-
-			$view = $reviewing->create_view();
-			$html .= $view->present_reviews($user, $user);
+			$html .= $submission->present($this, $user);
 		}
+
+//		/*
+//		 * Display any peer reviews
+//		 */
+//		if($assignment->get_reviewing() !== null) {
+//			$reviewing = $assignment->get_reviewing();
+//
+//			$html .= '<p class="reviewsappear">Reviews of this assignment appear here.</p>';
+//
+//			$view = $reviewing->create_view();
+//			$html .= $view->present_reviews($user, $user);
+//		}
 
 		return $html;
 	}
