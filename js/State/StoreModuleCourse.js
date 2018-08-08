@@ -7,11 +7,21 @@ import {Course} from '../Models/Course';
 export let StoreModuleCourse = {
     namespaced: true,
     state: {
-        course: null
+        course: null,
+        staff: []
     },
     mutations: {
         set(state, data) {
             state.course = new Course(data)
+        },
+        setStaff(state, data) {
+            let staff = {};
+            for(let d of data) {
+                let user = new Users.User(d);
+                staff[user.member.id] = user;
+            }
+
+            state.staff = staff;
         }
     },
     getters: {
@@ -32,6 +42,11 @@ export let StoreModuleCourse = {
             }
 
             return null;
+        },
+        staff: (state) => (id) => {
+            let user = state.staff[id];
+            return user !== undefined ? user : null;
         }
+
     }
 }

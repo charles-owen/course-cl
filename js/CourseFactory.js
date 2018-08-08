@@ -9,6 +9,7 @@ import {StoreModuleCourse} from './State/StoreModuleCourse';
 import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
 import {SectionSelector} from './SectionSelectors/SectionSelector';
 import {Submission} from './Submission/Submission';
+import {ErrorHelp} from './ErrorHelp/ErrorHelp';
 
 let CourseFactory = function() {
 }
@@ -62,6 +63,10 @@ CourseFactory.create = function(site) {
             store.commit('course/set', JSON.parse(en.textContent));
         }
 
+        if( (en = document.getElementById('cl-course-staff'))) {
+            store.commit('course/setStaff', JSON.parse(en.textContent));
+        }
+
         //
         // We have modified the User object so that it will know
         // how to attach a membership. This means we must reload
@@ -72,11 +77,13 @@ CourseFactory.create = function(site) {
         }
 
 
+
     })
 
     site.start(() => {
         SectionSelector.install(site);
         Submission.install(site);
+        ErrorHelp.install(site);
     })
 
     return Course;

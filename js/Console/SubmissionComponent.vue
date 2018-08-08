@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="full">
-      <memberfetcher v-on:fetched="fetched" :id="memberid" :faillink="submissions">
+      <memberfetcher v-on:fetched="fetched" :id="memberid" :faillink="submissionsLink">
         <template slot-scope="fetcher">
           <prev-next :user="fetcher.user">
             <backto name="Submissions" :link="submissionsLink"></backto>
@@ -89,10 +89,3 @@
         }
     }
 </script>
-
-<style lang="scss">
-  /* Not scoped */
-
-
-
-</style>

@@ -11,6 +11,10 @@ namespace CL\Course;
  *
  * One object of type Section is created for each section of
  * a course. These are added using the function Course::addSection()
+ *
+ * @cond
+ * @property Assignments assignments
+ * @endcond
  */
 class Section {
 	const Normal = 0;	//!< Section meets as normal class
@@ -141,14 +145,14 @@ class Section {
 
 			if($this->course->site !== null) {
 				$rootdir = $this->course->site->rootDir;
-				$file1 = $rootdir . '/course/assignments.' . $this->id . '.' . $this->getSemesterLC() . '.php';
+				$file1 = $rootdir . '/course/assignments.' . $this->getSemesterLC() . '.' . $this->id . '.php';
 				$this->assignments->load($file1);
 			}
 		}
 	}
 	
 	/**
-	 * Get an assignmment by tag
+	 * Get an assignment by tag
 	 * @param string $tag Tag for the assignment
 	 * @return Assignment object
 	 */
@@ -159,7 +163,7 @@ class Section {
 	
 	/**
 	 * Add a textbook for the course
-	 * @param $textbook The textbook object to add
+	 * @param Textbook $textbook The textbook object to add
 	 */
 	public function add_textbook(Textbook $textbook) {
 		if($this->textbooks === null) {
@@ -183,8 +187,8 @@ class Section {
 			$this->textbooks = [];
 			
 			$rootdir = $this->course->rootDir;
-			$file = $rootdir . '/course/textbooks.' . 
-				$this->id . '.' . $this->getSemesterLC() . '.php';
+			$file = $rootdir . '/course/textbooks.' .
+				$this->getSemesterLC() . '.' . $this->id . '.php';
 			$function = require($file);
             if(is_callable($function)) {
                 $function($this);

@@ -6,6 +6,8 @@
 
 namespace CL\Course;
 
+use CL\Users\User;
+
 /**
  * Course calendar for a section
  */
@@ -37,32 +39,33 @@ class Calendar {
      *
      * @return array Array of events, each with four values: name, date, url, displayTime
      */
-    public function getEvents(\CL\Users\User $user=null, $time=null) {
+    public function getEvents(User $user=null, $time=null) {
 	    if ($time === null) {
 		    $time = time();
         }
 
         $events = $this->events;
 
-        $categories = $this->section->assignments->categories;
-        foreach($categories as $category) {
-            foreach($category->assignments as $assignment) {
-                if(!$user->is_staff() && !$assignment->after_release($time)) {
-                    continue;
-                }
+	    if($user !== null) {
+		    $categories = $this->section->assignments->categories;
+		    foreach($categories as $category) {
+			    foreach($category->assignments as $assignment) {
+				    if(!$user->staff && !$assignment->after_release($time)) {
+					    continue;
+				    }
 
-                $course = $this->section->course;
-                $root = $course->root;
+				    $course = $this->section->course;
 
-                $due = $assignment->get_due($user);
-                $url = $assignment->url;
-                if($due != null) {
-                    $name = $assignment->shortName;
-                    $events[] = array('name' => $name, 'date' => $due,
-                        'url' => $url, 'displayTime' => false);
-                }
-            }
-        }
+				    $due = $assignment->get_due($user);
+				    $url = $assignment->url;
+				    if($due != null) {
+					    $name = $assignment->shortName;
+					    $events[] = array('name' => $name, 'date' => $due,
+						    'url' => $url, 'displayTime' => false);
+				    }
+			    }
+		    }
+	    }
 
         return $events;
     }

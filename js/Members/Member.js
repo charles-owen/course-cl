@@ -53,6 +53,7 @@ Member.prototype.getAssignment = function(store, assigntag) {
     return section.getAssignment(assigntag);
 }
 
+
 // The possible member roles
 // Must match values in Member.php
 Member.GUEST = 'G';     ///< Guest user visiting the site

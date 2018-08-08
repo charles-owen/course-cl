@@ -1,0 +1,28 @@
+div.cl-error-help {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: black;
+
+  input {
+    display: inline-block;
+    vertical-align: top;
+  }
+
+  input[type="text"] {
+    font-size: 14px;
+    width: 6em;
+    height: 22px;
+    margin: 0 5px 0 0;
+  }
+
+  input[type="submit"] {
+    font-size: 11px;
+    height: 22px;
+    margin: 0;
+    padding: 0 5px;
+
+  }
+}
+
+div.cl-error-help-page {
+  padding: 0 5px 0.1em 5px;
+}

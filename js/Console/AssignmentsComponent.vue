@@ -50,7 +50,6 @@
 </script>
 
 <style lang="scss" scoped>
-
   span.links {
 
     font-size: 0.85em;

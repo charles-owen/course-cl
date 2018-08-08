@@ -49,6 +49,7 @@
 
 <style lang="scss" scoped>
   select {
+   font-size: 0.95em;
     background: white;
     color: black;
   }

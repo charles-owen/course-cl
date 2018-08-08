@@ -16,6 +16,7 @@ use CL\Course\System\SectionSelectorView;
 use CL\Site\Router;
 use CL\Course\Submission\SubmissionDownloadView;
 use CL\Course\Submission\SubmissionImageView;
+use CL\Course\ErrorHelp\ErrorHelpRouter;
 
 /**
  * Plugin class for the Course Subsystem
@@ -62,6 +63,21 @@ class CoursePlugin extends Course {
 				return $view->whole();
 			});
 
+			$router->addRoute(['errorhelp'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new ErrorHelpRouter($site, $server, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['errorhelp', ':assign'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new ErrorHelpRouter($site, $server, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['errorhelp', ':assign', ':tag'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new ErrorHelpRouter($site, $server, $properties);
+				return $view->whole();
+			});
+
 			$router->addRoute(['api', 'course', '*'], function (Site $site, Server $server, array $params, array $properties, $time) {
 				$resource = new ApiCourse();
 				return $resource->apiDispatch($site, $server, $params, $properties, $time);
@@ -99,6 +115,23 @@ class CoursePlugin extends Course {
 
 			$json = json_encode($data);
 			$consoleView->addJSON('cl-course', $json);
+
+			//
+			// Get course staff
+			//
+			$members = new Members($this->site->db);
+			$staff = $members->query([
+				'semester'=>$user->member->semester,
+				'section'=>$user->member->sectionId,
+				'atLeast'=>Member::STAFF
+			]);
+
+			$staffData = [];
+			foreach($staff as $member) {
+				$staffData[] = $member->data();
+			}
+
+			$consoleView->addJSON('cl-course-staff', json_encode($staffData));
 		}
 	}
 

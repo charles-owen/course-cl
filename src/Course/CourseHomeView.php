@@ -276,12 +276,13 @@ HTML;
 				}
 			}
 
-			if($solving !== null && ($grader || $assignment->available_due($this->user, $this->time) )) {
+			$delay = $this->section->assignments->problemSolvingDelay;
+			if($solving !== null && ($grader || $assignment->after_due($this->user, $this->time, $delay) )) {
 				// We have a problem solving page
 				$html .= "<ul><li class=\"bullet\"><a href=\"$solving\">Problem Solving</a>";
 
 				if($staff) {
-					if($assignment->available_due($this->user, $this->time)) {
+					if($assignment->after_due($this->user, $this->time, $delay)) {
 						$html .= ' <span class="staff-note red">**active**</span>';
 					} else {
 						$html .= ' <span class="staff-note blu">**inactive**</span>';

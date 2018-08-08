@@ -15,6 +15,10 @@ use \Closure;
  *
  * This is for basic assignments and can be overridden for
  * more complex assignments.
+ *
+ * @cond
+ * @property Section section
+ * @endcond
  */
 class Assignment {
 	/** Constructor
@@ -36,7 +40,9 @@ class Assignment {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * section | Section | Course Section object
 	 * tag | string | Assignment tag
+	 *
 	 *
 	 * @param string $property Property to get
 	 * @return Course|mixed|null|string Property value
@@ -44,6 +50,9 @@ class Assignment {
 	public function __get($property)
 	{
 		switch ($property) {
+			case 'section':
+				return $this->section;
+
 			case 'tag':
 				return $this->tag;
 
@@ -58,9 +67,6 @@ class Assignment {
 
 			case 'dir':
 				return $this->get_dir();
-
-			case 'section':
-				return $this->section;
 
 			case 'grading':
 				return $this->grading;
@@ -216,18 +222,27 @@ class Assignment {
 		return false;
 	}
 
-	/** Is the time after the due date?
+	/**
+	 * Is the time after the due date?
 	 *
 	 * If no due date is specified, this will return
 	 * false since we can't be after a due date not set.
-	 * @param $user User we are looking at
-	 * @param $time PHP time, default is current time
+	 *
+	 * Guests always return false
+	 *
+	 * @param User $user The user we are looking at
+	 * @param int $time PHP time, default is current time
+	 * @param int $delay Delay after due time/date
 	 * @returns true if after a specified due date
 	 */
-	public function after_due(User $user, $time = null)
-	{
+	public function after_due(User $user, $time = null, $delay = 0) {
 		if ($time === null) {
 			$time = time();
+		}
+
+		// Guests are never after the due date
+		if($user->guest) {
+			return false;
 		}
 
 		$due = $this->get_due($user);
@@ -236,7 +251,7 @@ class Assignment {
 			return true;
 		}
 
-		return $time > $due;
+		return $time > ($due + $delay);
 	}
 
 	/** The assignment release date
@@ -323,13 +338,14 @@ class Assignment {
 		return $time >= $this->release;
 	}
 
-	/** Is this assignment past the due date?
+	/**
+	 * Is this assignment past the due date?
 	 *
 	 * This will return true if the time is after the due date
 	 * and the user is not a guest. Always available to staff.
 	 *
-	 * @param $user User
-	 * @param $time Time
+	 * @param User $user User we need a due date for
+	 * @param int $time Current time
 	 * @returns true if available to user
 	 */
 	public function available_due(User $user, $time)
@@ -650,9 +666,10 @@ class Assignment {
 
 	/**
 	 * Create data suitable for JSON to send to runtime
+	 * @param array $options Options that control what data is included
 	 * @return array
 	 */
-	public function data()
+	public function data($options=[])
 	{
 		$this->load();
 
@@ -689,18 +706,18 @@ class Assignment {
 	// false means not released at all
 	private $release = null;
 
-	private $due = NULL;        // When the assignment is due
-	private $revised = FALSE;    // Is the due date revised?
+	private $due = NULL;            // When the assignment is due
+	private $revised = FALSE;       // Is the due date revised?
 
-	private $category = null;    // Assignment category for this assignment
-	private $section = null;    // Section we are a member of
-	private $extensions = [];   // Extensions to this object
+	private $category = null;       // Assignment category for this assignment
+	private $section = null;        // Section we are a member of
+	private $extensions = [];       // Extensions to this object
 
-	private $grading = null;    // The Grading object for this assignment
-	private $loaded = false;    // Is the assignment loaded?
-	private $reviewing = null;    // Optional PeerReview object for this assignment
+	private $grading = null;        // The Grading object for this assignment
+	private $loaded = false;        // Is the assignment loaded?
+	private $reviewing = null;      // Optional PeerReview object for this assignment
 
-	protected $solving = NULL;        ///< Optional problem solving document
+	protected $solving = NULL;      ///< Optional problem solving document
 	protected $interact = false;    ///< Do we use the Interact system?
 
 	private $properties = [];       // Custom properties

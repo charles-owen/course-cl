@@ -79,6 +79,28 @@ SQL;
 			$where->append('member.section=?', $params['section']);
 		}
 
+		if(isset($params['atLeast'])) {
+			$roles = Member::getRoles_();
+			if(!isset($roles[$params['atLeast']])) {
+				return [];
+			}
+
+			$atLeastPriority = $roles[$params['atLeast']]['priority'];
+			$list = '';
+			foreach($roles as $code => $role) {
+				if($role['priority'] >= $atLeastPriority) {
+					if($list !== '') {
+						$list .= ',';
+					}
+
+					$list .= '?';
+					$where->appendExec($code);
+				}
+			}
+
+			$where->append("member.role in ($list)");
+		}
+
 		if(!empty($params['after'])) {
 			$where->nest();
 			$where->append('name > ?', $params['after']['name'], \PDO::PARAM_STR);
@@ -148,7 +170,7 @@ SQL;
 			$where->append(null, intval($params['offset']), \PDO::PARAM_INT);
 		}
 
-		//echo $where->sub_sql($sql);
+		// echo $where->sub_sql($sql);
 		$result = $where->execute($sql);
 		$users = [];
 		foreach($result->fetchAll(\PDO::FETCH_ASSOC) as $row) {

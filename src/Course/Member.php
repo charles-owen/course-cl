@@ -12,6 +12,10 @@ use \CL\Site\Site;
 
 /**
  * Member of a course
+ *
+ * @cond
+ * @property int id
+ * @endcond
  */
 class Member extends \CL\Users\Membership implements MetaDataOwner {
 	// User role codes in order of access permissions
@@ -218,6 +222,15 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	 * 'name' and 'priority'
 	 */
 	public function getRoles() {
+		return self::getRoles_();
+	}
+
+	/**
+	 * Static version of getRoles()
+	 * @return array With keys for the different roles, each with an array value with keys
+	 * 'name' and 'priority'
+	 */
+	public static function getRoles_() {
 		return array(self::GUEST => array('name' => "Guest", 'priority' => 1),
 			self::DROPPED => array('name' => "Dropped", 'priority' => 2),
 			self::USER => ['name' => 'User', 'priority' => 3],

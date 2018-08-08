@@ -217,13 +217,13 @@ class Course extends \CL\Site\Plugin {
 		$site->install("course", $this);
 	}
 
-	protected $site = null;     ///< The Site object for this course
-	private $account;	        ///< Account associated with the course (like "cse335")
-	private $name;	            ///< Course name (like "CSE 335")
-	private $desc;		        ///< Course description (like "Object-oriented Programming")
+	protected $site = null;         ///< The Site object for this course
+	private $account;	            // Account associated with the course (like "cse335")
+	private $name;	                // Course name (like "CSE 335")
+	private $desc;		            // Course description (like "Object-oriented Programming")
 
-	private $sections = [];	    ///< All sections for this course
+	private $sections = [];	        // All sections for this course
 	private $section0 = null;		// First section added
 
-	private $gradedispute = null;	    ///< Grade dispute link content
+	private $gradedispute = null;	// Grade dispute link content
 }

@@ -1,8 +1,5 @@
 <template>
-  <div class="cl-section-component">
-    <div class="content">
-      <div class="full center">{{course.name}} {{course.desc}} <section-select></section-select> <span class="extra"></span></div>
-    </div>
+  <div class="cl-section-component"><span v-if="!short">{{course.name}} {{course.desc}}</span><section-select></section-select><span class="extra"></span>
   </div>
 </template>
 
@@ -10,6 +7,7 @@
   import SectionSelect from '../SectionSelectors/SectionSelect.vue';
 
   export default {
+      props: ['short'],
       data: function() {
           return {
               course: this.$store.state.course.course
@@ -19,16 +17,23 @@
           'section-select': SectionSelect
       }
   }
-
 </script>
 
 <style lang="scss" scoped>
-@import '../../../site/sass/modules/_colors';
 
 div.cl-section-component {
-  background: $primary;
+  >span:first-child {
+    padding: 0 14px 0 0;
+  }
+
+  >span:last-child {
+    padding: 0 0 0 14px;
+  }
+
+  vertical-align: top;
+  font-size: 0.95em;
   color: white;
   margin: 0;
-  padding: 0.25em 0;
+  padding: 1px 0 0 0;
 }
 </style>

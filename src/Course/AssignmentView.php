@@ -6,7 +6,6 @@
  
 namespace CL\Course;
 
-use CL\Users\User;
 use CL\Site\Site;
 use CL\Site\System\Server;
 

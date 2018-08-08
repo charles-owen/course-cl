@@ -3,10 +3,8 @@
     <div class="full">
 
       <div v-if="fetcher.fetched">
-        <p v-if="management" class="center">
-          <router-link :to="toNew" tag="button">Add Member</router-link>
-        </p>
-        <table v-if="users.length > 0">
+        <div v-if="users.length > 0">
+        <table >
           <tr>
             <th scope="col"></th>
             <th scope="col">User</th>
@@ -33,7 +31,9 @@
             <td>{{user.roleName()}}</td>
           </tr>
         </table>
-        <p v-if="users.length == 0" class="centerbox comp center">
+          <p class="center small"><em>{{stats}}</em></p>
+        </div>
+        <p v-else class="centerbox comp center">
           There are currently no members enrolled in this section.</p>
         <bulk-upload v-if="management"></bulk-upload>
 
@@ -59,13 +59,13 @@
         ],
         data: function() {
             return {
-                toNew: Site.root + '/cl/console/management/course/member/new',
                 pencil: Site.root + '/vendor/cl/site/img/pencil16.png',
                 deleter: Site.root + '/vendor/cl/site/img/x.png',
                 info: Site.root + '/vendor/cl/site/img/info16.png',
                 toUser: function(user) {
                       return Site.root + '/cl/console/management/course/member/' + user.member.id;
-                }
+                },
+                stats: ''
             }
         },
         methods: {
@@ -95,14 +95,39 @@
         computed: mapState({
             users: state => state.members.users,
             fetcher: state => state.members.fetcher
-
         }),
+        watch: {
+            users: function(to, fm) {
+                let roleCnt  = [];
+                for(let user of this.users) {
+                    let role = user.role();
+                    if(roleCnt[role] === undefined) {
+                        roleCnt[role] = 1;
+                    } else {
+                        roleCnt[role]++;
+                    }
+                }
+
+                this.stats = this.users.length + ' members';
+
+                const user = this.$store.state.user.user;
+                const roles = user.getRoles();
+                for(let role in roleCnt) {
+                    this.stats += ' / ' + roleCnt[role] + ' ' + roles[role].name;
+                }
+            }
+        },
         components: {
             'bulk-upload': BulkUploadComponent,
             'fetcher': FetcherVue
         },
         mounted() {
-            this.$parent.setTitle(': Members');
+            // Add the 'Add Member' option to the the nav2 navigation bar
+            if(this.management) {
+                this.addComponent = Console.components.addNav2Link(this, 'Add Member', 5, () => {
+                    this.$router.push(Site.root + '/cl/console/management/course/member/new');
+                });
+            }
 
             const member = this.$store.state.user.user.member;
             let query = {
@@ -111,12 +136,17 @@
             };
             this.$store.commit('members/query', query);
 
+            this.$parent.setTitle(`: ${member.semester}/${member.section} Members`);
+
             // We reset the users state since we may add users
             if(this.management) {
                 this.$store.commit('users/reset');
             }
 
             this.$store.dispatch('members/fetch');
+        },
+        beforeDestroy() {
+            Console.components.removeNav2(this, this.addComponent);
         }
     }
 </script>

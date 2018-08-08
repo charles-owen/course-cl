@@ -63,7 +63,28 @@ class View extends \CL\Users\View {
 		}
 	}
 
+	public function addStaff() {
+		//
+		// Get course staff
+		//
+		$members = new Members($this->site->db);
+		$staff = $members->query([
+			'semester'=>$this->section->semester,
+			'section'=>$this->section->id,
+			'atLeast'=>Member::STAFF
+		]);
+
+		$staffData = [];
+		foreach($staff as $member) {
+			$staffData[] = $member->data();
+		}
+
+		$this->addJSON('cl-course-staff', json_encode($staffData));
+	}
+
 	protected $member;  ///< Member object for current user
 	protected $course;  ///< Course object
+
+	/* @var Section $section */
 	protected $section; ///< Section object for current user
 }

@@ -1,7 +1,7 @@
 <template>
   <div class="cl-member-editor content">
     <div class="full">
-      <prev-next :link="prevnextLink" :user="user"></prev-next>
+      <prev-next :user="user"></prev-next>
 
       <fetcher :fetcher="fetcher"></fetcher>
       <div>
@@ -35,7 +35,7 @@
             </p>
           </fieldset>
         </form>
-        <p v-if="id!=='new'" class="centerbox primary">User fields are not editable in this
+        <p v-if="user !== null && id!=='new'" class="centerbox primary">User fields are not editable in this
           form. To go the <router-link :to="userEditorLink + user.id">user editor page for {{name}}</router-link> to edit those fields.</p>
       </div>
     </div>
@@ -53,7 +53,6 @@
         data: function() {
             return {
                 cancel: Site.root + '/cl/console/management/course/members',
-                prevnextLink: Site.root + '/cl/console/management/course/member/',
                 legend: this.id === 'new' ? 'New Member' : 'Edit Member',
                 userEditorLink: Site.root + '/cl/console/management/user/',
                 roles: this.visibleRoles,

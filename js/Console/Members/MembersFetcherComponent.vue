@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="full">
-      <label ref="students-only" ><input type="checkbox" v-model="students" @change="studentsOnlyChanged"> Students Only</label>
+      <label style="display:none" ref="students-only" ><input type="checkbox" v-model="students" @change="studentsOnlyChanged"> Students Only</label>
       <fetcher :fetcher="fetcher" :fetching="fetching">
         <slot :users="users"></slot>
         <p v-if="users.length == 0" class="centerbox comp center">
@@ -41,6 +41,20 @@
             studentsOnlyChanged() {
                 const localStorage = window.localStorage;
                 localStorage.setItem(LOCAL_STORAGE_STUDENTS_ONLY, this.students ? 'yes' : 'no');
+            },
+            addStudentsOnly() {
+                const localStorage = window.localStorage;
+                let s = localStorage.getItem(LOCAL_STORAGE_STUDENTS_ONLY);
+                this.students = s === 'yes';
+
+                let element = this.$refs['students-only'];
+                element.parentNode.removeChild(element);
+
+                let extra = document.querySelector('div.cl-section-component span.extra');
+                extra.appendChild(element);
+                element.style.display = 'inline-block';
+
+                this.studentsElement = element;
             }
         },
         computed: mapState({
@@ -68,19 +82,16 @@
             this.$store.commit('members/query', query);
             this.$store.dispatch('members/fetch');
 
-            const localStorage = window.localStorage;
-            let s = localStorage.getItem(LOCAL_STORAGE_STUDENTS_ONLY);
-            this.students = s === 'yes';
-            let el = this.$refs['students-only'];
-            let extra = document.querySelector('div.cl-section-component span.extra');
+            setTimeout(() => {
+                this.addStudentsOnly();
+            }, 100);
 
-            el.parentNode.removeChild(el);
-            extra.appendChild(el);
-
-            this.studentsElement = el;
         },
-        destroyed() {
+        beforeDestroy() {
             this.studentsElement.parentNode.removeChild(this.studentsElement);
+            let extras = document.querySelectorAll('div.cl-section-component span.extra');
+            console.log(extras.length);
         }
+
     }
 </script>

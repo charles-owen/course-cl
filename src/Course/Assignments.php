@@ -11,6 +11,10 @@ use CL\Course\AssignmentCategory;
  * Provides support for managing course assignments
  * 
  * One object of this type is owned by each section.
+ *
+ * @cond
+ * @property int problemSolvingDelay
+ * @endcond
  */
 class Assignments {
 	/**
@@ -31,6 +35,16 @@ class Assignments {
 
 	/**
 	 * Property get magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * categories | array | AssignmentCategory collection
+	 * course | Course | Course object
+	 * problemSolvingDelay | int | Delay for release of problem solving pages
+	 * section | Section | Section object for this assignment
+	 * site | Site | Site object
+	 *
 	 * @param string $key Property name
 	 * @return mixed
 	 */
@@ -47,6 +61,9 @@ class Assignments {
 
 			case 'site':
 				return $this->course !== null ? $this->course->site : null;
+
+			case 'problemSolvingDelay':
+				return $this->problemSolvingDelay;
 
 			default:
 				$trace = debug_backtrace();
@@ -69,6 +86,10 @@ class Assignments {
 			case 'section':
 				$this->section = $value;
 				$this->course = $this->section->course;
+				break;
+
+			case 'problemSolvingDelay':
+				$this->problemSolvingDelay = $value;
 				break;
 
 			default:
@@ -225,4 +246,5 @@ class Assignments {
 	private $course = null;		    ///< Course object
     private $section = null;        ///< Section we are associated with
 	private $categories = array();	///< The assignment categories
+	private $problemSolvingDelay = 86400;   // Delay after due before problem solving released/24 hours
 }

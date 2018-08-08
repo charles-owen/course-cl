@@ -59,50 +59,6 @@ p.reading {
     text-align: left;
     display: inline-block; }
 
-div.grade-box {
-  border: 1px solid #c0c0c0; }
-
-div.grading {
-  padding: 0 0.5em; }
-  div.grading p.grade {
-    text-align: center;
-    font-size: 1em;
-    border-top: 1px solid #000000;
-    padding-top: 1em; }
-  div.grading .late {
-    color: red;
-    font-style: italic; }
-  div.grading a.validator {
-    font-size: 0.8em;
-    font-style: italic;
-    padding-left: 1em; }
-  div.grading div.rubric {
-    font-size: 0.85em; }
-    div.grading div.rubric .item, div.grading div.rubric .items li {
-      color: #8a8a8a;
-      text-decoration: underline;
-      cursor: pointer; }
-  div.grading table.grading {
-    table-layout: fixed;
-    width: 90%; }
-    div.grading table.grading th {
-      font-size: 0.85em; }
-    div.grading table.grading td {
-      text-align: center; }
-    div.grading table.grading td:first-child {
-      text-align: left; }
-    div.grading table.grading th.points {
-      width: 5.5em; }
-    div.grading table.grading input.points {
-      width: 3.5em; }
-  div.grading table.quiz-grading th {
-    font-size: 0.85em;
-    text-align: center; }
-  div.grading table.quiz-grading td {
-    text-align: center; }
-  div.grading table.narrow {
-    width: auto; }
-
 #cl-section-selector div.cl-selector p {
   text-align: center; }
   #cl-section-selector div.cl-selector p button {
@@ -137,5 +93,25 @@ div.cl-submission figure.cl-preview {
 div.cl-submission pre.cl-preview {
   border: thin solid black;
   min-height: 5em; }
+
+div.cl-error-help {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: black; }
+  div.cl-error-help input {
+    display: inline-block;
+    vertical-align: top; }
+  div.cl-error-help input[type="text"] {
+    font-size: 14px;
+    width: 6em;
+    height: 22px;
+    margin: 0 5px 0 0; }
+  div.cl-error-help input[type="submit"] {
+    font-size: 11px;
+    height: 22px;
+    margin: 0;
+    padding: 0 5px; }
+
+div.cl-error-help-page {
+  padding: 0 5px 0.1em 5px; }
 
 /*# sourceMappingURL=course.css.map */
