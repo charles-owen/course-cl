@@ -15,6 +15,10 @@ use CL\Site\Site;
  * Exactly one object of this type will be instantiated for
  * a given web site and will include information about this
  * particular course offering.
+ *
+ * @cond
+ * @property Site site
+ * @endcond
  */
 class Course extends \CL\Site\Plugin {
 	/**

@@ -3,6 +3,7 @@ import {Assignment} from './Assignment';
 export let AssignmentCategory = function(data) {
     this.tag = data.tag;
     this.name = data.name;
+    this.grading = data.grading !== undefined ? data.grading : null;
 
     this.assignments = [];
     this.assignmentsByTag = [];

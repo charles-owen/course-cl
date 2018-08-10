@@ -90,7 +90,6 @@
         beforeDestroy() {
             this.studentsElement.parentNode.removeChild(this.studentsElement);
             let extras = document.querySelectorAll('div.cl-section-component span.extra');
-            console.log(extras.length);
         }
 
     }

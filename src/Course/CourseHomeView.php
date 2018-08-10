@@ -314,7 +314,7 @@ HTML;
 <ul>
 <li><a href="$this->aboutme">About Me and Preferences...</a></li>
 <li><a href="cl/calendar">Personal Calendar</a></li>
-<li><a href="lib/grading/grades.php">Grades</a></li>
+<li><a href="cl/grades">Grades</a></li>
 HTML;
 
 //			// Are there any peer reviews in the assignments?

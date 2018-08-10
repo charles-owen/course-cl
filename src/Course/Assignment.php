@@ -40,9 +40,20 @@ class Assignment {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
-	 * section | Section | Course Section object
+	 * category | AssignmentCategory | The assignment category for this assignment
+	 * course | Course | The Course object
+	 * dir | string | Directory (path) containing the assignment
+	 * grading | AssignmentGrading | Optional grading object if grading subsystem present
+	 * name | string | Assignment name (full)
+	 * release | int | Time/date for assignment release
+	 * revised | boolean | true if the due date has been revised.
+	 * section | Section | Course Section object/section this assignment is for
+	 * shortName | string | Assignment short name (like "Step 1")
+	 * site | Site | The Site object
+	 * solving | string | Path to problem solving document
+	 * submissions | AssignmentSubmissions | The submissions object for this assignment
 	 * tag | string | Assignment tag
-	 *
+	 * url | string | URL for this assignment on the site
 	 *
 	 * @param string $property Property to get
 	 * @return Course|mixed|null|string Property value
@@ -50,15 +61,6 @@ class Assignment {
 	public function __get($property)
 	{
 		switch ($property) {
-			case 'section':
-				return $this->section;
-
-			case 'tag':
-				return $this->tag;
-
-			//
-			// Documentation pending
-			//
 			case 'category':
 				return $this->category;
 
@@ -71,6 +73,9 @@ class Assignment {
 			case 'grading':
 				return $this->grading;
 
+			case 'section':
+				return $this->section;
+
 			case 'name':
 				return $this->name;
 
@@ -79,6 +84,9 @@ class Assignment {
 
 			case 'site':
 				return $this->section->course->site;
+
+			case 'tag':
+				return $this->tag;
 
 			case 'url':
 				return $this->section->course->root . '/' . $this->url;

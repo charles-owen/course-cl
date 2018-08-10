@@ -181,11 +181,17 @@ class AssignmentCategory {
 			$assignments[] = $assignment->data();
 		}
 
-		return [
+		$data = [
 			'tag'=>$this->tag,
 			'name'=>$this->name,
 			'assignments'=>$assignments
 		];
+
+		if($this->grading !== null) {
+			$data['grading'] = $this->grading->data();
+		}
+
+		return $data;
 	}
 
 	private $course = null;		    ///< Course object

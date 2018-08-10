@@ -63,6 +63,9 @@ class View extends \CL\Users\View {
 		}
 	}
 
+	/**
+	 * Add the cl-course-staff div to the page containing staff information
+	 */
 	public function addStaff() {
 		//
 		// Get course staff

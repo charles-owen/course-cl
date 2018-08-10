@@ -10,7 +10,7 @@ import SectionComponent from './SectionComponent.vue';
 import AssignmentsComponent from './AssignmentsComponent.vue';
 import ExtensionsComponent from './ExtensionsComponent.vue';
 import SubmissionsComponent from './SubmissionsComponent.vue';
-import SubmissionComponent from './SubmissionComponent.vue';
+import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
 
 export let CourseConsole = function(site, Console) {
     //
@@ -78,7 +78,7 @@ export let CourseConsole = function(site, Console) {
     Console.components.addRoutes([
         {route: '/course/extensions/:assigntag', component: ExtensionsComponent, props: true},
         {route: '/course/submissions/:assigntag', component: SubmissionsComponent, props: true},
-        {route: '/course/submissions/:assigntag/:memberid', name: 'submissions', component: SubmissionComponent, props: true}
+        {route: '/course/submissions/:assigntag/:memberid', name: 'submissions', component: SubmissionsAssignmentMember, props: true}
     ]);
 
 

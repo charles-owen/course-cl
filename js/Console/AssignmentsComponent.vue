@@ -34,7 +34,6 @@
         created() {
             this.$parent.setTitle(': Assignments');
 
-
             let user = this.$store.state.user.user;
             let member = user.member;
 

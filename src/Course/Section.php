@@ -14,6 +14,14 @@ namespace CL\Course;
  *
  * @cond
  * @property Assignments assignments
+ * @property Calendar calendar
+ * @property Course course
+ * @property string id
+ * @property string name
+ * @property string season
+ * @property string semester
+ * @property int type
+ * @property string year
  * @endcond
  */
 class Section {
@@ -34,20 +42,29 @@ class Section {
 		$this->type = $type;
         $this->calendar = new Calendar($this);
 
-		$this->scale[] = array(89.5, "4.0");
-		$this->scale[] = array(84.5, "3.5");
-		$this->scale[] = array(79.5, "3.0");
-		$this->scale[] = array(74.5, "2.5");
-		$this->scale[] = array(69.5, "2.0");
-		$this->scale[] = array(64.5, "1.5");
-		$this->scale[] = array(59.5, "1.0");
-		$this->scale[] = array(0, "0.0");
+        $course->site->amend($this);
 	}
 
     /**
      * Property get magic method
-     * @param $property Property name
-     * @return null|string
+     *
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * assignments | Assignments | The section Assignments object
+     * calendar | Calendar | The calendar for this section
+     * course | Course | The Course object
+     * id | string | Section id (like '001')
+     * grading | SectionGrading | Optional grading support
+     * name | string | Semester and section (like 'FS18/001')
+     * season | string | 'FS', 'US', or 'SS'
+     * semester | string | Semester id (like 'FS18')
+     * summer | bool | True if section is a summer section
+     * type | int | Type code. See class constants
+     * year | string | Section year (like '2018')
+     *
+     * @param string $property Property name
+     * @return mixed Property value
      */
     public function __get($property) {
         switch($property) {
@@ -96,6 +113,9 @@ class Section {
 		        $this->ensureLoaded();
 		        return $this->assignments;
 
+	        case 'grading':
+	        	return $this->grading;
+
 	        default:
                 $trace = debug_backtrace();
                 trigger_error(
@@ -110,6 +130,14 @@ class Section {
 
     /**
      * Property set magic method
+     *
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * assignments | Assignments | The section Assignments object
+     * course | Course | The Course object
+     * grading | SectionGrading | Optional grading support
+     *
      * @param string $property Property name
      * @param mixed $value Value to set
      */
@@ -122,6 +150,11 @@ class Section {
 
 		    case 'course':
 		    	$this->course = $value;
+		    	break;
+
+		    case 'grading':
+		    	$this->grading = $value;
+		    	$this->grading->section = $this;
 		    	break;
 
 		    default:
@@ -199,23 +232,6 @@ class Section {
 	}
 
 
-
-	/**
-	 * Convert a percentage to a grade based on the
-	 * set section grading scale. 
-	 * @param $score Score (0 to 100)
-	 */
-	public function to_grade($score) {
-		foreach($this->scale as $scale) {
-			if($score >= $scale[0]) {
-				return $scale[1];
-			}
-		}
-		
-		$last = end($this->scale);
-		return $last[1];
-	}
-
 	/**
 	 * Data to describe this section for sending to clients.
 	 * @return array Containing section data.
@@ -256,11 +272,10 @@ class Section {
 	private $textbooks = null;		// Any course textbooks		
 	private $assignments = null;	// Course assignments
     private $calendar;              // Course calendar object
+	private $grading = null;        // Section grading extension
 	
 	private $course;			// Course this is a member of
 	private $id;				// Section code, like "001
     private $semester;          ///< Semester code, like "FS18"
 	private $type = Section::Normal;
-	
-	private $scale = array();	// Grading scale, pairs like (90, 4.0)
 }
