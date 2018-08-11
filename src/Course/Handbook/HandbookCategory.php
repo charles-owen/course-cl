@@ -83,6 +83,20 @@ class HandbookCategory {
 		}
 	}
 
+	public function data($rubrics) {
+		$data = [
+			'tag'=>$this->tag,
+			'name'=>$this->name,
+			'deduct'=>$this->deduct,
+		];
+
+		if($rubrics && $this->rubric !== null) {
+			$data['rubric'] = $this->rubric;
+		}
+
+		return $data;
+	}
+
 	private $tag;	    // Short string associated with category
 	private $name;	    // Category name
 	private $deduct;	// Maximum deduction

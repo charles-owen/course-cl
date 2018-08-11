@@ -31,7 +31,6 @@
                 type: 'text/plain',
                 text: text
             }
-            console.log(params);
 
             Site.api.post(`/api/course/submission/submit/${this.options.assignTag}/${this.options.tag}`, params)
                 .then((response) => {

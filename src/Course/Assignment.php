@@ -17,6 +17,7 @@ use \Closure;
  * more complex assignments.
  *
  * @cond
+ * @property \CL\Grades\AssignmentGrading grading
  * @property Section section
  * @endcond
  */

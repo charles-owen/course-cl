@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="left">
+    <div>
       <template v-if="submissions.length === 0">
         <p class="large center">No submissions, yet.</p>
       </template>

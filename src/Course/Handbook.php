@@ -41,7 +41,6 @@ class Handbook {
 			$function = require($file1);
 			$function($handbook);
 		} else {
-			echo 'loading general';
 			$file2 = "$dir/handbook.inc.php";
 			if(file_exists($file2)) {
 				$function = require($file2);
@@ -53,10 +52,11 @@ class Handbook {
 	}
 	
 	/** Add a handbook deduction category
-	 * @param $tag A short string associated with the category
-	 * @param $name The category name
-	 * @param $deduct Maximum possible deduction
-	 * @returns HandbookCategory object */
+	 * @param string $tag A short string associated with the category
+	 * @param string $name The category name
+	 * @param int $deduct Maximum possible deduction
+	 * @returns HandbookCategory object
+	 */
 	public function add_category($tag, $name, $deduct) {
 		$category = new HandbookCategory($tag, $name, $deduct);
 		$this->categories[] = $category;
@@ -69,12 +69,18 @@ class Handbook {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * categories | array | Array of HandbookCategory objects
+	 * free | int | Free points
+	 * title | string | Title for the handbook
 	 *
 	 * @param string $property Property name
 	 * @return mixed
 	 */
 	public function __get($property) {
 		switch($property) {
+			case 'categories':
+				return $this->categories;
+
 			case "title":
 				return $this->title;
 
@@ -98,6 +104,8 @@ class Handbook {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * free | int | Free points
+	 * title | string | Title for the handbook
 	 *
 	 * @param string $property Property name
 	 * @param mixed $value Value to set
@@ -122,11 +130,20 @@ class Handbook {
 				break;
 		}
 	}
+
+	public function data($rubrics) {
+		$categories = [];
+		foreach($this->categories as $category) {
+			$categories[] = $category->data($rubrics);
+		}
+
+		return [
+			'free'=>$this->free,
+			'categories'=>$categories
+		];
+	}
 	
-	/** The handbook categories array */
-	public function categories() { return $this->categories;}
-	
-	private $categories = array();	// The handbook categories
+	private $categories = [];	    // The handbook categories
 	private $title = "Course Handbook";
 	private $free = 1;				// Free points
 }

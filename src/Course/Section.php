@@ -25,10 +25,10 @@ namespace CL\Course;
  * @endcond
  */
 class Section {
-	const Normal = 0;	//!< Section meets as normal class
-	const Online = 1;	//!< Online section
-	const Hybrid = 2;	//!< Hybrid section
-	const Flipped = 3;	//!< Flipped section
+	const Normal = 0;	///< Section meets as normal class
+	const Online = 1;	///< Online section
+	const Hybrid = 2;	///< Hybrid section
+	const Flipped = 3;	///< Flipped section
 	
 	/** Constructor 
 	 * @param Course $course Course this section is a member of
@@ -115,6 +115,13 @@ class Section {
 
 	        case 'grading':
 	        	return $this->grading;
+
+	        case 'handbook':
+	        	if($this->handbook === null) {
+	        		$this->handbook = Handbook::get($this);
+		        }
+
+		        return $this->handbook;
 
 	        default:
                 $trace = debug_backtrace();
@@ -273,6 +280,7 @@ class Section {
 	private $assignments = null;	// Course assignments
     private $calendar;              // Course calendar object
 	private $grading = null;        // Section grading extension
+	private $handbook = null;       // Optional course handbook
 	
 	private $course;			// Course this is a member of
 	private $id;				// Section code, like "001

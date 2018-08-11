@@ -26,19 +26,22 @@
         },
         methods: {
             fetch(user) {
-                console.log('getting submissions');
+                let section = user.member.getSection(this.$store);
+                this.assignment = user.member.getAssignment(this.$store, this.assigntag);
+                if(this.assignment.submissions === undefined) {
+                    // This assignment has no submissions
+                    this.submissions = [];
+                    return;
+                }
+
                 Site.api.get('/api/course/submission/submissions/' +
                     this.assigntag + '/' + user.member.id, {})
                     .then((response) => {
                         if (!response.hasError()) {
-                            console.log('got submissions');
                             let submissions = {};
                             for(let submission of response.getDataAll('submissions')) {
                                 submissions[submission.id] = submission.attributes;
                             }
-
-                            let section = user.member.getSection(this.$store);
-                            this.assignment = user.member.getAssignment(this.$store, this.assigntag);
 
                             this.submissions = [];
                             for(let submission of this.assignment.submissions) {
