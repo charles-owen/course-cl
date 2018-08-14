@@ -17,12 +17,7 @@ use CL\Course\AssignmentCategory;
  * @endcond
  */
 class Assignments {
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-	}
-	
+
 	
 	/** Load assignment set from a file
 	 * @param string $file File to load from */

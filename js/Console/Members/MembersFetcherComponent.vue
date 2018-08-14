@@ -30,7 +30,7 @@
         },
         data: function() {
             return {
-               students: false,
+                students: false,
                 studentsElement: null
             }
         },
@@ -38,10 +38,9 @@
             fetchMore() {
                 this.$store.dispatch('members/more');
             },
-            studentsOnlyChanged() {
-                const localStorage = window.localStorage;
-                localStorage.setItem(LOCAL_STORAGE_STUDENTS_ONLY, this.students ? 'yes' : 'no');
-            },
+            /**
+             * Add "Students Only" to the menu bar
+             */
             addStudentsOnly() {
                 const localStorage = window.localStorage;
                 let s = localStorage.getItem(LOCAL_STORAGE_STUDENTS_ONLY);
@@ -55,6 +54,10 @@
                 element.style.display = 'inline-block';
 
                 this.studentsElement = element;
+            },
+            studentsOnlyChanged() {
+                const localStorage = window.localStorage;
+                localStorage.setItem(LOCAL_STORAGE_STUDENTS_ONLY, this.students ? 'yes' : 'no');
             }
         },
         computed: mapState({

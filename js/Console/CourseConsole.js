@@ -11,6 +11,7 @@ import AssignmentsComponent from './AssignmentsComponent.vue';
 import ExtensionsComponent from './ExtensionsComponent.vue';
 import SubmissionsComponent from './SubmissionsComponent.vue';
 import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
+import CourseEmailVue from './CourseEmail.vue';
 
 export let CourseConsole = function(site, Console) {
     //
@@ -58,6 +59,18 @@ export let CourseConsole = function(site, Console) {
         route: '/course/assignments',
         routes: [
             {route: '/course/assignments', component: AssignmentsComponent}
+        ]
+    });
+
+    Console.components.addOption({
+        atLeast: Member.TA,
+        page: {title: 'Course', route: '/course', order: 3},
+        section: {title: 'Course', order: 5},
+        title: 'Email Members',
+        order: 3,
+        route: '/course/email',
+        routes: [
+            {route: '/course/email', component: CourseEmailVue}
         ]
     });
 

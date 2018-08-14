@@ -24,11 +24,13 @@ class CourseHomeView extends \CL\Course\View {
         parent::__construct($site, $options);
 
         $this->time = $time !== null ? $time : time();
-        $this->addCSS("vendor/cl/course/coursehome.css", 100);
+        $this->addCSS("vendor/cl/course/coursehome.css");
         $this->title = $this->course->desc;
 		$this->addBody('wider');
 
 		$this->calendar = $this->add_aux(new CalendarView(time()));
+
+		$site->amend($this);
 	}
 
 
@@ -59,20 +61,10 @@ class CourseHomeView extends \CL\Course\View {
     }
 
 
-
-//	/**
-//	 * Present the Interact! button on the home page
-//	 * @return string HTML for hte Interact button
-//	 */
-//	public function interact_button() {
-//		$libroot = $this->course->get_libroot();
-//		$html = <<<HTML
-//<p class="control"><a href="$libroot/interact" title="Interact! System">
-//<img src="$libroot/images/interact/linkbutton.png" width="100" height="25" alt="Interact! System"></a></p>
-//HTML;
-//		return $html;
-//	}
-
+	/**
+	 * Present the calendar
+	 * @return string HTML
+	 */
 	public function present_calendar() {
 		return $this->calendar->present();
 	}

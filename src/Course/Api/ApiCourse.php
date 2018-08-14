@@ -10,6 +10,8 @@ use CL\Site\Site;
 use CL\Site\System\Server;
 use CL\Site\Api\APIException;
 use CL\Course\System\CourseTables;
+use CL\Course\Member;
+use CL\Site\Api\JsonAPI;
 
 /**
  * API Resource for /api/course
@@ -52,11 +54,31 @@ class ApiCourse extends \CL\Users\Api\Resource {
 				array_shift($params2);
 				return $api->dispatch($site, $server, $params2, $properties, $time);
 
+			case 'email':
+				return $this->email($site, $server, $time);
+
 			case 'tables':
 				return $this->tables($site, $server, new CourseTables($site->db));
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+	}
+
+	private function email(Site $site, Server $server, $time) {
+		$user = $this->isUser($site, Member::TA);
+
+		$post = $server->post;
+		$this->ensure($post, ['to', 'subject', 'message']);
+
+		$email = $server->email;
+		$subject = $post['subject'];
+		$message = $post['message'];
+
+		foreach($post['to'] as $to) {
+			$email->send($site, $to['email'], $to['name'], $subject, $message);
+		}
+
+		return new JsonAPI();
 	}
 
 }

@@ -624,8 +624,7 @@ class Assignment {
 	 * @param string $name Name of non-existent function
 	 * @param array $arguments Arguments to the function call
 	 */
-	public function __call($name, $arguments)
-	{
+	public function __call($name, $arguments) {
 		if (isset($this->extensions[$name])) {
 			return $this->extensions[$name]($this, $arguments);
 		} else {
@@ -645,8 +644,7 @@ class Assignment {
 	 * @param string $name Name of the function
 	 * @param Closure $closure Closure to call.
 	 */
-	public function extend($name, $closure)
-	{
+	public function extend($name, $closure) {
 		$this->extensions[$name] = $closure;
 	}
 
