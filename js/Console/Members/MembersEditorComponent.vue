@@ -124,7 +124,7 @@
         mounted() {
             // Add the 'Add Member' option to the the nav2 navigation bar
             if(this.management) {
-                this.addComponent = Console.components.addNav2Link(this, 'Add Member', 5, () => {
+                this.addComponent = Site.Console.components.addNav2Link(this, 'Add Member', 5, () => {
                     this.$router.push(Site.root + '/cl/console/management/course/member/new');
                 });
             }
@@ -146,7 +146,7 @@
             this.$store.dispatch('members/fetch');
         },
         beforeDestroy() {
-            Console.components.removeNav2(this, this.addComponent);
+            Site.Console.components.removeNav2(this, this.addComponent);
         }
     }
 </script>

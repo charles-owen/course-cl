@@ -41,21 +41,21 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	/** Constructor
 	 * @param array $row Contents of the row in the table for this user
 	 */
-	public function __construct($row = null) {
+	public function __construct($row = null, $prefix='') {
 		parent::__construct();
 
 		if($row !== null) {
-			if(isset($row['member_id'])) {
+			if(isset($row["{$prefix}id"])) {
 				// Required values
-				$this->id = +$row['member_id'];
-				$this->userId = $row['member_userid'];
-				$this->semester = $row['member_semester'];
-				$this->sectionId = $row['member_section'];
-				$this->role = $row['member_role'];
-				$this->created = strtotime($row['member_created']);
+				$this->id = +$row["{$prefix}id"];
+				$this->userId = $row["{$prefix}userid"];
+				$this->semester = $row["{$prefix}semester"];
+				$this->sectionId = $row["{$prefix}section"];
+				$this->role = $row["{$prefix}role"];
+				$this->created = strtotime($row["{$prefix}created"]);
 
-				if(isset($row['member_metadata'])) {
-					$this->metaData = new MetaData($this, $row['member_metadata']);
+				if(isset($row["{$prefix}metadata"])) {
+					$this->metaData = new MetaData($this, $row["{$prefix}metadata"]);
 				}
 			} else {
 				// Required values

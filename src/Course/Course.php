@@ -221,6 +221,17 @@ class Course extends \CL\Site\Plugin {
 		$site->install("course", $this);
 	}
 
+	/**
+	 * Magic function to disable displaying recursive content (Site)
+	 * @return array Properties to dump
+	 */
+	public function __debugInfo()
+	{
+		$properties = get_object_vars($this);
+		unset($properties['site']);
+		return $properties;
+	}
+
 	protected $site = null;         ///< The Site object for this course
 	private $account;	            // Account associated with the course (like "cse335")
 	private $name;	                // Course name (like "CSE 335")

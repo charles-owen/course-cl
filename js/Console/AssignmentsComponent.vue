@@ -26,7 +26,7 @@
             return {
                 course: this.$store.state.course.course,
                 section: null,
-                assignmentLinks: Console.course.assignmentLinks,
+                assignmentLinks: Site.Console.course.assignmentLinks,
                 extensionsLink: Site.root + '/cl/console/course/extensions/',
                 submissionsLink: Site.root + '/cl/console/course/submissions/'
             }

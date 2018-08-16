@@ -14,6 +14,8 @@ import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
 import CourseEmailVue from './CourseEmail.vue';
 
 export let CourseConsole = function(site, Console) {
+    console.log(Console);
+
     //
     // Register components
     //
@@ -38,9 +40,12 @@ export let CourseConsole = function(site, Console) {
         api: '/api/course/tables'
     });
 
+    //const page = {title: 'Course', route: '/course', order: 3};
+    const page = {title: 'Main', route: '', order: 1};
+
     Console.components.addOption({
         atLeast: Member.STAFF,
-        page: {title: 'Course', route: '/course', order: 3},
+        page: page,
         section: {title: 'Course', order: 5},
         title: 'Members',
         order: 1,
@@ -52,7 +57,7 @@ export let CourseConsole = function(site, Console) {
 
     Console.components.addOption({
         atLeast: Member.STAFF,
-        page: {title: 'Course', route: '/course', order: 3},
+        page: page,
         section: {title: 'Course', order: 5},
         title: 'Assignments',
         order: 2,
@@ -64,7 +69,7 @@ export let CourseConsole = function(site, Console) {
 
     Console.components.addOption({
         atLeast: Member.TA,
-        page: {title: 'Course', route: '/course', order: 3},
+        page: page,
         section: {title: 'Course', order: 5},
         title: 'Email Members',
         order: 3,

@@ -79,6 +79,10 @@ SQL;
 			$where->append('member.section=?', $params['section']);
 		}
 
+		if(isset($params['sectionId'])) {
+			$where->append('member.section=?', $params['sectionId']);
+		}
+
 		if(isset($params['atLeast'])) {
 			$roles = Member::getRoles_();
 			if(!isset($roles[$params['atLeast']])) {
@@ -190,17 +194,17 @@ SQL;
 	 * @param bool $includeMeta If true, include metadata in the query.
 	 * @return string SQL
 	 */
-	public function memberUserJoinSQL($additional=null, $includeMeta = false) {
+	public function memberUserJoinSQL($additional=null, $includeMeta = false, $userPrefix='user_', $memberPrefix='') {
 		$usersTable = new Users($this->config);
-		$meta = $includeMeta ? ', user.metadata as user_metadata, member.metadata as metadata' : '';
+		$meta = $includeMeta ? ", user.metadata as {$userPrefix}metadata, member.metadata as {$memberPrefix}metadata" : '';
 
 		$additional = $additional !== null ? ', ' . $additional : '';
 
 		$sql = <<<SQL
-select user.id as user_id, user.user as user_user, user.email as user_email,
-user.name as user_name, user.role as user_role,
-user.created as user_created, member.id as id, member.userid as userid, member.semester as semester,
-member.section as section, member.role as role, member.created as created$meta$additional
+select user.id as {$userPrefix}id, user.user as {$userPrefix}user, user.email as {$userPrefix}email,
+user.name as {$userPrefix}name, user.role as {$userPrefix}role,
+user.created as {$userPrefix}created, member.id as {$memberPrefix}id, member.userid as {$memberPrefix}userid, member.semester as {$memberPrefix}semester,
+member.section as {$memberPrefix}section, member.role as {$memberPrefix}role, member.created as {$memberPrefix}created$meta$additional
 from $this->tablename member
 join $usersTable->tablename user
 on member.userid = user.id
