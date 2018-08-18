@@ -23,6 +23,8 @@ class SectionSelectorView extends \CL\Course\View {
 	public function __construct(Site $site) {
 		parent::__construct($site, ['open-section']);
 
+		$this->setTitle('Section Selector');
+
 		// Default "after" message
 		$this->after = '<p class="centerbox secondb">You are indicated as a member of more than one
 section of this course. Please select the section you wish to log in to.</p>';

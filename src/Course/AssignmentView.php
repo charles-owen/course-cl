@@ -38,6 +38,11 @@ class AssignmentView extends \CL\Course\View {
 
 		$this->assignment->load();
 		$this->setTitle($this->assignment->name);
+
+		// Call amend if this object is not subclassed.
+		if(get_class($this) === self::class) {
+			$site->amend($this);
+		}
 	}
 
     /**
@@ -87,19 +92,6 @@ class AssignmentView extends \CL\Course\View {
         }
     }
 
-
-
-	/**
-	 * If Interact is in use, allocate the Interact object
-	 * @return string Content to place in the head tag area
-	 */
-	public function head() {
-//		if($this->assignment->uses_interact()) {
-//			$this->create_interact_view();
-//		}
-
-		return parent::head();
-	}
 	
 	/** Get the due date presentation for this assignment 
 	 * @returns HTML for the due date */
@@ -182,45 +174,6 @@ HTML;
 	 */
 	public function link($text, $link) {
 		return \Backto::link($text, $link);
-	}
-
-
-	/**
-	 * Create the Interact! object for this view.
-	 *
-	 * May be overridden in a derived class that also uses a section.
-	 */
-	protected function create_interact_view() {
-		$this->interact = new \InteractView($this->course, $this->user, array($this->assignment->get_tag()));
-		$this->add_aux($this->interact);
-	}
-
-    /**
-     * Present the Interact! section on the screen
-     * @return string HTML for the Interact! component
-     */
-	public function present_interact() {
-		if($this->interact !== null) {
-			return $this->interact->present();
-		}
-
-		return '';
-	}
-
-    /**
-     * Present the Interact link if Interact is in use on this assignment
-     * @return string HTML for the link
-     */
-	public function interact_link() {
-		$libroot = $this->course->get_libroot();
-		if($this->interact !== null) {
-			return <<<HTML
-<p class="interact_link"><a href="#interact"><img src="$libroot/images/interact/link.png"> for this assignment</a></p>
-HTML;
-		} else {
-			return '';
-		}
-
 	}
 
     protected $time;            ///< The view time

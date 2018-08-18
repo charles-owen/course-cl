@@ -5,10 +5,9 @@
  
 namespace CL\Course;
 
-use CL\Course\Course;
 use CL\Users\User;
-use CL\Course\Member;
 use \Closure;
+use CL\Site\ViewAux;
 
 /**
  * A single assignment in the assignment tracking system.
@@ -199,12 +198,12 @@ class Assignment {
 			return $due;
 		}
 
-		if ($this->reviewing !== null) {
-			$rdue = $this->reviewing->get_revision_due($user);
-			if ($rdue !== null && $rdue > $due) {
-				$due = $rdue;
-			}
-		}
+//		if ($this->reviewing !== null) {
+//			$rdue = $this->reviewing->get_revision_due($user);
+//			if ($rdue !== null && $rdue > $due) {
+//				$due = $rdue;
+//			}
+//		}
 
 		// Handle a user extension of the due date
 		$extension = $user->member->meta->get(Member::METADATA_EXTENSIONS, $this->tag);
@@ -363,17 +362,17 @@ class Assignment {
 			return false;
 		}
 
-		//
-		// If there is reviewing, we don't open solutions
-		// until after the reviewing due date plus any option extra time
-		//
-		if ($this->reviewing !== null) {
-			$rdue = $this->reviewing->get_available_due();
-			if ($rdue !== null && $rdue > $time) {
-
-				return false;
-			}
-		}
+//		//
+//		// If there is reviewing, we don't open solutions
+//		// until after the reviewing due date plus any option extra time
+//		//
+//		if ($this->reviewing !== null) {
+//			$rdue = $this->reviewing->get_available_due();
+//			if ($rdue !== null && $rdue > $time) {
+//
+//				return false;
+//			}
+//		}
 
 		if (!$this->after_due($user, $time)) {
 			return false;
@@ -453,8 +452,7 @@ class Assignment {
 	 * This is overridden for assignment types that have more
 	 * complex definitions to load.
 	 */
-	public function load()
-	{
+	public function load() {
 		if ($this->loaded) {
 			return;
 		}
@@ -485,9 +483,9 @@ class Assignment {
 	 */
 	public function submitted(User $user, Submission $submission, $time)
 	{
-		if ($this->reviewing !== null) {
-			$this->reviewing->submitted($user, $submission, $time);
-		}
+//		if ($this->reviewing !== null) {
+//			$this->reviewing->submitted($user, $submission, $time);
+//		}
 	}
 
 	/** Construct the due date HTML for an assignment
@@ -508,12 +506,12 @@ class Assignment {
 			$html .= '<p class="due">' . $name . ' is due ' . $date . ' at ' . $time . '</p>';
 		}
 
-		if ($this->reviewing !== null) {
-			$reviewDue = $this->reviewing->get_due();
-			$date = date("l, F j, Y", $reviewDue);
-			$time = date("g:ia", $reviewDue);
-			$html .= '<p class="due">Peer reviews are due ' . $date . ' at ' . $time . '</p>';
-		}
+//		if ($this->reviewing !== null) {
+//			$reviewDue = $this->reviewing->get_due();
+//			$date = date("l, F j, Y", $reviewDue);
+//			$time = date("g:ia", $reviewDue);
+//			$html .= '<p class="due">Peer reviews are due ' . $date . ' at ' . $time . '</p>';
+//		}
 
 		return $html;
 	}
@@ -537,8 +535,7 @@ class Assignment {
 	 *
 	 * @returns string File system path
 	 */
-	public function get_dir()
-	{
+	public function get_dir() {
 		$rootDir = $this->section->course->rootDir;
 
 		if ($this->url !== null && strpos($this->url, ".") !== false) {
@@ -551,7 +548,7 @@ class Assignment {
 	/**
 	 * Flag an assignment as looked at.
 	 * @param User $user User doing the looking
-	 * @param $time Optional time for the look
+	 * @param int $time Optional time for the look
 	 * @internal param $
 	 */
 	public function look(User $user, $time = null)
@@ -565,46 +562,28 @@ class Assignment {
 	}
 
 
-	/** The reviews due date
-	 * @param $due The due date (time as a string as in '9/02/2014 11:55pm')
-	 * @param $revisionHours Number of hours after review for resubmission, default is 24
-	 * @param $revised true if the due date is a revison
-	 */
-	public function set_reviews_due($due, $revisionHours = 24, $revised = false)
-	{
-		if ($this->reviewing === null) {
-			$this->reviewing = new \Review\Reviewing($this);
-		}
-
-		$this->reviewing->set_due($due, $revisionHours, $revised);
-	}
-
-	/**
-	 * Get the PeerReview object for this assignment
-	 * @return Reviewing|null Peer review object or null if not used
-	 */
-	public function get_reviewing()
-	{
-		return $this->reviewing;
-	}
-
-	/**
-	 * Enable the use of  the Interact! system for this assignment.
-	 * @param bool|true $use True (default) to use the Interact! system for this assignment
-	 */
-	public function use_interact($use = true)
-	{
-		$this->interact = $use;
-	}
-
-	/**
-	 * Does this assignment use the Interact! system?
-	 * @return bool True if the assignment uses Interact!
-	 */
-	public function uses_interact()
-	{
-		return $this->interact;
-	}
+//	/** The reviews due date
+//	 * @param $due The due date (time as a string as in '9/02/2014 11:55pm')
+//	 * @param $revisionHours Number of hours after review for resubmission, default is 24
+//	 * @param $revised true if the due date is a revison
+//	 */
+//	public function set_reviews_due($due, $revisionHours = 24, $revised = false)
+//	{
+//		if ($this->reviewing === null) {
+//			$this->reviewing = new \Review\Reviewing($this);
+//		}
+//
+//		$this->reviewing->set_due($due, $revisionHours, $revised);
+//	}
+//
+//	/**
+//	 * Get the PeerReview object for this assignment
+//	 * @return Reviewing|null Peer review object or null if not used
+//	 */
+//	public function get_reviewing()
+//	{
+//		return $this->reviewing;
+//	}
 
 	/**
 	 * Magic function to disable displaying the section
@@ -663,12 +642,20 @@ class Assignment {
 	 * @param mixed $value Initial value
 	 * @param boolean $data If true the property will be sent to clients
 	 */
-	public function addProperty($name, $value, $data = false)
-	{
+	public function addProperty($name, $value, $data = false) {
 		$this->properties[$name] = $value;
 		if ($data) {
 			$this->dataProperties[$name] = $data;
 		}
+	}
+
+	/**
+	 * Does the assignment have this installed property?
+	 * @param string $name Name of property.
+	 * @return bool True if installed.
+	 */
+	public function hasProperty($name) {
+		return isset($this->properties[$name]);
 	}
 
 	/**
@@ -702,6 +689,24 @@ class Assignment {
 		return $data;
 	}
 
+	/**
+	 * Add any auxiliary views that are utilized by the page views
+	 * @param ViewAux $aux Auxiliary view utilized by this page
+	 * @return ViewAux The ViewAux object we added
+	 */
+	public function add_view_aux(ViewAux $aux) {
+		$this->viewaux[] = $aux;
+		return $aux;
+	}
+
+	/**
+	 * Get all ViewAux views attached to this view.
+	 * @return array All auxiliary views attached to this view
+	 */
+	public function get_view_aux() {
+		return $this->viewaux;
+	}
+
 	// Basic description of an assignment
 	private $tag;                // Assignment tag
 	private $name;                // Name of the assignment
@@ -722,13 +727,15 @@ class Assignment {
 
 	private $grading = null;        // The Grading object for this assignment
 	private $loaded = false;        // Is the assignment loaded?
-	private $reviewing = null;      // Optional PeerReview object for this assignment
+	// private $reviewing = null;      // Optional PeerReview object for this assignment
 
 	protected $solving = NULL;      ///< Optional problem solving document
 	protected $interact = false;    ///< Do we use the Interact system?
 
 	private $properties = [];       // Custom properties
 	private $dataProperties = [];   // Custom data associated with properties
+
+	private $viewaux = array();		///< Any auxiliary views to add to pages
 
 	// AssignmentSubmissions object
 	// Any submissions for this assignment

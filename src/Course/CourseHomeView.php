@@ -232,13 +232,13 @@ LINK;
 <span class="due"> Due <a class="tip">$duedate<span>Assignment Due</span></a>
 HTML;
 
-				$review = $assignment->get_reviewing();
-				if($review !== null) {
-					$reviewDue = date('n-d-y', $review->get_due());
-					$html .= <<<HTML
- / <a class="tip">$reviewDue<span>Reviews Due</span></a>
-HTML;
-				}
+//				$review = $assignment->get_reviewing();
+//				if($review !== null) {
+//					$reviewDue = date('n-d-y', $review->get_due());
+//					$html .= <<<HTML
+// / <a class="tip">$reviewDue<span>Reviews Due</span></a>
+//HTML;
+//				}
 
 				$html .= "</span>";
 
