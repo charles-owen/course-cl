@@ -10,7 +10,7 @@
             <th>Submissions</th>
           </tr>
           <tr v-for="submission in submissions">
-            <td><submitted-item :submission="submission" v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
+            <td><submitted-item :submission="submission" :analysis="analysis" @result='analysisResult' v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
           </tr>
         </table>
         <p v-if="type === 'text'" class="center">Click on any submission date to display the submission</p>
@@ -19,6 +19,7 @@
         <pre class="cl-preview yellow-pad" v-if="preview !== null">{{preview}}</pre>
       </template>
     </div>
+    <pre class="cl-analysis" v-if="result !== null">{{result}}</pre>
     <figure v-if="previewImg !== null" class="cl-preview"><img :src="previewImg"></figure>
   </div>
 </template>
@@ -31,11 +32,12 @@
   import SubmittedItemVue from './SubmittedItem.vue';
 
   export default {
-      props: ['type', 'submissions'],
+      props: ['type', 'submissions', 'analysis'],
       data: function() {
           return {
               preview: null,
-              previewImg: null
+              previewImg: null,
+              result: null
           }
       },
       components: {
@@ -76,6 +78,9 @@
             } else {
                 this.previewImg = null;
             }
+        },
+        analysisResult(result) {
+        	this.result = result;
         }
 
       }

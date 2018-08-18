@@ -1,4 +1,4 @@
-div.cl-submission form.file, div.cl-submission figure.cl-preview, div.cl-submission pre.cl-preview {
+div.cl-submission form.file, div.cl-submission figure.cl-preview, div.cl-submission pre.cl-preview, div.cl-submission pre.cl-analysis {
   -moz-box-shadow: 3px 3px 8px #ccc;
   -webkit-box-shadow: 3px 3px 8px #ccc;
   box-shadow: 3px 3px 8px #ccc; }
@@ -93,6 +93,11 @@ div.cl-submission figure.cl-preview {
 div.cl-submission pre.cl-preview {
   border: thin solid black;
   min-height: 5em; }
+div.cl-submission pre.cl-analysis {
+  font-size: 0.80em;
+  border: thin solid black;
+  padding: 5px;
+  background-color: #ffffcc; }
 
 div.cl-error-help {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

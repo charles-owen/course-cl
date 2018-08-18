@@ -13,6 +13,7 @@ use CL\Users\User;
 use CL\Users\Users;
 use CL\Course\Members;
 use CL\Course\Member;
+use CL\Users\Autologin;
 
 /**
  * API Resource for /api/course/members
@@ -375,7 +376,6 @@ class ApiMembers extends \CL\Users\Api\Resource
 
 		// We have a membership, attach it to the user
 		$user->member = $member;
-
 		//
 		// A new session cookie is created
 		//
@@ -384,6 +384,15 @@ class ApiMembers extends \CL\Users\Api\Resource
 		$server->setcookie($cookiename, $jwt, 0, "/");
 
 		$data = $user->data();
+
+		// Update any autologin records as well
+		$cookiename = $site->cookiePrefix . Autologin::COOKIENAME;
+		$autologin = new Autologin($site->db);
+		if(!empty($server->cookie[$cookiename])) {
+			// Attempt to validate
+			$cred = explode(":", $server->cookie[$cookiename]);
+			$autologin->updateData($cred[0], $user->dataJWT);
+		}
 
 		$json = new JsonAPI();
 		$json->addData('user', $user->id, $data);

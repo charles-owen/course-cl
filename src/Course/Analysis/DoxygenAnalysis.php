@@ -6,34 +6,88 @@
 
 namespace CL\Course\Analysis;
 
+use CL\Site\Site;
+
 /**
  * Class for analysis of submissions using Doxygen
  *
  * This looks in the site root/doxygen for a file Doxyfile.doxy
  * that is the Doxygen configuration.
+ *
+ * @cond
+ * @property string config
+ * @endcond
  */
 class DoxygenAnalysis extends Analysis {
     /// Tag for this analysis component
     const TAG = 'doxygen';
 
+    /**
+     * Property get magic method
+     *
+     * <b>Properties</b>
+     * Property | Type | Description
+     * -------- | ---- | -----------
+     * config | string | Path to doxygen config file, default is 'doxygen/Doxyfile.doxy'
+     *
+     * @param string $property Property name
+     * @return mixed
+     */
+    public function __get($property) {
+        switch($property) {
+	        case 'config':
+	        	return $this->config;
+
+            default:
+                return parent::__get($property);
+        }
+    }
+
+	/**
+	 * Property set magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * config | string | Path to doxygen config file, default is 'doxygen/Doxyfile.doxy'
+	 *
+	 * @param string $property Property name
+	 * @param mixed $value Value to set
+	 */
+	public function __set($property, $value) {
+		switch($property) {
+			case 'config':
+				$this->config = $value;
+				break;
+
+			default:
+				parent::__set($property, $value);
+				break;
+		}
+	}
+
+
 	/**
 	 * Perform a Doxygen analysis
+	 * @param Site $site The site object
 	 * @param Analyzer $analyzer The analyzer for a submission
-	 * @throws Exception If unable to unzip the solution or execute Doxygen
+	 * @return void
+	 * @throws AnalysisException If unable to unzip the solution or execute Doxygen
 	 */
-    public function analyze(Analyzer $analyzer) {
+    public function analyze(Site $site, Analyzer $analyzer) {
         // Get the unzipped version of the project
-        $dir = $analyzer->get_unzipped_dir();
+        $dir = $analyzer->get_unzipped_dir($site);
         if($dir === null) {
-            throw new \Exception("Unable to unzip solution");
+            throw new AnalysisException("Unable to unzip solution");
         }
 
         // Find Doxyfile.doxy for this course
         // Future option: specify the settings file
-        $course = $analyzer->get_submission()->get_assignment()->get_course();
-        $rootdir = $course->get_rootdir();
-        $doxyfile = $rootdir . DIRECTORY_SEPARATOR . 'doxygen' . DIRECTORY_SEPARATOR . 'Doxyfile.doxy';
-				
+        $doxyfile = $site->rootDir . DIRECTORY_SEPARATOR . $this->config;
+		if(!file_exists($doxyfile)) {
+			throw new AnalysisException('Doxygen configuration file does not exist');
+		}
+
 		$sys = strtoupper(PHP_OS);
 		if(substr($sys,0,3) === "WIN") {
 			$quote = '"';
@@ -49,10 +103,7 @@ class DoxygenAnalysis extends Analysis {
         exec("$exec $quote" . $doxyfile . "$quote 2>&1", $result, $ret);
 
         if($ret > 0) {
-			foreach($result as $line) {
-				echo "$line<br/>";
-			}
-			throw new \Exception("Unable to execute doxygen");
+			throw new AnalysisException("Unable to execute doxygen");
         }
 
         $str = '';
@@ -66,21 +117,22 @@ class DoxygenAnalysis extends Analysis {
     }
 
     /**
-     * @brief Get information about the analysis component
+     * Get information about the analysis component
      * @return mixed Array with key 'name'
      */
-    public function info(\Course $course) {
-        $libroot = $course->get_libroot();
-        return array('name' => 'doxygen', 'menu' => 'doxygen analysis',
-            'icon' => "$libroot/images/doxygen16.png");
+    public function info(Site $site) {
+        $root = $site->root;
+        return ['tag' => self::TAG,
+	        'menu' => 'doxygen analysis',
+            'icon' => "$root/vendor/cl/course/img/doxygen16.png"];
     }
 
     /**
-     * @brief Present analysis for the user
-     * @param $analysis The analysis array as stored with the submission
+     * Present analysis for the user
+     * @param array $analysis The analysis array as stored with the submission
      * @return string HTML
      */
-    public function present($analysis) {
+    public function present(array $analysis) {
         if(!isset($analysis['doxygen'])) {
             return '<p class="center">Not available</p>';
         }
@@ -103,4 +155,6 @@ class DoxygenAnalysis extends Analysis {
 
         return $html;
     }
+
+    private $config = 'doxygen/Doxyfile.doxy';
 }

@@ -18,6 +18,8 @@ use CL\Site\ViewAux;
  * @cond
  * @property \CL\Grades\AssignmentGrading grading
  * @property Section section
+ * @property array Submissions
+ * @property \CL\Site\Site site
  * @endcond
  */
 class Assignment {

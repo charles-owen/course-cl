@@ -9,6 +9,8 @@
  */
 namespace CL\Course\Analysis;
 
+use CL\Site\Site;
+
 /**
  * Base class for any analysis components.
  */
@@ -72,54 +74,49 @@ abstract class Analysis {
 
     /**
      * Perform an analysis
+     * @param Site $site The site object
      * @param Analyzer $analyzer Analyzer we are applying
      * @return mixed Analysis results as array or string
      */
-    public abstract function analyze(Analyzer $analyzer);
+    public abstract function analyze(Site $site, Analyzer $analyzer);
 
     /**
      * Get information about the analysis component
-     * @return mixed Array with key 'name', 'menu'
+     * @param Site $site The site object
+     * @return mixed Array with key 'name', 'menu' or null if no info
      */
-    public abstract function info(\Course $course);
+    public abstract function info(Site $site);
 
     /**
      * Present analysis for the user
-     * @param $analysis The analysis array as stored with the submission
+     * @param array $analysis The analysis array as stored with the submission
      * @return string HTML
      */
-    public abstract function present($analysis);
+    public abstract function present(array $analysis);
 
-	/**
-	 * @param \Assignments\Submission $submission The Submission object we are associated with
-	 */
-	public function set_submission(\Assignments\Submission $submission) {
-		$this->submission = $submission;
-	}
-
-    /**
-     * Get the submission data from the user
-     *
-     * The basic version assumes only a single submission file. Derived classes
-     * may override this functionality to support multiple-file submissions.
-     *
-     * @param \Course $course Course object
-     * @param \User $user User we are getting the data for
-     * @return array Array of submission file data. Each item is filename=>data
-     */
-    public function get_data(\Course $course, \User $user) {
-        $assignment = $this->submission->get_assignment();
-        $submittag = $this->submission->get_tag();
-
-        $submissions = new \Assignments\Submissions($course);
-        $submits = $submissions->get_submissions($assignment, $submittag, $user);
-        if(count($submits) == 0) {
-            return [];
-        }
-
-        $data = $submissions->get_file($submits[0]['id']);
-        return [$submits[0]['name'] => $data];
-    }
+//    /**
+//     * Get the submission data from the user
+//     *
+//     * The basic version assumes only a single submission file. Derived classes
+//     * may override this functionality to support multiple-file submissions.
+//     *
+//     * @param \Course $course Course object
+//     * @param \User $user User we are getting the data for
+//     * @return array Array of submission file data. Each item is filename=>data
+//     */
+//    public function get_data(\Course $course, \User $user) {
+//        $assignment = $this->submission->get_assignment();
+//        $submittag = $this->submission->get_tag();
+//
+//        $submissions = new \Assignments\Submissions($course);
+//        $submits = $submissions->get_submissions($assignment, $submittag, $user);
+//        if(count($submits) == 0) {
+//            return [];
+//        }
+//
+//        $data = $submissions->get_file($submits[0]['id']);
+//        return [$submits[0]['name'] => $data];
+//    }
 
 	/**
 	 * Get any grading page link for analysis

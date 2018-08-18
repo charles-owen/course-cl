@@ -38,22 +38,32 @@
                     this.assigntag + '/' + user.member.id, {})
                     .then((response) => {
                         if (!response.hasError()) {
-                            let submissions = {};
-                            for(let submission of response.getDataAll('submissions')) {
-                                submissions[submission.id] = submission.attributes;
-                            }
+                        	console.log(response);
+                        	const submissions = response.getDataAll('submissions');
+                        	this.submissions = [];
+                        	for(let i=0; i<submissions.length; i++) {
+                        		this.submissions.push(submissions[i].attributes);
+                        		this.submissions[i].user = user;
+                          }
 
-                            this.submissions = [];
-                            for(let submission of this.assignment.submissions) {
-                                this.submissions.push({
-                                    name: submission.name,
-                                    assignTag: this.assignment.tag,
-                                    tag: submission.tag,
-                                    type: submission.type,
-                                    user: user,
-                                    submissions: submissions[submission.tag]
-                                });
-                            }
+                          console.log(this.submissions);
+
+//                            let submissions = {};
+//                            for(let submission of ) {
+//                                submissions[submission.id] = submission.attributes;
+//                            }
+//
+//                            this.submissions = [];
+//                            for(let submission of this.assignment.submissions) {
+//                                this.submissions.push({
+//                                    name: submission.name,
+//                                    assignTag: this.assignment.tag,
+//                                    tag: submission.tag,
+//                                    type: submission.type,
+//                                    user: user,
+//                                    submissions: submissions[submission.tag]
+//                                });
+//                            }
                         } else {
                             Site.toast(this, response);
                         }

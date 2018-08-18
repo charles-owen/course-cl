@@ -14,6 +14,7 @@ use CL\Users\Users;
 use CL\Course\Members;
 use CL\Course\Member;
 use CL\Course\Submission\Submissions;
+use CL\Course\Analysis\AnalysisException;
 
 /**
  * API Resource for /api/course/members
@@ -61,9 +62,40 @@ class SubmissionApi extends \CL\Users\Api\Resource
 			case 'get':
 				// /api/course/submission/get/id
 				return $this->get($site, $user, $params);
+
+			case 'analysis':
+				// /api/course/submission/analysis/:tag/:submissionid
+				return $this->analysis($site, $user, $params);
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+	}
+
+	private function analysis(Site $site, User $user, array $params) {
+		if(count($params) < 3) {
+			throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+		}
+
+		$analysisTag = $params[1];
+		$submissionId = +$params[2];
+
+		$submissions = new Submissions($site->db);
+		$analysis = $submissions->get_analysis($submissionId);
+		if($analysis === null) {
+			throw new APIException("Analysis does not exist");
+		}
+
+		if(!$user->atLeast(Member::STAFF) && $user->member->id !== $analysis['memberid']) {
+			throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
+		}
+
+		if(!isset($analysis[$analysisTag])) {
+			throw new APIException("Analysis does not exist");
+		}
+
+		$json = new JsonAPI();
+		$json->addData('submission-analysis', $submissionId, $analysis[$analysisTag]);
+		return $json;
 	}
 
 	/**
@@ -73,6 +105,8 @@ class SubmissionApi extends \CL\Users\Api\Resource
 	 * @param Site $site Site object
 	 * @param User $user Current user object
 	 * @param array $params Parameters
+	 * @return JsonAPI
+	 * @throws APIException
 	 */
 	private function submissions(Site $site, User $user, array $params) {
 		if(count($params) < 2) {
@@ -112,7 +146,21 @@ class SubmissionApi extends \CL\Users\Api\Resource
 
 		foreach($assignment->submissions->submissions as $submission) {
 			$subs = $submissions->get_submissions($member, $assignment->tag, $submission->tag);
-			$json->addData('submissions', $submission->tag, $subs);
+			$analysis = [];
+			foreach($submission->analysis as $an) {
+				$info = $an->info($site);
+				if($info !== null) {
+					$analysis[] = $info;
+
+				}
+			}
+
+			$data = $submission->data();
+			$data['assignTag'] = $assignment->tag;
+			$data['submissions'] = $subs;
+			$data['analysis'] = $analysis;
+
+			$json->addData('submissions', $submission->tag, $data);
 		}
 
 		return $json;
@@ -186,10 +234,25 @@ class SubmissionApi extends \CL\Users\Api\Resource
 
 			}
 
-			if(!$submissions->submit_file($user,
-				$assignment->tag, $submission->tag, $time, $path, $name, $type)) {
+			// Perform any specified analysis
+			try {
+				$analysis = $submission->analyze($site, $path);
+			} catch(AnalysisException $exception) {
+				unlink($path);
+				throw new APIException($exception->getMessage());
+			}
+
+			$id = $submissions->submit_file($user,
+				$assignment->tag, $submission->tag, $time, $path, $name, $type);
+			if(!$id) {
 				throw new APIException("Submission failed");
 			}
+
+			// File any computed analysis
+			if($analysis !== null) {
+				$submission->set_analysis($site, $id, $analysis);
+			}
+
 		} else {
 			// Post-based submission
 			$this->ensure($post, ['text', 'type']);

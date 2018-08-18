@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+	<test_cl_site_submission id="20" memberid="14" assigntag="design3"
+					 submissiontag="task1" date="2015-01-10 10:00:11"
+					 type="text/html" text="Example Submission"/>
+	<test_cl_site_submission id="22" memberid="14" assigntag="design3"
+					 submissiontag="task1" date="2015-01-10 12:02:11" type="text/html" />
+	<test_cl_site_submission id="25" memberid="14" assigntag="design3"
+					 submissiontag="task2" date="2015-01-10 12:22:00" type="text/html" />
+</dataset>

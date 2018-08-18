@@ -33,7 +33,16 @@
               this.submitting = false;
 
               let json = frames['upload_target_' + this.options.tag].document.getElementsByTagName("body")[0].innerHTML;
-              let response = new APIResponse(JSON.parse(json));
+              let response;
+              try {
+	              response = new APIResponse(JSON.parse(json));
+              } catch(exception) {
+              	console.log(exception);
+              	console.log(json);
+	              Site.toast(this, "Error during submission");
+              	return;
+              }
+
 
               if (!response.hasError()) {
                   this.$refs['form'].reset();

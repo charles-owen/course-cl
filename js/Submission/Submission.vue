@@ -1,6 +1,6 @@
 <template>
-  <div class="cl-submission full">
-    <div v-if="options.submit" class="left">
+  <div class="cl-submission">
+    <div v-if="options.submit" class="">
       <div v-if="!options.open">
         <p class="centerbox comp center">This assignment is not open for submissions.</p>
         <div v-if="staff" class="centerbox primary">
@@ -10,8 +10,8 @@
       </div>
       <component :is="submitter" v-if="options.open" :options="options" v-on:new_submissions="newSubmissions"></component>
     </div>
-    <submitted :type="options.type" :submissions="options.submissions"></submitted>
-    <div v-if="options.additional !== null" v-html="options.additional" class="left"></div>
+    <submitted :analysis='options.analysis' :type="options.type" :submissions="options.submissions"></submitted>
+    <div v-if="options.additional !== null" v-html="options.additional" class=""></div>
   </div>
 </template>
 

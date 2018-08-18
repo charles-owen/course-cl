@@ -4,9 +4,10 @@
       <a @click.prevent="selectText()">{{display()}}</a>
     </template>
     <template v-else>
-      <menu-vue v-on:open="select"><a>{{display()}}</a><a class="float-right"><img :src="menubarsImg" alt="Menu"></a>
+      <menu-vue v-on:open="select"><a>{{display()}}</a><a class="float-right"><img :src="root + '/vendor/cl/site/img/menubars.png'" alt="Menu"></a>
         <ul>
-          <li><a :href="toDownload"><img :src="downloadImg" alt="Download"> Download</a></li>
+          <li><a :href="toDownload"><img :src="root + '/vendor/cl/site/img/download.png'" alt="Download"> Download</a></li>
+          <li v-for="item in analysis"><a @click.prevent="showAnalysis(item)"><img :src="item.icon" :alt="item.menu"> {{item.menu}}</a></li>
         </ul>
       </menu-vue>
     </template>
@@ -21,12 +22,11 @@
   export const TEXT_TYPES = ['text/plain', 'text/html']
 
   export default {
-      props: ['submission'],
+      props: ['submission', 'analysis'],
       data: function() {
           return {
-              menubarsImg: Site.root + '/vendor/cl/site/img/menubars.png',
-              downloadImg: Site.root + '/vendor/cl/site/img/download.png',
-              toDownload: Site.root + '/cl/submission/download/' + this.submission.id
+          	root: Site.root,
+            toDownload: Site.root + '/cl/submission/download/' + this.submission.id
           }
       },
       components: {
@@ -48,6 +48,23 @@
           },
           select() {
               this.$emit('preview_img', this.submission);
+          },
+          showAnalysis(analysis) {
+          	console.log(analysis);
+          	Site.api.get('/api/course/submission/analysis/' + analysis.tag + '/' + this.submission.id, {})
+          	    .then((response) => {
+          	        if (!response.hasError()) {
+          	        	const analysisResult = response.getData('submission-analysis').attributes;
+          	        	this.$emit('result', analysisResult);
+          	        } else {
+          	            Site.toast(this, response);
+          	        }
+
+          	    })
+          	    .catch((error) => {
+          	        Site.toast(this, error);
+          	    });
+          	console.log(analysis);
           }
 
       }

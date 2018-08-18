@@ -7,11 +7,17 @@ namespace CL\Course\Submission;
 
 use CL\Course\Analysis\Analysis;
 
+use CL\Site\Site;
 use CL\Users\User;
 use CL\Course\AssignmentView;
+use CL\Course\Analysis\Analyzer;
 
 /**
  * Base class for classes that model an assignment submission
+ *
+ * @cond
+ * @property \CL\Course\Assignment assignment
+ * @endcond
  */
 abstract class Submission {
 	/**
@@ -52,6 +58,9 @@ abstract class Submission {
 			case 'name':
 				return $this->name;
 				break;
+
+			case 'analysis':
+				return $this->analysis;
 
 			default:
 				$trace = debug_backtrace();
@@ -110,6 +119,15 @@ abstract class Submission {
 
 		$assignment = $this->assignment;
 
+		$analysis = [];
+		foreach($this->analysis as $an) {
+			$info = $an->info($view->site);
+			if($info !== null) {
+				$analysis[] = $info;
+
+			}
+		}
+
 		$data = [
 			'name' => $this->name,
 			'submit' => true,
@@ -117,6 +135,7 @@ abstract class Submission {
 			'assignTag' => $assignment->tag,
 			'tag' => $this->tag,
 			'additional' => $this->additional,
+			'analysis'=>$analysis,
 			'submissions' => $submissions->get_submissions($user,
 				$assignment->tag, $this->tag)
 		];
@@ -285,29 +304,34 @@ HTML;
 		$this->submitted($user, $time);
 		return $result;
 	}
-	
-	public function set_analysis($id, $analysis) {
-		$course = $this->assignment->course;
 
-		if($this->get_teaming() !== null) {
-			$submissions = new \Team\TeamSubmissions($course);
-		} else {
-			$submissions = new \Assignments\Submissions($course );
-		}
+	/**
+	 * Set the analysis for a submission.
+	 * @param Site $site The Site object
+	 * @param int $id ID for the submission in the submissions table
+	 * @param array $analysis Analysis to set
+	 */
+	public function set_analysis(Site $site, $id, $analysis) {
+//		if($this->get_teaming() !== null) {
+//			$submissions = new \Team\TeamSubmissions($site->db);
+//		} else {
+//			$submissions = new Submissions($site->db);
+//		}
 
+		$submissions = new Submissions($site->db);
 		$submissions->set_analysis($id, $analysis);
 	}
 	
 
 	
-	/** This function is called whenever a new submission occurs.
-	 *
-	 * This checks to see if pending review is open on this submission. If so,
-	 * it tells the pending review system so it can test the results 
-	 */
-	protected function submitted(\User $user, $time) {
-		$this->assignment->submitted($user, $this, $time);
-	}
+//	/** This function is called whenever a new submission occurs.
+//	 *
+//	 * This checks to see if pending review is open on this submission. If so,
+//	 * it tells the pending review system so it can test the results
+//	 */
+//	protected function submitted(\User $user, $time) {
+//		$this->assignment->submitted($user, $this, $time);
+//	}
 
 
 	/**
@@ -331,7 +355,7 @@ HTML;
 
     /**
      * Present the formatted analysis
-     * @param $ndx Index into the array of analysis components
+     * @param int $ndx Index into the array of analysis components
      * @param $analysis The analysis array as stored with the submission
      * @return string HTML
      */
@@ -345,17 +369,18 @@ HTML;
 
 	/**
 	 * Submit a file to analysis
-	 * @param $path Path to the file to analyze
+	 * @param Site $site The site object
+	 * @param string $path Path to the file to analyze
 	 * @return null|array Array of analysis results or null if none
 	 */
-	public function analyze($path) {
+	public function analyze(Site $site, $path) {
 		if(count($this->analysis) == 0) {
 			return null;
 		}
 
-		$analyzer = new \Analysis\Analyzer($this, $path);
+		$analyzer = new Analyzer($this, $path);
 		foreach($this->analysis as $analysis) {
-			$analysis->analyze($analyzer);
+			$analysis->analyze($site, $analyzer);
 		}
 
 		$results = $analyzer->get_results();
@@ -364,28 +389,30 @@ HTML;
 		return $results;
 	}
 
-	/**
-	 * Get the name of the teaming for this assignment.
-	 * @return teaming|null The teaming name or null if not a team submission
-	 */
-	public function get_teaming() {
-		return $this->teaming;
-	}
+//	/**
+//	 * Get the name of the teaming for this assignment.
+//	 * @return teaming|null The teaming name or null if not a team submission
+//	 */
+//	public function get_teaming() {
+//		return $this->teaming;
+//	}
+//
+//	/**
+//	 * Get the team for a user for this submission
+//	 * @param User $user
+//	 * @return array of team ID's for false if failure
+//	 */
+//	public function get_teams(User $user) {
+//		if($this->teaming === null) {
+//			return false;
+//		}
+//
+//		$course = $this->assignment->course;
+//		$teamMembers = new \Team\TeamMembers($course);
+//		return $teamMembers->get_teams_in_teaming_by_tag($user, $this->teaming);
+//	}
 
-	/**
-	 * Get the team for a user for this submission
-	 * @param User $user
-	 * @return array of team ID's for false if failure
-	 */
-	public function get_teams(User $user) {
-		if($this->teaming === null) {
-			return false;
-		}
 
-		$course = $this->assignment->course;
-		$teamMembers = new \Team\TeamMembers($course);
-		return $teamMembers->get_teams_in_teaming_by_tag($user, $this->teaming);
-	}
 
 	/**
 	 * Is this submission visible on the user grades page?
@@ -417,6 +444,6 @@ HTML;
 	private $additional = null; // Additional text to display with the submission tool
 
 
-	protected $analysis = array();	///< Any Analysis components we will use
+	protected $analysis = [];	// Any Analysis components we will use
 	private $teaming;	///< Any teaming this submission is for
 }

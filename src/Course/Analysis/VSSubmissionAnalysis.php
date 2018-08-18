@@ -6,6 +6,9 @@
 
 namespace CL\Course\Analysis;
 
+use CL\Site\Site;
+
+
 /**
  * Class for analysis of Visual Studio submissions to ensure validity.
  *
@@ -19,11 +22,12 @@ class VSSubmissionAnalysis extends Analysis {
 	/**
 	 * Perform a Visual Studio integrity analysis
 	 * @param Analyzer $analyzer The analyzer for a submission
-	 * @throws Exception If unable to unzip the solution or solution is invalid
+	 * @return void
+	 * @throws AnalysisException If unable to unzip the solution or solution is invalid
 	 */
-	public function analyze(Analyzer $analyzer) {
+	public function analyze(Site $site, Analyzer $analyzer) {
 		// Get the unzipped version of the project
-		$dir = $analyzer->get_unzipped_dir();
+		$dir = $analyzer->get_unzipped_dir($site);
 		if ($dir === null) {
 			throw new AnalysisException("Unable to unzip solution");
 		}
@@ -59,7 +63,7 @@ class VSSubmissionAnalysis extends Analysis {
 
 	/**
 	 * Test for files that should not exist in a submission
-	 * @param $file File
+	 * @param string $file File name
 	 * @return bool True if file is okay
 	 */
 	public function testPath($file) {
@@ -68,10 +72,11 @@ class VSSubmissionAnalysis extends Analysis {
 	}
 
 	/**
-	 * @brief Get information about the analysis component
-	 * @return mixed Array with key 'name'
+	 * Get information about the analysis component
+	 * @param Site $site The site object
+	 * @return mixed Array with key 'name' or null if no info
 	 */
-	public function info(\Course $course) {
+	public function info(Site $site) {
 		return null;
 	}
 
@@ -80,7 +85,7 @@ class VSSubmissionAnalysis extends Analysis {
 	 * @param $analysis The analysis array as stored with the submission
 	 * @return string HTML nothing for this analysis...
 	 */
-	public function present($analysis) {
+	public function present(array $analysis) {
 		return "";
 	}
 

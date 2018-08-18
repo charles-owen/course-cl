@@ -45,4 +45,12 @@ div.cl-submission {
     border: thin solid black;
     min-height: 5em;
   }
+
+  pre.cl-analysis {
+    @extend %shadow;
+    font-size: 0.80em;
+    border: thin solid black;
+    padding: 5px;
+    background-color: #ffffcc;
+  }
 }
