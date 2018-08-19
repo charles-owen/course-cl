@@ -34,12 +34,14 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	const JWT_ID = 'member_id'; ///< Field to use in JWT for member ID
 	const JWT_SEMESTER = 'member_semester'; ///< Field to use in JWT for a semester indicator
 	const JWT_SECTION = 'member_section';   ///< Field to use in JWT for a section indicator
+    const JWT_MEMBER_ACTUAL = 'member_actual';  ///< Actual membership during spoofing
 
 	/// Name for the extensions MetaDat category
 	const METADATA_EXTENSIONS = 'extensions';
 
 	/** Constructor
 	 * @param array $row Contents of the row in the table for this user
+	 * @param string $prefix Optional prefix for table column names.
 	 */
 	public function __construct($row = null, $prefix='') {
 		parent::__construct();

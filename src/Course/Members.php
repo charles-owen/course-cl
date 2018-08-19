@@ -192,6 +192,8 @@ SQL;
 	 * content needed to create the User and Member objects.
 	 * @param string $additional Additional fields to select
 	 * @param bool $includeMeta If true, include metadata in the query.
+	 * @param string $userPrefix Prefix to add to user table column names
+	 * @param string $memberPrefix Prefix to add to member column names
 	 * @return string SQL
 	 */
 	public function memberUserJoinSQL($additional=null, $includeMeta = false, $userPrefix='user_', $memberPrefix='') {

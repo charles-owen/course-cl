@@ -565,9 +565,9 @@ class Assignment {
 
 
 //	/** The reviews due date
-//	 * @param $due The due date (time as a string as in '9/02/2014 11:55pm')
-//	 * @param $revisionHours Number of hours after review for resubmission, default is 24
-//	 * @param $revised true if the due date is a revison
+//	 * @ param $due The due date (time as a string as in '9/02/2014 11:55pm')
+//	 * @ param $revisionHours Number of hours after review for resubmission, default is 24
+//	 * @ param $revised true if the due date is a revison
 //	 */
 //	public function set_reviews_due($due, $revisionHours = 24, $revised = false)
 //	{
@@ -580,7 +580,7 @@ class Assignment {
 //
 //	/**
 //	 * Get the PeerReview object for this assignment
-//	 * @return Reviewing|null Peer review object or null if not used
+//	 * @ return Reviewing|null Peer review object or null if not used
 //	 */
 //	public function get_reviewing()
 //	{

@@ -94,30 +94,6 @@ abstract class Analysis {
      */
     public abstract function present(array $analysis);
 
-//    /**
-//     * Get the submission data from the user
-//     *
-//     * The basic version assumes only a single submission file. Derived classes
-//     * may override this functionality to support multiple-file submissions.
-//     *
-//     * @param \Course $course Course object
-//     * @param \User $user User we are getting the data for
-//     * @return array Array of submission file data. Each item is filename=>data
-//     */
-//    public function get_data(\Course $course, \User $user) {
-//        $assignment = $this->submission->get_assignment();
-//        $submittag = $this->submission->get_tag();
-//
-//        $submissions = new \Assignments\Submissions($course);
-//        $submits = $submissions->get_submissions($assignment, $submittag, $user);
-//        if(count($submits) == 0) {
-//            return [];
-//        }
-//
-//        $data = $submissions->get_file($submits[0]['id']);
-//        return [$submits[0]['name'] => $data];
-//    }
-
 	/**
 	 * Get any grading page link for analysis
 	 * @return string HTML
@@ -126,6 +102,7 @@ abstract class Analysis {
 		return '';
 	}
 
+	/// The submission this is analysis for
 	protected $submission = null;
 }
 

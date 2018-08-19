@@ -10,35 +10,37 @@ p {
 h2 {
   margin: 0.5em 0; }
 
-#main {
+div.cl-main {
   position: relative;
   display: flex;
   flex-direction: row;
   padding: 0; }
-  #main > div.left {
+  div.cl-main > div.left {
     width: 100%;
     position: relative;
     vertical-align: top;
     padding: 0.25em 235px 0.25em 10px; }
-  #main > div.right {
+  div.cl-main > div.right {
     position: absolute;
     top: 0;
     right: 235px; }
-  #main div.sidebar {
+  div.cl-main div.sidebar {
     position: absolute;
     top: 0;
     right: 0;
     width: 225px;
     padding: 0 10px 0 0;
     box-shadow: none; }
-    #main div.sidebar iframe {
+    div.cl-main div.sidebar iframe {
       box-shadow: none; }
-  #main div.twocol {
+  div.cl-main div.twocol {
     padding: 10px 0 0 0; }
-  #main .control {
+  div.cl-main .cl-home-control {
     text-align: center;
     margin: 0.25em 0 0.5em 0;
     width: 100px; }
+    div.cl-main .cl-home-control button, div.cl-main .cl-home-control select {
+      width: 100%; }
 
 .cl-calendar {
   width: 100%;
@@ -81,21 +83,21 @@ footer {
 .email {
   font-size: smaller; }
 
-.lists {
+div.cl-lists {
   padding: 0; }
-  .lists h2 {
+  div.cl-lists h2 {
     font-family: sans-serif;
     font-size: 1.3em;
     border-bottom: none;
     padding: 0;
     background: #f2f2f2; }
-    .lists h2 img {
+    div.cl-lists h2 img {
       display: none;
       vertical-align: middle; }
-  .lists li {
+  div.cl-lists li {
     font-size: 1em;
     margin-right: 10pt; }
-  .lists span.staff-note {
+  div.cl-lists span.staff-note {
     font-size: 0.7em;
     font-style: italic;
     white-space: nowrap; }
@@ -140,12 +142,6 @@ img.homeicon {
 
 #right-column {
   float: right; }
-
-select {
-  width: 100px; }
-
-input {
-  width: 100px; }
 
 @media only screen and (max-width: 900px) {
   #main {

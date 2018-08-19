@@ -21,6 +21,7 @@ class VSSubmissionAnalysis extends Analysis {
 
 	/**
 	 * Perform a Visual Studio integrity analysis
+	 * @param Site $site The site object
 	 * @param Analyzer $analyzer The analyzer for a submission
 	 * @return void
 	 * @throws AnalysisException If unable to unzip the solution or solution is invalid

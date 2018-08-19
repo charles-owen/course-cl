@@ -20,7 +20,7 @@ class Analyzer {
 	/**
 	 * Constructor
 	 * @param Submission $submission Submission we are analyzing
-	 * @param $path Path to any file for the submission
+	 * @param string $path Path to any provided file for the submission
 	 */
     public function __construct(Submission $submission, $path=null) {
         $this->submission = $submission;
@@ -114,8 +114,8 @@ class Analyzer {
 
     /**
      * Add result to the current analysis
-     * @param $tag The tag for the type of analysis
-     * @param $data Data produced by the analysis
+     * @param string $tag The tag for the type of analysis
+     * @param mixed $data Data produced by the analysis
      */
     public function add_result($tag, $data) {
         $this->results[$tag] = $data;
@@ -123,7 +123,7 @@ class Analyzer {
 
     /**
      * Get results of an analysis
-     * @param $tag The tag for the type of analysis
+     * @param string $tag The tag for the type of analysis
      * @return mixed|null The data for the analysis or null if none
      */
     public function get_result($tag) {
@@ -141,7 +141,11 @@ class Analyzer {
     public function get_results() {
         return $this->results;
     }
-	
+
+	/**
+	 * Set the path to the submission file
+	 * @param $path
+	 */
 	public function set_path($path) {
 		$this->path = $path;
 	}
@@ -153,17 +157,20 @@ class Analyzer {
 		return $this->path;
 	}
 
+	/**
+	 * Get the submission under analysis
+	 * @return Submission Submission this is analyzing
+	 */
 	public function get_submission() {
 		return $this->submission;
 	}
 
-    private $user;
     private $submission;
     private $path;
 
     private $tmpDir = null;
     private $unzipDir = null;
 
-    /// All of the analysis results will be placed in this array
-    private $results = array();
+    // All of the analysis results will be placed in this array
+    private $results = [];
 }

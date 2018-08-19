@@ -32,11 +32,13 @@
 </template>
 
 <script>
+	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
   import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
   import flatPickr from 'vue-flatpickr-component';
   import 'flatpickr/dist/flatpickr.css';
 
     export default {
+	    'extends': ConsoleComponentBase,
         props: ['assigntag'],
         data: function() {
             return {
@@ -63,7 +65,7 @@
             this.section = this.$store.getters['course/section'](member.semester, member.section);
             this.assignment = this.section.getAssignment(this.assigntag);
 
-            this.$parent.setTitle(': ' + this.assignment.shortname + ' Extensions');
+            this.setTitle(': ' + this.assignment.shortname + ' Extensions');
 
             let query = {
                 semester: member.semester,
@@ -72,7 +74,6 @@
             Site.api.get('/api/course/members/meta/get/extensions/' + this.assigntag, query)
                 .then((response) => {
                     if(!response.hasError()) {
-                        console.log(response);
                         let data = response.getData('member-meta');
                         if(data !== null) {
                             this.extensions = [];
@@ -105,7 +106,7 @@
                 Site.api.post(`/api/course/members/meta/set/${user.member.id}/extensions/${this.assigntag}`, query)
                     .then((response) => {
                         if(!response.hasError()) {
-                            console.log(response);
+
                         } else {
                             Site.toast(this, response);
                         }
@@ -118,7 +119,6 @@
             },
             clear(user) {
                 Site.Vue.set(this.extensions, +user.member.id, '');
-               // this.extensions[+user.member.id] = '';
             }
         }
     }

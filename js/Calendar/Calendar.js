@@ -9,7 +9,7 @@ import $ from 'jquery';
 * {title: 'Step 1', start: '2018-05-17', url: '/step1'},
 * @constructor
 */
-var Calendar = function () {
+const Calendar = function () {
     let sel = 'div.cl-calendar';
     Site.Site.ready(() => {
         let calendars = document.querySelectorAll(sel);

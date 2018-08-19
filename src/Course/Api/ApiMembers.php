@@ -68,6 +68,10 @@ class ApiMembers extends \CL\Users\Api\Resource
 			case 'meta':
 				return $this->meta($site, $user, $server, $params, $time);
 
+			// /api/course/members/spoof
+			case 'spoof':
+				return $this->spoof($site, $user, $server, $params, $time);
+
 			case 'bulk':
 				$api = new ApiMembersBulk();
 				$params2 = $params;
@@ -79,17 +83,76 @@ class ApiMembers extends \CL\Users\Api\Resource
 	}
 
 	/**
+	 * POST: /api/course/members/spoof, post['user'], post['member']
+	 * Enable user spoofing.
+	 *
+	 * POST: /api/course/members/spoof, post['restore'] = true
+	 * Restore from user spoofing
+	 *
+	 * @param Site $site The Site object
+	 * @param User $user The current user
+	 * @param Server $server Server abstraction
+	 * @param array $params Parameters from the router
+	 * @param int $time The current time
+	 * @return JsonAPI object
+	 * @throws APIException
+	 */
+	private function spoof(Site $site, User $user, Server $server, array $params, $time) {
+
+		$post = $server->post;
+		if(!empty($post['restore']) && $post['restore']) {
+			if(isset($user->dataJWT[Member::JWT_MEMBER_ACTUAL])) {
+				$memberId = $user->dataJWT[Member::JWT_MEMBER_ACTUAL];
+				$members = new Members($site->db);
+				$member = $members->getAsUser($memberId);
+				if($member === null) {
+					throw new APIException("Member does not exist");
+				}
+
+				// Make this the current user
+				$jwt = $member->createJWT($site, $time);
+				$cookiename = $site->cookiePrefix . User::COOKIENAME;
+				$server->setcookie($cookiename, $jwt, 0, "/");
+			} else {
+				throw new APIException('Not Authorized', APIException::NOT_AUTHORIZED);
+			}
+		} else if(!empty($post['member'])) {
+			$this->atLeast($user, $site->users->atLeast('course-spoofing', Member::TA));
+
+			// Enable user spoofing
+			$members = new Members($site->db);
+			$member = $members->getAsUser($post['member']);
+			if($member === null) {
+				throw new APIException("Member does not exist");
+			}
+
+			$member->setJWT(Member::JWT_MEMBER_ACTUAL, $user->member->id);
+
+			//
+			// A new session cookie is created
+			//
+			$jwt = $member->createJWT($site, $time);
+			$cookiename = $site->cookiePrefix . User::COOKIENAME;
+			$server->setcookie($cookiename, $jwt, 0, "/");
+		} else {
+			throw new APIException("Invalid API Usage", APIException::INVALID_API_USAGE);
+		}
+
+		return new JsonAPI();
+	}
+
+	/**
 	 * GET: /api/course/members/meta/get/:category/:key, post['section'], post['semester']
 	 * Gets all members metadata by category and key
 	 *
 	 * POST: /api/course/members/meta/set/:memberid/:category/:key, post['value']
 	 * Sets a member metadata value
 	 *
-	 * @param Site $site
-	 * @param User $user
-	 * @param Server $server
-	 * @param array $params
-	 * @param $time
+	 * @param Site $site The Site object
+	 * @param User $user The current user
+	 * @param Server $server Server abstraction
+	 * @param array $params Parameters from the router
+	 * @param int $time The current time
 	 * @return JsonAPI object
 	 * @throws APIException
 	 */

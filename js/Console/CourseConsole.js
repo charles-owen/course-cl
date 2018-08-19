@@ -12,14 +12,10 @@ import ExtensionsComponent from './ExtensionsComponent.vue';
 import SubmissionsComponent from './SubmissionsComponent.vue';
 import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
 import CourseEmailVue from './CourseEmail.vue';
+import SpoofingVue from './Spoofing.vue';
+
 
 export let CourseConsole = function(site, Console) {
-    console.log(Console);
-
-    //
-    // Register components
-    //
-  //  Site.Vue.component('section-component', SectionComponent);
 
     //
     // Assignment links are linked added to the assignment page next to an
@@ -67,12 +63,24 @@ export let CourseConsole = function(site, Console) {
         ]
     });
 
+	Console.components.addOption({
+		atLeast: {tag: 'course-spoofing', default: Member.TA},
+		page: page,
+		section: {title: 'Course', order: 5},
+		title: 'Member Spoofing',
+		order: 3,
+		route: '/course/spoofing',
+		routes: [
+			{route: '/course/spoofing', component: SpoofingVue}
+		]
+	});
+
     Console.components.addOption({
         atLeast: Member.TA,
         page: page,
         section: {title: 'Course', order: 5},
         title: 'Email Members',
-        order: 3,
+        order: 4,
         route: '/course/email',
         routes: [
             {route: '/course/email', component: CourseEmailVue}
@@ -80,7 +88,7 @@ export let CourseConsole = function(site, Console) {
     });
 
 
-    Console.components.addOption({
+	Console.components.addOption({
         atLeast: Member.ADMIN,
         page: {title: 'Management', route: '/management', order: 10},
         section: {title: 'Course Management', order: 1},

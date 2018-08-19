@@ -131,6 +131,11 @@ class Handbook {
 		}
 	}
 
+	/**
+	 * Get data for sending to client (runtime)
+	 * @param bool $rubrics If true, include rubrics.
+	 * @return array
+	 */
 	public function data($rubrics) {
 		$categories = [];
 		foreach($this->categories as $category) {

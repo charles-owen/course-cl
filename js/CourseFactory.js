@@ -10,6 +10,7 @@ import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
 import {SectionSelector} from './SectionSelectors/SectionSelector';
 import {Submission} from './Submission/Submission';
 import {ErrorHelp} from './ErrorHelp/ErrorHelp';
+import {SpoofingRestore} from './Util/SpoofingRestore';
 
 let CourseFactory = function() {
 }
@@ -84,6 +85,7 @@ CourseFactory.create = function(site) {
         SectionSelector.install(site);
         Submission.install(site);
         ErrorHelp.install(site);
+        SpoofingRestore.install(site);
     })
 
     return Course;

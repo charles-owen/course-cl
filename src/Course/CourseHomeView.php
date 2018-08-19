@@ -79,14 +79,14 @@ class CourseHomeView extends \CL\Course\View {
 		$img = $this->site->img;
 
 		$html = <<<HTML
-<p class="control"><a href="$root/cl/login" title="Log Out">
+<p class="cl-home-control"><a href="$root/cl/login" title="Log Out">
 <img src="$img/logout.png" width="100" height="25" alt="Log Out"></a></p>
 HTML;
 		return $html;
 	}
 
 	/** The management section of this home page
-	 * @returns HTML for the management options if staff, empty string otherwise */
+	 * @returns string HTML for the management options if staff, empty string otherwise */
 	public function management_controls() {
 		$html = '';
 
@@ -97,7 +97,7 @@ HTML;
 			$img = $this->course->img;
 
 			$html .= <<<LINK
-<p class="control"><a href="cl/console"><img src="$img/restricted.png" width="100" height="74" alt="Restricted Area"></a></p>
+<p class="cl-home-control"><a href="cl/console"><img src="$img/restricted.png" width="100" height="74" alt="Restricted Area"></a></p>
 LINK;
 		}
 
@@ -135,38 +135,12 @@ LINK;
 //HTML;
 //                }
 //            }
-//
-//
-//			$html .= <<<HTML
-//</select>
-//</p>
-//HTML;
-//
-//            /*
-//             * Section selection
-//             */
-//            $html .= <<<HTML
-//<p class="control">
-//<select name="section" onChange="submit_roles();">
-//HTML;
-//
-//            foreach($course->get_sections() as $section) {
-//                $secid = $section->name;
-//                $selected = $secid === $user->get_section()->name ? 'selected' : '';
-//                $html .= <<<HTML
-//<option value="$secid" $selected>$secid</option>
-//HTML;
-//            }
-//
-//		    $html .= <<<HTML
-//</select></p>
-//HTML;
-//
-//            if($user->has_actual($this->session)) {
-//                $html .= <<<HTML
-//<p><input type="submit" name="restore" id="restore" value="restore"></p>
-//HTML;
-//            }
+
+
+		if(isset($this->user->dataJWT[Member::JWT_MEMBER_ACTUAL])) {
+			$html .= '<div class="cl-spoofing-restore"></div>';
+		}
+
 //
 //            $html .= <<<HTML
 //</form>
