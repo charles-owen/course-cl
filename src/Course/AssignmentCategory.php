@@ -11,7 +11,13 @@ namespace CL\Course;
  * 
  * This class defines a grading category for a course
  * and has a collection of the assignments in that 
- * category */
+ * category
+ *
+ * @cond
+ * @property array assignments
+ * @property Section section
+ * @enccond
+ */
 class AssignmentCategory {
 	/** Constructor 
 	 * @param string $tag Tag associated with the assignment category

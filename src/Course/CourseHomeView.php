@@ -7,7 +7,6 @@ namespace CL\Course;
 
 use \CL\Site\Site;
 use \CL\Users\User;
-use \CL\Course\Assignment;
 
 /**
  * View class for course home page
@@ -169,11 +168,16 @@ LINK;
 
 		$html = '<ul>';
 		$assignments = $category->assignments;
-		if(count($assignments) > 0) {
-			foreach($category->assignments as $assignment) {
-				$html .= $this->assignmentLink($assignment);
+		$any = false;
+		foreach($category->assignments as $assignment) {
+			$link = $this->assignmentLink($assignment);
+			if($link !== '') {
+				$any = true;
 			}
-		} else {
+			$html .= $link;
+		}
+
+		if(!$any) {
 			$html .= '<li>Pending...</li>';
 		}
 
@@ -269,16 +273,18 @@ HTML;
 	public function enrolled_tools() {
 		$html = '';
 
-//		$html = <<<HTML
-//<ul>
-//<li><a href="lib/interact"><img alt="Interact! System" src="lib/images/interact/link.png" height="16" width="82"></a></li>
-//</ul>
-//HTML;
+		if($this->user->atLeast(Member::STUDENT)) {
+			if($this->site->installed('interact')) {
+				$html = <<<HTML
+<ul>
+<li><a href="cl/interact"><img alt="Interact! System" src="vendor/cl/interact/img/link.png" height="16" width="82"></a></li>
+</ul>
+HTML;
+			}
 
-		if(!$this->user->guest) {
 			$html .= <<<HTML
 <ul>
-<li><a href="$this->aboutme">About Me and Preferences...</a></li>
+<li><a href="cl/aboutme">About Me and Preferences...</a></li>
 <li><a href="cl/calendar">Personal Calendar</a></li>
 <li><a href="cl/grades">Grades</a></li>
 HTML;
@@ -297,29 +303,17 @@ HTML;
 		return $html;
 	}
 
-
-//	/** The section we are viewing */
-//	public function get_section() {
-//		return $this->section;
-//	}
-//
-//	/** The section ID (like '001') */
-//	public function get_section_id() {
-//		return $this->section !== null ? $this->section->get_id() : "???";
-//	}
-
-	/** Specify a custom aboutme page
-	 * @param $aboutme Link to about me page */
-	public function set_aboutme($aboutme) {
-		$this->aboutme = $aboutme;
+	public function staff() {
+		$users = new Members($this->site->db);
+		return $users->query([
+			'semester'=>$this->section->semester,
+			'section'=>$this->section->id,
+			'atLeast'=>\CL\Users\User::STAFF
+		]);
 	}
 
-
-//	private $section;	// The Section object
-//	private $footer = null;
-
+	/* @var int $time */
 	private $time;          ///< Current time
-	private $aboutme = "lib/user/aboutme.php";	// Link to aboutme page...
 	private $calendar;      ///< The course calendar
 }
 

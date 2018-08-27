@@ -36,6 +36,11 @@ return function(Assignments $assignments) {
 	$step1 = $steps->add_assignment('step1', 'Step 1');
 	$step1->set_release('8/28/2018 1:00am', '9/6/2018 11:55pm');
 	$step1->submissions->add_text('text', 'Text');
+	$step1->submissions->add_program('program', 'Program');
+
+	$step2 = $steps->add_assignment('step2', 'Step 2');
+	$step2->set_release('8/28/2018 1:00am', '9/15/2018 11:55pm');
+	$step2->submissions->add_program('program', 'Program');
 
 //	//
 //	// Design 1

@@ -11,13 +11,13 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
-    "console-cl": "^0.0.1",
-    "dialog-cl": "^0.2.1",
+    "console-cl": ">=0.0.1",
+    "dialog-cl": ">=0.2.1",
     "flatpickr": "^4.5.1",
     "fullcalendar": "^3.9.0",
     "jquery": "^3.3.1",
-    "site-cl": "^0.0.1",
-    "users-cl": "^0.0.1",
+    "site-cl": ">=0.0.1",
+    "users-cl": ">=0.0.1",
     "vue-flatpickr-component": "^7.0.4"
   }
 }

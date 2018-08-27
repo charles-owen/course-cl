@@ -20,6 +20,7 @@ use CL\Site\ViewAux;
  * @property Section section
  * @property array Submissions
  * @property \CL\Site\Site site
+ * @property \CL\Course\AssignmentCategory category
  * @endcond
  */
 class Assignment {
@@ -93,6 +94,9 @@ class Assignment {
 			case 'url':
 				return $this->section->course->root . '/' . $this->url;
 
+			case 'rawUrl':
+				return $this->url;
+
 			// 	The assignment release date/time
 			case 'release':
 				return $this->release;
@@ -148,7 +152,7 @@ class Assignment {
 
 			case 'category':
 				$this->category = $value;
-				$this->section = $value->section;
+				$this->section = $this->category->section;
 				break;
 
 			case 'solving':
@@ -179,8 +183,8 @@ class Assignment {
 	 * '9/02/2014 11:55pm'. Any time that can be read by PHP's strtotime
 	 * will work.
 	 *
-	 * @param $due The due date (time as a string as in '9/02/2014 11:55pm')
-	 * @param $revised true if the due date is a revison
+	 * @param int $due The due date (time as a string as in '9/02/2014 11:55pm')
+	 * @param bool $revised true if the due date is a revison
 	 */
 	public function set_due($due, $revised = FALSE)
 	{
@@ -189,8 +193,8 @@ class Assignment {
 	}
 
 	/** The assignment due date as a PHP time
-	 * @param $user User we want the due date for or null to get the fixed due date
-	 * @returns Due date or null if none
+	 * @param User $user User we want the due date for or null to get the fixed due date
+	 * @return int Due date or null if none
 	 */
 	public function get_due(User $user = null)
 	{
@@ -243,7 +247,7 @@ class Assignment {
 	 * @param User $user The user we are looking at
 	 * @param int $time PHP time, default is current time
 	 * @param int $delay Delay after due time/date
-	 * @returns true if after a specified due date
+	 * @return true if after a specified due date
 	 */
 	public function after_due(User $user, $time = null, $delay = 0) {
 		if ($time === null) {
@@ -277,9 +281,9 @@ class Assignment {
 	 * 'no' or 'none' : No release date at all
 	 *
 	 *
-	 * @param $release The release date (time as a string as in '9/02/2014 11:55pm')
-	 * @param $due Optional due date (time as a string as in '9/02/2014 11:55pm')
-	 * @param $revised Optional due date revised flag
+	 * @param int $release The release date (time as a string as in '9/02/2014 11:55pm')
+	 * @param int $due Optional due date (time as a string as in '9/02/2014 11:55pm')
+	 * @param bool $revised Optional due date revised flag
 	 */
 	public function set_release($release, $due = null, $revised = false)
 	{
@@ -297,9 +301,11 @@ class Assignment {
 	}
 
 
-	/** Is this assignment active for submission?
-	 * @param $user User we are testing, default is current user
-	 * @param $time PHP time, default is current time
+	/**
+	 * Is this assignment active for submission?
+	 * @param User $user User we are testing, default is current user
+	 * @param int $time PHP time, default is current time
+	 * @return bool True if assignment is active
 	 */
 	public function is_open(User $user, $time = null)
 	{
@@ -326,14 +332,15 @@ class Assignment {
 		return !$this->after_due($user, $time);
 	}
 
-	/** Is the time after the release date?
+	/**
+	 * Is the time after the release date?
 	 *
 	 * If no release date is specified, this will return
 	 * true. If the release date is equal to false, there is
 	 * no release date for the assignment.
 	 *
-	 * @param $time PHP time
-	 * @returns true if after a specified release date
+	 * @param int $time PHP time
+	 * @return bool true if after a specified release date
 	 */
 	public function after_release($time)
 	{
@@ -356,7 +363,7 @@ class Assignment {
 	 *
 	 * @param User $user User we need a due date for
 	 * @param int $time Current time
-	 * @returns true if available to user
+	 * @return true if available to user
 	 */
 	public function available_due(User $user, $time)
 	{
@@ -386,8 +393,9 @@ class Assignment {
 	/** Generate a top notice about availability relative to due date
 	 *
 	 * The will return for staff only a message about availability
-	 * @param $user User
-	 * @param $time Time
+	 * @param User $user The user we need a due date for
+	 * @param int $time The current time
+	 * @return string HTML
 	 */
 	public function shout_available_due(User $user, $time = null)
 	{
@@ -405,15 +413,17 @@ class Assignment {
 
 	}
 
-	/** Generate a top notice about availability relative to release date
+	/**
+	 * Generate a top notice about availability relative to release date
 	 *
 	 * The will return for staff only a message about availability
-	 * @param $user User
-	 * @param $time Time
+	 * @param User $user The user we are displaying for
+	 * @param int $time Current time
+	 * @return string HTML
 	 */
 	public function shout_available_release(User $user, $time)
 	{
-		if ($user->is_staff()) {
+		if ($user->staff) {
 			if ($this->after_release($time)) {
 				return '<p class="topnotice">available to students</p>';
 			} else {
@@ -432,7 +442,7 @@ class Assignment {
 	 *
 	 * @param User $user The user to test
 	 * @param int $time Time to test
-	 * @returns true if available to user
+	 * @return true if available to user
 	 */
 	public function available_release(User $user, $time)
 	{
@@ -449,7 +459,8 @@ class Assignment {
 	}
 
 
-	/** Load the assignment definition.
+	/**
+	 * Load the assignment definition.
 	 *
 	 * This is overridden for assignment types that have more
 	 * complex definitions to load.
@@ -479,9 +490,9 @@ class Assignment {
 	 *
 	 * This checks to see if pending review is open on this submission. If so,
 	 * it tells the pending review system so it can test the results
-	 * @param The|User $user The user the submission is for
-	 * @param Submission|The $submission The Submission object this is for
-	 * @param $time Submission time
+	 * @param User $user The user the submission is for
+	 * @param Submission $submission The Submission object this is for
+	 * @param int $time Submission time
 	 */
 	public function submitted(User $user, Submission $submission, $time)
 	{
@@ -490,8 +501,9 @@ class Assignment {
 //		}
 	}
 
-	/** Construct the due date HTML for an assignment
-	 * @returns HTML for the due date
+	/**
+	 * Construct the due date HTML for an assignment
+	 * @returns string HTML for the due date
 	 */
 	public function due_present(User $user, $name = null)
 	{
@@ -535,7 +547,7 @@ class Assignment {
 	 * not contain a period, it is assumed that is the directory for the
 	 * assignment instead.
 	 *
-	 * @returns string File system path
+	 * @return string File system path
 	 */
 	public function get_dir() {
 		$rootDir = $this->section->course->rootDir;
@@ -551,7 +563,6 @@ class Assignment {
 	 * Flag an assignment as looked at.
 	 * @param User $user User doing the looking
 	 * @param int $time Optional time for the look
-	 * @internal param $
 	 */
 	public function look(User $user, $time = null)
 	{
@@ -604,6 +615,7 @@ class Assignment {
 	 * __call() is triggered when invoking inaccessible methods in an object context.
 	 * @param string $name Name of non-existent function
 	 * @param array $arguments Arguments to the function call
+	 * @return mixed
 	 */
 	public function __call($name, $arguments) {
 		if (isset($this->extensions[$name])) {

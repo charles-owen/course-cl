@@ -83,6 +83,11 @@ class HandbookCategory {
 		}
 	}
 
+	/**
+	 * Create data suitable for sending to runtime (client)
+	 * @param bool $rubrics If true, include any rubrics.
+	 * @return array Data
+	 */
 	public function data($rubrics) {
 		$data = [
 			'tag'=>$this->tag,

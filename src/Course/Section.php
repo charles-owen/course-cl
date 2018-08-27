@@ -78,6 +78,9 @@ class Section {
             case "semester":
                 return $this->semester;
 
+	        case "semesterLC":
+	        	return strtolower($this->semester);
+
             case 'name':
                 return $this->semester . '/' . $this->id;
 

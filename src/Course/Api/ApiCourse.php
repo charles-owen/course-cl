@@ -6,6 +6,7 @@
 namespace CL\Course\Api;
 
 use CL\Course\Submission\SubmissionApi;
+use CL\Course\Submission\SubmissionProgram;
 use CL\Site\Site;
 use CL\Site\System\Server;
 use CL\Site\Api\APIException;
@@ -54,6 +55,11 @@ class ApiCourse extends \CL\Users\Api\Resource {
 				array_shift($params2);
 				return $api->dispatch($site, $server, $params2, $properties, $time);
 
+			// /api/course/open
+			// Get all open assignment available for submission
+			case 'open':
+				return $this->open($site, $server, $time);
+
 			case 'email':
 				return $this->email($site, $server, $time);
 
@@ -62,6 +68,53 @@ class ApiCourse extends \CL\Users\Api\Resource {
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
+	}
+
+	private function open(Site $site, Server $server, $time) {
+		$user = $this->isUser($site, Member::STUDENT);
+
+		$get = $server->get;
+
+		$section = $site->course->get_section_for($user);
+		if($section === null) {
+			throw new APIException("Member not currently in a course section");
+		}
+
+		$opens = $section->assignments->getOpenAssignments($user, $time);
+		$data = [];
+		foreach($opens as $open) {
+			$open->load();
+			$submissions = $open->submissions->submissions;
+			if(count($submissions) === 0) {
+				// If no submissions, ignore the assignment
+				continue;
+			}
+
+			foreach($submissions as $submission) {
+				if(!($submission instanceof SubmissionProgram)) {
+					continue;
+				}
+
+
+				$submitData = [
+					'assign'=>$open->tag,
+					'assignName'=>$open->name,
+					'submitTag'=>$submission->tag,
+					'submitName'=>$submission->name
+				];
+
+				$due = $open->get_due($user);
+				if($due !== null) {
+					$submitData['due'] = date("m-d-Y h:ia", $due);
+				}
+
+				$data[] = $submitData;
+			}
+		}
+
+		$json = new JsonAPI();
+		$json->addData('open-submissions', 0, $data);
+		return $json;
 	}
 
 	private function email(Site $site, Server $server, $time) {

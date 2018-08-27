@@ -22,7 +22,7 @@ class ErrorHelpView extends View {
 	 * @param Server $server Optional server object
 	 */
 	public function __construct(Site $site, $error, Server $server=null) {
-		parent::__construct($site);
+		parent::__construct($site, ["nojs"=>true]);
 
 		$server = $server !== null ? $server : new Server();
 		$this->ide = isset($server->get['ide']);

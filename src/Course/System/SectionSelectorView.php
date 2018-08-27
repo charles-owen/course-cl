@@ -69,7 +69,10 @@ section of this course. Please select the section you wish to log in to.</p>';
 	 */
 	public function present() {
 		$user = $this->site->users->user;
-		if($user->atLeast(User::ADMIN)) {
+		$members = new \CL\Course\Members($this->site->db);
+		$memberships = $members->getByUser($user->id);
+
+		if(count($memberships) === 0 || $user->atLeast(User::ADMIN)) {
 			$sections = $this->site->course->sections;
 			$memberships = [];
 			foreach($sections as $section) {
@@ -81,41 +84,9 @@ section of this course. Please select the section you wish to log in to.</p>';
 					'created'=>time()]);
 				$memberships[] = $member;
 			}
-		} else {
-			$members = new \CL\Course\Members($this->site->db);
-			$memberships = $members->getByUser($user->id);
 		}
 
-		// Sort into calendar order
-		usort($memberships, function($a, $b) {
-			$semesterA = $a->semester;
-			$semesterB = $b->semester;
-			$yearA = +substr($semesterA, 2, 2);
-			$yearB = +substr($semesterB, 2, 2);
-			if($yearA !== $yearB) {
-				return $yearA - $yearB;
-			}
-
-			$semA = substr($semesterA, 0, 2);
-			$semB = substr($semesterB, 0, 2);
-			if($semA !== $semB) {
-				if($semA === 'SS') {
-					return -1;
-				}
-
-				if($semA === 'US') {
-					if($semB === 'SS') {
-						return 1;
-					}
-				} else {
-					return -1;
-				}
-
-				return 1;
-			}
-
-			return $a->id - $b->id;
-		});
+		$memberships = Members::sortCalendarOrder($memberships);
 
 		$data = [];
 		foreach($memberships as $member) {

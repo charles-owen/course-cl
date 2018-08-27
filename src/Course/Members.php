@@ -105,6 +105,10 @@ SQL;
 			$where->append("member.role in ($list)");
 		}
 
+		if(isset($params['role'])) {
+			$where->append("member.role=?", $params['role']);
+		}
+
 		if(!empty($params['after'])) {
 			$where->nest();
 			$where->append('name > ?', $params['after']['name'], \PDO::PARAM_STR);
@@ -545,7 +549,7 @@ SQL;
 	 * @param int $userId The User internal ID
 	 * @return array of Member objects.
 	 */
-	function getByUser($userId) {
+	public function getByUser($userId) {
 		$sql = <<<SQL
 select * from $this->tablename
 where userid=?
@@ -569,6 +573,46 @@ SQL;
 		foreach($rows as $row) {
 			$memberships[] = new Member($row);
 		}
+
+		return $memberships;
+	}
+
+	/**
+	 * Sort an array of Member objects into calendar/section order.
+	 * @param array $memberships Array of Member objects to sort.
+	 * @return array Sorted array of Member objects.
+	 */
+	public static function sortCalendarOrder(array $memberships) {
+		// Sort into calendar order
+		usort($memberships, function($a, $b) {
+			$semesterA = $a->semester;
+			$semesterB = $b->semester;
+			$yearA = +substr($semesterA, 2, 2);
+			$yearB = +substr($semesterB, 2, 2);
+			if($yearA !== $yearB) {
+				return $yearA - $yearB;
+			}
+
+			$semA = substr($semesterA, 0, 2);
+			$semB = substr($semesterB, 0, 2);
+			if($semA !== $semB) {
+				if($semA === 'SS') {
+					return -1;
+				}
+
+				if($semA === 'US') {
+					if($semB === 'SS') {
+						return 1;
+					}
+				} else {
+					return -1;
+				}
+
+				return 1;
+			}
+
+			return $a->sectionId - $b->sectionId;
+		});
 
 		return $memberships;
 	}

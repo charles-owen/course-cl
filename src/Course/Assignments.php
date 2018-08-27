@@ -6,6 +6,8 @@
 namespace CL\Course;
 
 use CL\Course\AssignmentCategory;
+use CL\Users\User;
+
 
 /**
  * Provides support for managing course assignments
@@ -182,14 +184,14 @@ class Assignments {
 	}
 	
 	/** Get all assignments that are released and not yet due
-	 * @param $user User to get the assignments for
-	 * @param $time Time to test
+	 * @param User $user User to get the assignments for
+	 * @param int $time Time to test
 	 * @returns array List of Assignment objects */
-	public function getOpenAssignments(\User $user, $time) {
-		$result = array();
+	public function getOpenAssignments(User $user, $time) {
+		$result =[];
 		
 		foreach($this->categories as $category) {
-			foreach($category->get_assignments() as $assignment) {
+			foreach($category->assignments as $assignment) {
 				if($assignment->is_open($user, $time)) {
 					$result[] = $assignment;
 				}

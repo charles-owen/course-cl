@@ -25,8 +25,8 @@
             <div class="radio-set">
               <div class="label"><em>Role:</em></div>
               <div class="options">
-                <label v-for="(roleObj, id) in roles"><input v-model="role" name="role" type="radio" :value="id"
-                                                             :checked="checked(id)"> {{roleObj.name}}</label>
+                <label v-for="(roleObj, id) in roles">
+                  <input v-model="role" name="role" type="radio" :value="id"> {{roleObj.name}}</label>
               </div>
             </div>
             <p class="center">
@@ -134,9 +134,6 @@
 
                 }
 
-            },
-            checked(role) {
-                return role === this.role;
             },
             fetch(userId) {
                 if(this.id !== 'new') {

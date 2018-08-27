@@ -21,14 +21,18 @@ class ErrorHelpRouter extends View {
 	 * @param array $properties Properties from the router
 	 */
 	public function __construct(Site $site, Server $server, array $properties) {
-		parent::__construct($site);
-
+		parent::__construct($site, ['nojs'=>true]);
 		$get = $server->get;
+
 		$ide = isset($get['ide']);
 		if(!empty($get['e'])) {
-			$error = strip_tags($get['e']);
-			$this->error = $error;
+			$error = strtoupper(trim(strip_tags($get['e'])));
 
+			if(substr($error, 0, 1) === 'E') {
+				$error = "E000";
+			}
+
+			$this->error = $error;
 			$dir = $site->rootDir . '/errorhelp';
 
 			if(file_exists("$dir/$error.php")) {

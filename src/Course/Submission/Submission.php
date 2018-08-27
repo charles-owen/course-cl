@@ -108,6 +108,7 @@ abstract class Submission {
 
 	/**
 	 * Present the submission form where users enter the submission
+	 * @param AssignmentView $view The view of the assignment
 	 * @param User $user Current user
 	 * @param int $time Current time
 	 * @returns string HTML For submission page
@@ -391,7 +392,7 @@ HTML;
 
 //	/**
 //	 * Get the name of the teaming for this assignment.
-//	 * @return teaming|null The teaming name or null if not a team submission
+//	 * @ return teaming|null The teaming name or null if not a team submission
 //	 */
 //	public function get_teaming() {
 //		return $this->teaming;
@@ -399,8 +400,8 @@ HTML;
 //
 //	/**
 //	 * Get the team for a user for this submission
-//	 * @param User $user
-//	 * @return array of team ID's for false if failure
+//	 * @ param User $user
+//	 * @ return array of team ID's for false if failure
 //	 */
 //	public function get_teams(User $user) {
 //		if($this->teaming === null) {
@@ -444,6 +445,7 @@ HTML;
 	private $additional = null; // Additional text to display with the submission tool
 
 
-	protected $analysis = [];	// Any Analysis components we will use
+	/// Any Analysis components we will use
+	protected $analysis = [];
 	private $teaming;	///< Any teaming this submission is for
 }

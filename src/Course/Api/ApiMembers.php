@@ -414,29 +414,109 @@ class ApiMembers extends \CL\Users\Api\Resource
 		return new JsonAPI();
 	}
 
-	private function sectionselect(Site $site, User $user, Server $server, $time) {
+	private function sectionselect(Site $site, User $user, Server $server, $time)
+	{
+		$members = new Members($site->db);
+
 		$post = $server->post;
+		if (isset($post['auto'])) {
+			//
+			// Automatic section selection
+			//
+			$memberships = $members->getByUser($user->id);
+			if ($user->atLeast(User::ADMIN) && count($site->course->sections) > 1) {
+				// Admins are allowed to log into any section on
+				// the system, even if they are not a member.
+				$sections = $site->course->sections;
+				$memberships = [];
+				foreach($sections as $section) {
+					$member = new Member(['id'=>0,
+						'userid'=>$user->id,
+						'semester'=>$section->semester,
+						'section'=>$section->id,
+						'role'=>$user->role,
+						'created'=>time()]);
+					$memberships[] = $member;
+				}
+			} else {
+				switch (count($memberships)) {
+					case 0:
+						throw new APIException("You are not a member of any section of this course.");
+						break;
+
+					case 1:
+						return $this->setMembership($site, $server, $user, $memberships[0], $time);
+
+					default:
+						break;
+				}
+			}
+
+			//
+			// Multiple section options, return that instead of logging the
+			// user into a section.
+			//
+			$data = [];
+			foreach($memberships as $member) {
+				switch(substr($member->semester, 0, 2)) {
+					case 'SS':
+						$sem = 'Spring';
+						break;
+
+					case 'US':
+						$sem = 'Summer';
+						break;
+
+					default:
+						$sem = 'Fall';
+						break;
+				}
+
+				$data[] = [
+					'course'=>$site->course->name,
+					'desc'=>$site->course->desc,
+					'semester'=>$member->semester,
+					'section'=>$member->sectionId,
+					'nice'=>$sem . ', ' . '20' . substr($member->semester, 2, 2)
+				];
+			}
+
+			$json = new JsonAPI();
+			$json->addData('course-sections', 0, $data);
+			return $json;
+		}
+
 		$this->ensure($post, ['semester', 'section']);
 
 		$semester = strip_tags($post['semester']);
 		$section = strip_tags($post['section']);
 
 		// Load the membership for this user
-		$members = new Members($site->db);
 		$member = $members->getBySection($user->id, $semester, $section);
-		if($member === null) {
-			if($user->atLeast(User::ADMIN)) {
+		if ($member === null) {
+			if ($user->atLeast(User::ADMIN)) {
 				$member = new Member(['id' => 0,
 					'userid' => $user->id,
 					'semester' => $semester,
 					'section' => $section,
 					'role' => $user->role,
 					'created' => $time]);
+			} else if($user->role === User::GUEST) {
+				$member = new Member(['id' => 0,
+					'userid' => $user->id,
+					'semester' => $semester,
+					'section' => $section,
+					'role' => Member::GUEST,
+					'created' => $time]);
 			} else {
 				throw new APIException("Unable to open membership in that section");
 			}
 		}
 
+		return $this->setMembership($site, $server, $user, $member, $time);
+	}
+
+	private function setMembership(Site $site, Server $server, User $user, Member $member, $time) {
 		// We have a membership, attach it to the user
 		$user->member = $member;
 		//

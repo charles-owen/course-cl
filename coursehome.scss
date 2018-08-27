@@ -1,47 +1,46 @@
 ﻿@import '../site/sass/modules/variables';
 @import '../site/sass/modules/colors';
 
+div.cl-course-home {
+  padding: 0 0 1em 0;
+
+
 $menubar-background: #f2f2f2;
 $border-color: #cccccc;
 $main-padding: $margin;
 $mobile-padding: $margin-mobile;
 $sidebar-width: 225px;
 
-p {
-  text-align: left;
-  margin: 1em 0;
-}
-
-h2 {
-  margin: 0.5em 0;
-}
-
 div.cl-main {
-
   position: relative;
   display: flex;
   flex-direction: row;
+  flex-wrap: nowrap;
   padding: 0;
 
-  > div.left {
-    width: 100%;
-    position: relative;
-    vertical-align: top;
-    padding: 0.25em $sidebar-width+$main-padding 0.25em $main-padding;
+  > div:first-child {
+   // width: 100%;
+    flex: 1 1 auto;
+   // position: relative;
+   // vertical-align: top;
+    padding: 0.25em $main-padding;
+   //  padding: 0.25em $sidebar-width+$main-padding 0.25em $main-padding;
   }
 
-  > div.right {
-    position: absolute;
-    top: 0;
-    right: $sidebar-width+$main-padding;
+  > div:nth-child(2) {
+   // flex: 0 1 100px;
+   // position: absolute;
+   // top: 0;
+   // right: $sidebar-width+$main-padding;
   }
 
-  div.sidebar {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: $sidebar-width;
-    padding: 0 $main-padding 0 0;
+  > div:last-child{
+    flex: 0 1 $sidebar-width;
+    //position: absolute;
+    //top: 0;
+    //right: 0;
+    //width: $sidebar-width;
+    //padding: 0 $main-padding 0 0;
     box-shadow: none;
 
     iframe {
@@ -49,11 +48,30 @@ div.cl-main {
     }
   }
 
-  div.twocol {
+  div.cl-controls {
+    float: right;
+    margin: 0 0 0 $main-padding;
+  }
+
+  @media only screen and (max-width: $wide-width) {
+    > div:first-child {
+      padding: 0.25em $main-padding 0.25em $main-padding;
+    }
+
+    > div:nth-child(2) {
+      right: $main-padding;
+    }
+
+    > div:last-child {
+      display: none;
+    }
+  }
+
+  div.cl-twocol {
     padding: $main-padding 0 0 0;
   }
 
-  .cl-home-control {
+  p.cl-home-control {
     text-align: center;
     margin: 0.25em 0 0.5em 0;
     width: 100px;
@@ -64,35 +82,29 @@ div.cl-main {
   }
 }
 
-.cl-calendar {
+div.cl-calendar {
   @extend %shadow;
   width: 100%;
   max-width: 650px;
-  margin: $main-padding 0 0 0;
+  margin: $main-padding auto 0 auto;
   background-color: $menubar-background;
   border: 1px $border-color solid;
   padding: 6px 4px 0 4px;
 
   .fc-toolbar {
-
     text-align: left;
     padding-left: 0.3rem;
   }
 }
 
-div.twocol {
+div.cl-twocol {
   width: 100%;
   display: flex;
   flex-direction: row;
   padding: $main-padding $main-padding 0 $main-padding;
   margin: 0;
 
-  h2 {
-    margin: 0;
-    padding: $main-padding;
-  }
-
-  div.left, div.right {
+  >div {
     @extend %shadow;
     border: 1px $border-color solid;
     padding: 0;
@@ -104,24 +116,13 @@ div.twocol {
     }
   }
 
-  div.left {
+  div:first-child {
     margin-right: 5px;
   }
 
-  div.right {
+  div:last-child {
     margin-left: 5px;
   }
-}
-
-footer {
-  clear: both;
-  border-top: 1pt solid #000000;
-  font-style: italic;
-  padding: 0 $margin;
-}
-
-.email {
-  font-size: smaller;
 }
 
 div.cl-lists {
@@ -131,8 +132,9 @@ div.cl-lists {
     font-family: sans-serif;
     font-size: 1.3em;
     border-bottom: none;
-    padding: 0;
     background: $menubar-background;
+    padding: $main-padding;
+    margin: 0;
 
     img {
       display: none;
@@ -152,87 +154,37 @@ div.cl-lists {
   }
 }
 
-.lists > ul > li {
-  list-style-image: url('img/bullet1.png');
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-.lists ul li.star {
-  list-style-image: url('img/star.png');
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-.lists ol li img, .lists ul li img {
-  vertical-align: top;
-  border: 0px;
-}
-
-.lists ol li ul li {
-  list-style-image: url('img/bullet.png');
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-.lists ul li ul li, .lists ol li ul li.bullet, li.bullet {
-  list-style-image: url('img/bullet.png');
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-img.homeicon {
-  vertical-align: middle;
-}
-
-.lists ul li .additional {
-  color: #008080;
-  padding-left: 20px;
-  font-style: italic;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.lists ol li ul, .lists ul li ul {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-
-
-#right-column {
-  float: right;
-}
 
 @media only screen and (max-width: $wide-width) {
-  #main {
-    width: 100%;
-    max-width: 100%;
 
-    .sidebar {
-      display: none;
-    }
-
-    > div.left {
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      display: inline-block;
-      padding: 0 $main-padding;
-
-      div.top {
-        padding-right: 100px;
-      }
-    }
-
-    > div.right {
-      display: block;
-      padding-right: 0.25em;
-      position: absolute;
-      top: 0;
-      right: $main-padding;
-    }
-  }
+  //#main {
+  //  width: 100%;
+  //  max-width: 100%;
+  //
+  //  .sidebar {
+  //    display: none;
+  //  }
+  //
+  //  > div.left {
+  //    width: 100%;
+  //    max-width: 100%;
+  //    box-sizing: border-box;
+  //    display: inline-block;
+  //    padding: 0 $main-padding;
+  //
+  //    div.top {
+  //      padding-right: 100px;
+  //    }
+  //  }
+  //
+  //  > div.right {
+  //    display: block;
+  //    padding-right: 0.25em;
+  //    position: absolute;
+  //    top: 0;
+  //    right: $main-padding;
+  //  }
+  //}
 
   .mobile {
     display: inherit;
@@ -245,31 +197,31 @@ img.homeicon {
     max-width: 100%;
   }
 
-  #body {
-    width: 100%;
-    min-width: initial;
-    max-width: 100%;
-    font-size: 1em;
-  }
+  //#body {
+  //  width: 100%;
+  //  min-width: initial;
+  //  max-width: 100%;
+  //  font-size: 1em;
+  //}
 
   div.hot {
     width: 90%;
   }
 
-  #main {
-    div.twocol {
-      width: calc(100% + #{$mobile-padding * 2});
-      margin-left: -$mobile-padding;
-    }
-
-     > div.left {
-         padding: 0 $mobile-padding 0 $mobile-padding;
-       }
-
-       > div.right {
-         right: $mobile-padding;
-       }
-  }
+  //#main {
+  //  div.cl-twocol {
+  //    width: calc(100% + #{$mobile-padding * 2});
+  //    margin-left: -$mobile-padding;
+  //  }
+  //
+  //   > div.left {
+  //       padding: 0 $mobile-padding 0 $mobile-padding;
+  //     }
+  //
+  //     > div.right {
+  //       right: $mobile-padding;
+  //     }
+  //}
 
   h1 {
     font-size: 1.3em;
@@ -298,7 +250,7 @@ img.homeicon {
     font-size: 1em;
   }
 
-  div.twocol {
+  div.cl-twocol {
     display: block;
     position: relative;
     width: 100%;
@@ -306,7 +258,7 @@ img.homeicon {
     border: 0;
     padding: $mobile-padding 0 0 0;
  
-    div.left, div.right {
+    >div {
       box-shadow: none;
 
       display: block;
@@ -333,4 +285,7 @@ img.homeicon {
 #start {
   font-size: 2.5em;
   text-align: center;
+}
+
+
 }

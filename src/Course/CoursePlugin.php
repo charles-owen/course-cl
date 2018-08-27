@@ -78,6 +78,16 @@ class CoursePlugin extends Course {
 				return $view->whole();
 			});
 
+			$router->addRoute(['aboutme'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new AboutMeView($site, $server);
+				return $view->vue();
+			});
+
+			$router->addRoute(['ide'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new Ide\IdeConnectedView($site, $server);
+				return $view->whole();
+			});
+
 			$router->addRoute(['api', 'course', '*'], function (Site $site, Server $server, array $params, array $properties, $time) {
 				$resource = new ApiCourse();
 				return $resource->apiDispatch($site, $server, $params, $properties, $time);
@@ -201,7 +211,22 @@ class CoursePlugin extends Course {
 				} else {
 					switch(count($memberships)) {
 						case 0:
-							$redirect = $site->root . '/cl/notauthorized';
+							// If a user is not indicated as being in
+							// any sections, we put them into the
+							// one section as a guest or route to the section selector.
+							if(count($course->sections) === 1) {
+								$member = new Member();
+								$member->role = Member::GUEST;
+								$member->userId = $user->userId;
+								$member->semester = $course->sections[0]->semester;
+								$member->sectionId = $course->sections[0]->id;
+								$user->member = $member;
+							} else {
+								$redirect = $site->root . '/cl/sectionselector?u=' .
+									urlencode($server->server['REQUEST_URI']);
+							}
+
+//							$redirect = $site->root . '/cl/notauthorized';
 							break;
 
 						case 1:
@@ -217,7 +242,7 @@ class CoursePlugin extends Course {
 
 			}
 
-			// If this is an open page, we allow no active membership
+			// If this is an open page, we require no active membership
 			if(in_array('open', $site->options) ||
 				in_array('open-section', $site->options)) {
 				return null;

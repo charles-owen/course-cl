@@ -28,11 +28,6 @@ class CalendarView extends \CL\Site\ViewAux {
 		parent::install($view);
 
 		$view->addJS('calendar');
-		$view->script = <<<SCRIPT
-//new Calendar('div.cl-calendar');
-SCRIPT;
-
-
 
 		$this->site = $view->site;
 		$this->user = $this->site->users->user;
@@ -69,7 +64,7 @@ SCRIPT;
 	    $json = htmlspecialchars(json_encode($items), ENT_NOQUOTES);
 
 
-	    return "<div class=\"cl-calendar\">$json</div>";
+	    return "<div class=\"full\"><div class=\"cl-calendar\">$json</div></div>";
     }
 
     private $site;
