@@ -378,25 +378,27 @@ class Assignment extends Extendible {
 	 *
 	 * @param User $user User we need a due date for
 	 * @param int $time Current time
+	 * @param int $delay Optional time after due date before available
 	 * @return true if available to user
 	 */
-	public function available_due(User $user, $time)
+	public function available_due(User $user, $time, $delay=0)
 	{
 		if ($user->guest) {
 			return false;
 		}
 
-//		//
-//		// If there is reviewing, we don't open solutions
-//		// until after the reviewing due date plus any option extra time
-//		//
-//		if ($this->reviewing !== null) {
-//			$rdue = $this->reviewing->get_available_due();
-//			if ($rdue !== null && $rdue > $time) {
-//
-//				return false;
-//			}
-//		}
+		$time -= $delay;
+
+		//
+		// If there is reviewing, we don't open solutions
+		// until after the reviewing due date plus any option extra time
+		//
+		if ($this->reviewing !== null) {
+			$rdue = $this->reviewing->get_available_due();
+			if ($rdue !== null && $rdue > $time) {
+				return false;
+			}
+		}
 
 		if (!$this->after_due($user, $time)) {
 			return false;
@@ -534,12 +536,12 @@ class Assignment extends Extendible {
 			$html .= '<p class="due">' . $name . ' is due ' . $date . ' at ' . $time . '</p>';
 		}
 
-//		if ($this->reviewing !== null) {
-//			$reviewDue = $this->reviewing->get_due();
-//			$date = date("l, F j, Y", $reviewDue);
-//			$time = date("g:ia", $reviewDue);
-//			$html .= '<p class="due">Peer reviews are due ' . $date . ' at ' . $time . '</p>';
-//		}
+		if ($this->reviewing !== null) {
+			$reviewDue = $this->reviewing->due;
+			$date = date("l, F j, Y", $reviewDue);
+			$time = date("g:ia", $reviewDue);
+			$html .= '<p class="due">Peer reviews are due ' . $date . ' at ' . $time . '</p>';
+		}
 
 		return $html;
 	}

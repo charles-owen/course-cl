@@ -7,9 +7,21 @@ div.cl-calendar {
   background-color: $very-light-primary;
   padding: 4px 4px 4px 4px;
 
-  .fc-event {
+  a.fc-event {
     background-color: #005500;
+    color: white;
     font-size: 0.7em;
+
+
+  }
+
+  a.fc-event, a.fc-event:visited, a.fc-event:link {
+         color: white;
+         text-decoration: none;
+       }
+
+  a.fc-event:hover {
+    color: #ffcccc;
   }
 
   .fc-unthemed .fc-today {

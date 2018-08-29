@@ -124,17 +124,18 @@ class AssignmentView extends \CL\Course\View {
 			$html .= $submission->present($this, $user);
 		}
 
-//		/*
-//		 * Display any peer reviews
-//		 */
-//		if($assignment->get_reviewing() !== null) {
+		/*
+		 * Display any peer reviews
+		 */
+		if($assignment->reviewing !== null) {
+			$html .= $assignment->reviewing->presentReviews($user);
 //			$reviewing = $assignment->get_reviewing();
 //
 //			$html .= '<p class="reviewsappear">Reviews of this assignment appear here.</p>';
 //
 //			$view = $reviewing->create_view();
 //			$html .= $view->present_reviews($user, $user);
-//		}
+		}
 
 		return $html;
 	}

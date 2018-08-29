@@ -210,13 +210,13 @@ LINK;
 <span class="due"> Due <a class="tip">$duedate<span>Assignment Due</span></a>
 HTML;
 
-//				$review = $assignment->get_reviewing();
-//				if($review !== null) {
-//					$reviewDue = date('n-d-y', $review->get_due());
-//					$html .= <<<HTML
-// / <a class="tip">$reviewDue<span>Reviews Due</span></a>
-//HTML;
-//				}
+				$review = $assignment->reviewing;
+				if($review !== null) {
+					$reviewDue = date('n-d-y', $review->due);
+					$html .= <<<HTML
+ / <a class="tip">$reviewDue<span>Reviews Due</span></a>
+HTML;
+				}
 
 				$html .= "</span>";
 
@@ -247,12 +247,12 @@ HTML;
 			}
 
 			$delay = $this->section->assignments->problemSolvingDelay;
-			if($solving !== null && ($grader || $assignment->after_due($this->user, $this->time, $delay) )) {
+			if($solving !== null && ($grader || $assignment->available_due($this->user, $this->time, $delay) )) {
 				// We have a problem solving page
 				$html .= "<ul><li class=\"bullet\"><a href=\"$solving\">Problem Solving</a>";
 
 				if($staff) {
-					if($assignment->after_due($this->user, $this->time, $delay)) {
+					if($assignment->available_due($this->user, $this->time, $delay)) {
 						$html .= ' <span class="staff-note red">**active**</span>';
 					} else {
 						$html .= ' <span class="staff-note blu">**inactive**</span>';

@@ -18,6 +18,7 @@ use CL\Site\Site;
  *
  * @cond
  * @property Site site
+ * @property string desc
  * @endcond
  */
 class Course extends \CL\Site\Plugin {
