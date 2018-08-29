@@ -151,7 +151,7 @@ SQL;
 	
 	/** Get a submission text
 	 * @param int $id ID for the submission
-	 * @returns array with these keys:
+	 * @return array with these keys:
 	 * 		text, memberid, assigntag, submissiontag */
 	public function get_text($id) {
 		$pdo = $this->pdo();
@@ -176,7 +176,7 @@ SQL;
 		$stmt->bindColumn(5, $type, \PDO::PARAM_STR);
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
-		return array('text' => $text, 'type'=>$type, 'memberid' => $submissionuser,
+		return array('text' => $text, 'type'=>$type, 'memberid' => +$submissionuser,
 			'assigntag' => $assigntag, 'submissiontag' => $submissiontag);
 	}
 
@@ -188,7 +188,7 @@ SQL;
 	 * @return array Array of submission records, empty if none. Each record with keys:
 	 *     id, date, name, type
 	 */
-	public function get_submissions(User $user, $assignTag, $submissionTag) {
+	public function get_submissions(User $user, $assignTag, $submissionTag, $mostRecentOnly = false) {
 		$pdo = $this->pdo();
 
 		$sql = <<<SQL
@@ -197,8 +197,14 @@ where memberid=? and assigntag=? and submissiontag=?
 order by date DESC
 SQL;
 
+		if($mostRecentOnly) {
+			$sql .= "\nlimit 1";
+		}
+
 		$stmt = $pdo->prepare($sql);
-		$stmt->execute(array($user->member->id, $assignTag, $submissionTag));
+		$exec = [$user->member->id, $assignTag, $submissionTag];
+		// echo "<pre>\n" . $this->sub_sql($sql, $exec) . "</pre>";
+		$stmt->execute($exec);
 
 		$result = array();
 		foreach($stmt as $row) {

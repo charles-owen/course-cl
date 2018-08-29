@@ -271,31 +271,32 @@ HTML;
 	/** Display items in the tools and resources category
 	 * that are not available to guests */
 	public function enrolled_tools() {
+		$root = $this->site->root;
 		$html = '';
 
 		if($this->user->atLeast(Member::STUDENT)) {
 			if($this->site->installed('interact')) {
 				$html = <<<HTML
 <ul>
-<li><a href="cl/interact"><img alt="Interact! System" src="vendor/cl/interact/img/link.png" height="16" width="82"></a></li>
+<li><a href="$root/cl/interact"><img alt="Interact! System" src="vendor/cl/interact/img/link.png" height="16" width="82"></a></li>
 </ul>
 HTML;
 			}
 
 			$html .= <<<HTML
 <ul>
-<li><a href="cl/aboutme">About Me and Preferences...</a></li>
-<li><a href="cl/calendar">Personal Calendar</a></li>
-<li><a href="cl/grades">Grades</a></li>
+<li><a href="$root/cl/aboutme">About Me and Preferences...</a></li>
+<li><a href="$root/cl/calendar">Personal Calendar</a></li>
+<li><a href="$root/cl/grades">Grades</a></li>
 HTML;
 
-//			// Are there any peer reviews in the assignments?
-//			$assignments = $this->user->get_section()->get_assignments();
-//			if($assignments->are_reviews() ) {
-//				$html .= <<<HTML
-//<li><a href="lib/review/pending.php">Peer Reviewing</a></li>
-//HTML;
-//			}
+			// Are there any peer reviews in the assignments?
+			$assignments = $this->section->assignments;
+			if($assignments->areReviews() ) {
+				$html .= <<<HTML
+<li><a href="$root/cl/reviews/pending">Peer Reviewing</a></li>
+HTML;
+			}
 
 			$html .= "</ul>";
 		}

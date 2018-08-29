@@ -2,7 +2,8 @@
 tests/config.php
 /html
 /vendor
-
+_notes
+dwsync.xml
 
 # compiled output
 /dist

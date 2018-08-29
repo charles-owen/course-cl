@@ -173,8 +173,8 @@ class Assignments {
 	 */
 	public function areReviews() {
 		foreach($this->categories as $category) {
-			foreach($category->get_assignments() as $assignment) {
-				if($assignment->get_reviewing() !== null) {
+			foreach($category->assignments as $assignment) {
+				if($assignment->reviewing !== null) {
 					return true;
 				}
 			}

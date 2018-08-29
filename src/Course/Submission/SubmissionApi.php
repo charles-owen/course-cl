@@ -174,7 +174,7 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		$id = $params[1];
 		$submissions = new Submissions($site->db);
 		$submission = $submissions->get_text($id);
-		if(!$user->atLeast(Member::STAFF) && $submission->memberid !== $user->member->id) {
+		if(!$user->atLeast(Member::STAFF) && $submission['memberid'] !== $user->member->id) {
 			throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
 		}
 
@@ -265,11 +265,22 @@ class SubmissionApi extends \CL\Users\Api\Resource
 			}
 		}
 
+		// Tell the assignment we have had a submission.
+		// This is used by the reviewing system to send notices of pending reviews
+		$assignment->submitted($user, $submission, $time);
+
 		$json = new JsonAPI();
 		$json->addData('submissions', 0, $submissions->get_submissions($user, $assignment->tag, $submission->tag));
 		return $json;
 	}
 
+	/**
+	 * @param Site $site The site object
+	 * @param User $user The current user
+	 * @param string $assignTag The assignment tag
+	 * @return \CL\Course\Assignment
+	 * @throws APIException
+	 */
 	private function getAssignment(Site $site, User $user, $assignTag) {
 		// Determine the assignment and ensure it is open
 		$course = $site->course;

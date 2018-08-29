@@ -55,7 +55,7 @@ class CalendarView extends \CL\Site\ViewAux {
 
 		    $evt = ['title'=>$name, 'start'=>$date];
 		    if($event['url'] !== null) {
-			    $evt['url'] = $this->site->root . $event['url'];
+			    $evt['url'] = $this->site->root . '/' . $event['url'];
 		    }
 
 		    $items[] = $evt;

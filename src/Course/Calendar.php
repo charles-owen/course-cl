@@ -57,7 +57,7 @@ class Calendar {
 				    $course = $this->section->course;
 
 				    $due = $assignment->get_due($user);
-				    $url = $assignment->url;
+				    $url = $assignment->rawUrl;
 				    if($due != null) {
 					    $name = $assignment->shortName;
 					    $events[] = array('name' => $name, 'date' => $due,

@@ -6,8 +6,11 @@
 namespace CL\Course;
 
 use CL\Users\User;
-use \Closure;
+
 use CL\Site\ViewAux;
+use CL\Site\Extendible;
+use CL\Course\Submission\Submission;
+use CL\Course\Submission\AssignmentSubmissions;
 
 /**
  * A single assignment in the assignment tracking system.
@@ -18,12 +21,15 @@ use CL\Site\ViewAux;
  * @cond
  * @property \CL\Grades\AssignmentGrading grading
  * @property Section section
- * @property array Submissions
+ * @property \CL\Course\Submission\AssignmentSubmissions submissions
  * @property \CL\Site\Site site
  * @property \CL\Course\AssignmentCategory category
+ * @property \CL\Review\Reviewing reviewing
+ * @property string tag
+ * @property string name
  * @endcond
  */
-class Assignment {
+class Assignment extends Extendible {
 	/** Constructor
 	 * @param string $tag Tag for the assignment
 	 * @param string $name Assignment name
@@ -49,6 +55,7 @@ class Assignment {
 	 * grading | AssignmentGrading | Optional grading object if grading subsystem present
 	 * name | string | Assignment name (full)
 	 * release | int | Time/date for assignment release
+	 * reviewing | Reviewing | Optional reviewing object if reviewing installed
 	 * revised | boolean | true if the due date has been revised.
 	 * section | Section | Course Section object/section this assignment is for
 	 * shortName | string | Assignment short name (like "Step 1")
@@ -109,9 +116,12 @@ class Assignment {
 
 			case 'submissions':
 				if ($this->submissions_ === null) {
-					$this->submissions_ = new Submission\AssignmentSubmissions($this);
+					$this->submissions_ = new AssignmentSubmissions($this);
 				}
 				return $this->submissions_;
+
+			case 'reviewing':
+				return $this->reviewing;
 
 			default:
 				if (isset($this->properties[$property])) {
@@ -137,6 +147,7 @@ class Assignment {
 	 * -------- | ---- | -----------
 	 * category | AssignmentCategory | AssignmentCategory for this assignment
 	 * grading | Grading | Add a grading object to assignment
+	 * reviewing | Reviewing | Optional reviewing object if reviewing installed
 	 * solving | string | Path to problem solving page
 	 *
 	 * @param string $property Property to set
@@ -153,6 +164,10 @@ class Assignment {
 			case 'category':
 				$this->category = $value;
 				$this->section = $this->category->section;
+				break;
+
+			case 'reviewing':
+				$this->reviewing = $value;
 				break;
 
 			case 'solving':
@@ -184,7 +199,7 @@ class Assignment {
 	 * will work.
 	 *
 	 * @param int $due The due date (time as a string as in '9/02/2014 11:55pm')
-	 * @param bool $revised true if the due date is a revison
+	 * @param bool $revised true if the due date is a revision
 	 */
 	public function set_due($due, $revised = FALSE)
 	{
@@ -204,12 +219,12 @@ class Assignment {
 			return $due;
 		}
 
-//		if ($this->reviewing !== null) {
-//			$rdue = $this->reviewing->get_revision_due($user);
-//			if ($rdue !== null && $rdue > $due) {
-//				$due = $rdue;
-//			}
-//		}
+		if ($this->reviewing !== null) {
+			$rdue = $this->reviewing->get_revision_due($user);
+			if ($rdue !== null && $rdue > $due) {
+				$due = $rdue;
+			}
+		}
 
 		// Handle a user extension of the due date
 		$extension = $user->member->meta->get(Member::METADATA_EXTENSIONS, $this->tag);
@@ -494,11 +509,10 @@ class Assignment {
 	 * @param Submission $submission The Submission object this is for
 	 * @param int $time Submission time
 	 */
-	public function submitted(User $user, Submission $submission, $time)
-	{
-//		if ($this->reviewing !== null) {
-//			$this->reviewing->submitted($user, $submission, $time);
-//		}
+	public function submitted(User $user, Submission $submission, $time) {
+		if ($this->reviewing !== null) {
+			$this->reviewing->submitted($user, $submission, $time);
+		}
 	}
 
 	/**
@@ -575,28 +589,6 @@ class Assignment {
 	}
 
 
-//	/** The reviews due date
-//	 * @ param $due The due date (time as a string as in '9/02/2014 11:55pm')
-//	 * @ param $revisionHours Number of hours after review for resubmission, default is 24
-//	 * @ param $revised true if the due date is a revison
-//	 */
-//	public function set_reviews_due($due, $revisionHours = 24, $revised = false)
-//	{
-//		if ($this->reviewing === null) {
-//			$this->reviewing = new \Review\Reviewing($this);
-//		}
-//
-//		$this->reviewing->set_due($due, $revisionHours, $revised);
-//	}
-//
-//	/**
-//	 * Get the PeerReview object for this assignment
-//	 * @ return Reviewing|null Peer review object or null if not used
-//	 */
-//	public function get_reviewing()
-//	{
-//		return $this->reviewing;
-//	}
 
 	/**
 	 * Magic function to disable displaying the section
@@ -609,36 +601,6 @@ class Assignment {
 		unset($properties['course']);
 		unset($properties['section']);
 		return $properties;
-	}
-
-	/**
-	 * __call() is triggered when invoking inaccessible methods in an object context.
-	 * @param string $name Name of non-existent function
-	 * @param array $arguments Arguments to the function call
-	 * @return mixed
-	 */
-	public function __call($name, $arguments) {
-		if (isset($this->extensions[$name])) {
-			return $this->extensions[$name]($this, $arguments);
-		} else {
-			$trace = debug_backtrace();
-			trigger_error(
-				'Fatal error: Call to undefined method CL\Course\Assignment::' .
-				$name . '() in ' . $trace[0]['file'] .
-				' on line ' . $trace[0]['line'],
-				E_USER_NOTICE);
-		}
-	}
-
-	/**
-	 * Extend this class by adding a new function.
-	 * This is used by the Step system to add "add_step"
-	 * to the assignment category.
-	 * @param string $name Name of the function
-	 * @param Closure $closure Closure to call.
-	 */
-	public function extend($name, $closure) {
-		$this->extensions[$name] = $closure;
 	}
 
 	/**
@@ -737,11 +699,8 @@ class Assignment {
 
 	private $category = null;       // Assignment category for this assignment
 	private $section = null;        // Section we are a member of
-	private $extensions = [];       // Extensions to this object
 
-	private $grading = null;        // The Grading object for this assignment
 	private $loaded = false;        // Is the assignment loaded?
-	// private $reviewing = null;      // Optional PeerReview object for this assignment
 
 	protected $solving = NULL;      ///< Optional problem solving document
 	protected $interact = false;    ///< Do we use the Interact system?
@@ -754,4 +713,10 @@ class Assignment {
 	// AssignmentSubmissions object
 	// Any submissions for this assignment
 	private $submissions_ = null;
+
+	//
+	// Optional components. These are for standard subsystems.
+	//
+	private $grading = null;        // Grading object for this assignment
+	private $reviewing = null;      // Reviewing object for this assignment
 }

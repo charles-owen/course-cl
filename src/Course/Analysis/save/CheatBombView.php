@@ -42,7 +42,7 @@ class CheatBombView extends \Manage\ManageView {
 		/*
 		 * Get the analysis component
 		 */
-		foreach($this->submission->get_analysis() as $analysis) {
+		foreach($this->submission->analysis as $analysis) {
 			if($analysis instanceof CheatBombAnalysis) {
 				$this->cb = $analysis;
 				break;

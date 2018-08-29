@@ -9,7 +9,7 @@
           <router-link :to="extensionsLink + assignment.tag">extensions</router-link>
           <router-link v-if='assignment.submissions !== undefined' :to="submissionsLink + assignment.tag">submissions</router-link>
           <span v-for="link in assignmentLinks">
-            <router-link :to="assignmentLink(assignment, link.route)" v-if="assignment[link.property] !== false">{{link.name}}</router-link>
+            <router-link :to="assignmentLink(assignment, link.route)" v-if="assignment[link.property] !== false">{{link.name}}</router-link>&nbsp;
           </span>
           </span>
         </li>

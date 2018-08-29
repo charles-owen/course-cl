@@ -1,4 +1,4 @@
-div.cl-submission form.file, div.cl-submission figure.cl-preview, div.cl-submission pre.cl-preview, div.cl-submission pre.cl-analysis {
+div.cl-submission form.file, div.cl-submission-view form.file, div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview, div.cl-submission pre.cl-preview, div.cl-submission-view pre.cl-preview, div.cl-submission pre.cl-analysis, div.cl-submission-view pre.cl-analysis {
   -moz-box-shadow: 3px 3px 8px #ccc;
   -webkit-box-shadow: 3px 3px 8px #ccc;
   box-shadow: 3px 3px 8px #ccc; }
@@ -65,9 +65,9 @@ p.reading {
     width: 80%;
     color: black; }
 
-div.cl-submission form button, div.cl-submission form input, div.cl-submission form textarea {
+div.cl-submission form button, div.cl-submission form input, div.cl-submission form textarea, div.cl-submission-view form button, div.cl-submission-view form input, div.cl-submission-view form textarea {
   color: black; }
-div.cl-submission form.file {
+div.cl-submission form.file, div.cl-submission-view form.file {
   margin-left: 2em;
   margin-right: 2em;
   border: 1px solid black;
@@ -77,23 +77,23 @@ div.cl-submission form.file {
   background: white;
   color: black;
   font: 9pt helvetica,sans-serif; }
-  div.cl-submission form.file input[type=file] {
+  div.cl-submission form.file input[type=file], div.cl-submission-view form.file input[type=file] {
     width: 20em; }
-div.cl-submission figure.cl-preview {
+div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview {
   margin: 1em 0;
   overflow: auto;
   border: 1px solid black;
   text-align: center; }
-  div.cl-submission figure.cl-preview img {
+  div.cl-submission figure.cl-preview img, div.cl-submission-view figure.cl-preview img {
     max-width: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
     margin: 0; }
-div.cl-submission pre.cl-preview {
+div.cl-submission pre.cl-preview, div.cl-submission-view pre.cl-preview {
   border: thin solid black;
   min-height: 5em; }
-div.cl-submission pre.cl-analysis {
+div.cl-submission pre.cl-analysis, div.cl-submission-view pre.cl-analysis {
   font-size: 0.80em;
   border: thin solid black;
   padding: 5px;

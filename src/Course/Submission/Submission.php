@@ -111,7 +111,7 @@ abstract class Submission {
 	 * @param AssignmentView $view The view of the assignment
 	 * @param User $user Current user
 	 * @param int $time Current time
-	 * @returns string HTML For submission page
+	 * @return string HTML For submission page
 	 */
 	public function present(AssignmentView $view, User $user, $time=null) {
 		$time = $time !== null ? $time : time();
@@ -174,137 +174,107 @@ HTML;
 
 
 	
-	/**
-	 * Present the submissions for a user
-	 * @param User $user User to present for
-	 * @param $staffview True if this is a staff view page 
-	 * @returns HTML for the presentation
-	 */
-	public function present_submits(User $user, $staffview) {
-		$course = $this->assignment->course;
-
-		if($this->get_teaming() !== null) {
-			$teams = $this->get_teams($user);
-			if(count($teams) == 0) {
-				$this->recent = null;
-				$html = <<<HTML
-<p class="center">Not a member of a team.</p>
-HTML;
-				return $html;
-			} else {
-				$submissions = new \Team\TeamSubmissions($this->assignment->course);
-				$submits = $submissions->get_submissions($this->assignment,
-					$this->tag, $teams[0]);
-			}
-
-		} else {
-			$submissions = new Submissions($course->site->db);
-			$submits = $submissions->get_submissions($user, $this->assignment->tag, $this->tag);
-		}
-
-
-		if(count($submits) === 0) {
-			$this->recent = null;
-			$html = <<<HTML
-<p class="center">No submissions, yet.</p>
-HTML;
-			return $html;
-		}
-
-		$this->recent = $submits[0]['id'];
-
-        /*
-         * This ensures that if we have multiple submissions
-         * on a page that each gets a unique javascript function
-         */
-        self::$cnt++;
-        $func = 'request_' . self::$cnt;
-
-        /*
-         * Present any mechanism for displaying this submission
-         */
-		$html = $this->present_submits_display($user, $staffview, $submits, $func);
-		
-		/*
-		 * Present the table of submissions 
-		 */
-		$html .= <<<HTML
-<div class="left">
-<table><tr><th>Submission Date</td></tr>
-HTML;
-
-		foreach($submits as $submit) {
-            $html .= $this->present_submission_row($user, $submit, $staffview, $func);
-		}
-		
-		$html .= "</table></div>";
-		
-		$html .= $this->present_submits_message();
-
-		if($this->additional !== null) {
-			$html .= $this->additional;
-		}
-		
-		return $html;
-	}
-
-    /**
-     * Construct a single row of the submissions table
-     * @param \User $user User this submission is for
-     * @param array $submit The submission record from the table
-     * @param $staffview True if this is a staff view
-     * @param $func The name of the JavaScript function to call to bring up the submission
-     * @return string HTML for the row
-     */
-    protected function present_submission_row(\User $user, array $submit, $staffview, $func) {
-		return '';
-	}
-	
-	/** Present the submission display/access support
-	 * @param $user User to present for
-	 * @param $staffview True if this is a staff view page 
-	 * @param $submits The submits from the database
-	 * @param $func The name of the javascript function for clicking on a submit
-	 * @returns HTML for the presentation */
-	protected function present_submits_display(\User $user, $staffview, $submits, $func) {
-        return '';
-    }
+//	/**
+//	 * Present the submissions for a user
+//	 * @param User $user User to present for
+//	 * @param $staffview True if this is a staff view page
+//	 * @return HTML for the presentation
+//	 */
+//	public function present_submits(User $user, $staffview) {
+//		$course = $this->assignment->course;
+//
+//		if($this->get_teaming() !== null) {
+//			$teams = $this->get_teams($user);
+//			if(count($teams) == 0) {
+//				$this->recent = null;
+//				$html = <<<HTML
+//<p class="center">Not a member of a team.</p>
+//HTML;
+//				return $html;
+//			} else {
+//				$submissions = new \Team\TeamSubmissions($this->assignment->course);
+//				$submits = $submissions->get_submissions($this->assignment,
+//					$this->tag, $teams[0]);
+//			}
+//
+//		} else {
+//			$submissions = new Submissions($course->site->db);
+//			$submits = $submissions->get_submissions($user, $this->assignment->tag, $this->tag);
+//		}
+//
+//
+//		if(count($submits) === 0) {
+//			$this->recent = null;
+//			$html = <<<HTML
+//<p class="center">No submissions, yet.</p>
+//HTML;
+//			return $html;
+//		}
+//
+//		$this->recent = $submits[0]['id'];
+//
+//        /*
+//         * This ensures that if we have multiple submissions
+//         * on a page that each gets a unique javascript function
+//         */
+//        self::$cnt++;
+//        $func = 'request_' . self::$cnt;
+//
+//        /*
+//         * Present any mechanism for displaying this submission
+//         */
+//		$html = $this->present_submits_display($user, $staffview, $submits, $func);
+//
+//		/*
+//		 * Present the table of submissions
+//		 */
+//		$html .= <<<HTML
+//<div class="left">
+//<table><tr><th>Submission Date</td></tr>
+//HTML;
+//
+//		foreach($submits as $submit) {
+//            $html .= $this->present_submission_row($user, $submit, $staffview, $func);
+//		}
+//
+//		$html .= "</table></div>";
+//
+//		$html .= $this->present_submits_message();
+//
+//		if($this->additional !== null) {
+//			$html .= $this->additional;
+//		}
+//
+//		return $html;
+//	}
+//
 
 	
-	/**
-	 * The message to display below the submissions
-	 * @returns HTML */
-	protected function present_submits_message() {
-		return '';
-	}
-	
-
-	
-	/** Handle a file submission
-	 * @param $user User the submission is for
-	 * @param $time Submission time as PHP time value
-	 * @param $file Path to the file to submit
-	 * @param $name Name of the file as submitted
-	 * @param $type Type of the submission file */
-	public function submit_file(User $user, $time, $file, $name, $type) {
-		$course = $this->assignment->course;
-
-		if($this->get_teaming() !== null) {
-			$teams = $this->get_teams($user);
-			if(count($teams) == 0) {
-				return json_encode(array('ok'=>false, 'msg'=>"Not a member of a team"));
-			}
-
-			$submissions = new \Team\TeamSubmissions($course );
-			$result = $submissions->submit_file($teams[0], $user, $this, $time, $file, $name, $type);
-		} else {
-			$submissions = new \Assignments\Submissions($course );
-			$result = $submissions->submit_file($user, $this, $time, $file, $name, $type);
-		}
-		
-		$this->submitted($user, $time);
-		return $result;
-	}
+//	/** Handle a file submission
+//	 * @param $user User the submission is for
+//	 * @param $time Submission time as PHP time value
+//	 * @param $file Path to the file to submit
+//	 * @param $name Name of the file as submitted
+//	 * @param $type Type of the submission file */
+//	public function submit_file(User $user, $time, $file, $name, $type) {
+//		$course = $this->assignment->course;
+//
+//		if($this->get_teaming() !== null) {
+//			$teams = $this->get_teams($user);
+//			if(count($teams) == 0) {
+//				return json_encode(array('ok'=>false, 'msg'=>"Not a member of a team"));
+//			}
+//
+//			$submissions = new \Team\TeamSubmissions($course );
+//			$result = $submissions->submit_file($teams[0], $user, $this, $time, $file, $name, $type);
+//		} else {
+//			$submissions = new \Assignments\Submissions($course );
+//			$result = $submissions->submit_file($user, $this, $time, $file, $name, $type);
+//		}
+//
+//		$this->submitted($user, $time);
+//		return $result;
+//	}
 
 	/**
 	 * Set the analysis for a submission.
@@ -322,17 +292,7 @@ HTML;
 		$submissions = new Submissions($site->db);
 		$submissions->set_analysis($id, $analysis);
 	}
-	
 
-	
-//	/** This function is called whenever a new submission occurs.
-//	 *
-//	 * This checks to see if pending review is open on this submission. If so,
-//	 * it tells the pending review system so it can test the results
-//	 */
-//	protected function submitted(\User $user, $time) {
-//		$this->assignment->submitted($user, $this, $time);
-//	}
 
 
 	/**
@@ -346,27 +306,7 @@ HTML;
 		return $analysis;
 	}
 
-	/**
-	 * Get the array of installed analysis for this submission
-	 * @return array of Analysis objects
-	 */
-	public function get_analysis() {
-		return $this->analysis;
-	}
 
-    /**
-     * Present the formatted analysis
-     * @param int $ndx Index into the array of analysis components
-     * @param $analysis The analysis array as stored with the submission
-     * @return string HTML
-     */
-    public function present_analysis($ndx, $analysis) {
-        if(isset($this->analysis[$ndx])) {
-            return $this->analysis[$ndx]->present($analysis);
-        }
-
-        return '<p class="center">Not available</p>';
-    }
 
 	/**
 	 * Submit a file to analysis
@@ -390,14 +330,7 @@ HTML;
 		return $results;
 	}
 
-//	/**
-//	 * Get the name of the teaming for this assignment.
-//	 * @ return teaming|null The teaming name or null if not a team submission
-//	 */
-//	public function get_teaming() {
-//		return $this->teaming;
-//	}
-//
+
 //	/**
 //	 * Get the team for a user for this submission
 //	 * @ param User $user
