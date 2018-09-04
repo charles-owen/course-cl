@@ -3,6 +3,14 @@
     <template v-if="isText()">
       <a @click.prevent="selectText()">{{display()}}</a>
     </template>
+    <template v-else-if="isImage()">
+      <a @click.prevent="select">{{display()}}</a><menu-vue class="float-right" @open="select"><a><img :src="root + '/vendor/cl/site/img/menubars.png'" alt="Menu"></a>
+        <ul>
+          <li><a :href="toDownload"><img :src="root + '/vendor/cl/site/img/download.png'" alt="Download"> Download</a></li>
+          <li v-for="item in analysis"><a @click.prevent="showAnalysis(item)"><img :src="item.icon" :alt="item.menu"> {{item.menu}}</a></li>
+        </ul>
+      </menu-vue>
+    </template>
     <template v-else>
       <menu-vue v-on:open="select"><a>{{display()}}</a><a class="float-right"><img :src="root + '/vendor/cl/site/img/menubars.png'" alt="Menu"></a>
         <ul>
@@ -20,6 +28,7 @@
   import MenuVue from 'site-cl/js/UI/Menu.vue';
 
   export const TEXT_TYPES = ['text/plain', 'text/html']
+  export const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
 
   export default {
       props: ['submission', 'analysis'],
@@ -36,6 +45,9 @@
           isText() {
               return TEXT_TYPES.indexOf(this.submission.type) >= 0
           },
+          isImage() {
+	          return IMG_TYPES.indexOf(this.submission.type) >= 0
+          },
           display() {
               let disp = TimeFormatter.absoluteUNIX(this.submission.date, "long");
               if(this.submission.name !== null) {
@@ -50,7 +62,6 @@
               this.$emit('preview_img', this.submission);
           },
           showAnalysis(analysis) {
-          	console.log(analysis);
           	Site.api.get('/api/course/submission/analysis/' + analysis.tag + '/' + this.submission.id, {})
           	    .then((response) => {
           	        if (!response.hasError()) {
@@ -64,7 +75,6 @@
           	    .catch((error) => {
           	        Site.toast(this, error);
           	    });
-          	console.log(analysis);
           }
 
       }

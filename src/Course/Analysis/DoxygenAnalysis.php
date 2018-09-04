@@ -106,9 +106,19 @@ class DoxygenAnalysis extends Analysis {
 			throw new AnalysisException("Unable to execute doxygen");
         }
 
+        /*
+         * warning: ignoring unsupported tag `TOC_INCLUDE_HEADINGS   =' at line 313, file /var/www/cbowen/cse335/doxygen/Doxyfile.doxy
+warning: ignoring unsupported tag `PLANTUML_CFG_FILE      =' at line 2425, file /var/www/cbowen/cse335/doxygen/Doxyfile.doxy
+*** end of doxygen analysis ***
+         */
+
         $str = '';
         $dir1 = str_replace('\\', '/', $dir);
         foreach($result as $line) {
+        	if(strpos($line, 'warning: ignoring unsupported tag') !== false) {
+        		continue;
+	        }
+
             $str .= str_replace($dir1, '', $line) . "\n";
         }
 		$str .= "*** end of doxygen analysis ***\n";

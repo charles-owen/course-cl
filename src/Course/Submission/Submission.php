@@ -137,11 +137,12 @@ abstract class Submission {
 			'tag' => $this->tag,
 			'additional' => $this->additional,
 			'analysis'=>$analysis,
-			'submissions' => $submissions->get_submissions($user,
+			'submissions' => $submissions->get_submissions($user->member->id,
 				$assignment->tag, $this->tag)
 		];
 
 		$this->addData($data);
+		$this->addPreview($data, $view, $user, $data['submissions']);
 
 		$json = htmlspecialchars(json_encode($data), ENT_NOQUOTES);
 
@@ -171,83 +172,20 @@ HTML;
 	protected function addData(array &$data) {
 	}
 
+	/**
+	 * Add actual submission data to the data array.
+	 *
+	 * This is used to add the actual Text submission to the
+	 * data send to the client so we can preview it immediately.
+	 * @param AssignmentView $view
+	 * @param User $user
+	 * @param array $submissions
+	 */
+	protected function addPreview(array &$data, AssignmentView $view, User $user, array $submissions) {
+	}
 
 
 	
-//	/**
-//	 * Present the submissions for a user
-//	 * @param User $user User to present for
-//	 * @param $staffview True if this is a staff view page
-//	 * @return HTML for the presentation
-//	 */
-//	public function present_submits(User $user, $staffview) {
-//		$course = $this->assignment->course;
-//
-//		if($this->get_teaming() !== null) {
-//			$teams = $this->get_teams($user);
-//			if(count($teams) == 0) {
-//				$this->recent = null;
-//				$html = <<<HTML
-//<p class="center">Not a member of a team.</p>
-//HTML;
-//				return $html;
-//			} else {
-//				$submissions = new \Team\TeamSubmissions($this->assignment->course);
-//				$submits = $submissions->get_submissions($this->assignment,
-//					$this->tag, $teams[0]);
-//			}
-//
-//		} else {
-//			$submissions = new Submissions($course->site->db);
-//			$submits = $submissions->get_submissions($user, $this->assignment->tag, $this->tag);
-//		}
-//
-//
-//		if(count($submits) === 0) {
-//			$this->recent = null;
-//			$html = <<<HTML
-//<p class="center">No submissions, yet.</p>
-//HTML;
-//			return $html;
-//		}
-//
-//		$this->recent = $submits[0]['id'];
-//
-//        /*
-//         * This ensures that if we have multiple submissions
-//         * on a page that each gets a unique javascript function
-//         */
-//        self::$cnt++;
-//        $func = 'request_' . self::$cnt;
-//
-//        /*
-//         * Present any mechanism for displaying this submission
-//         */
-//		$html = $this->present_submits_display($user, $staffview, $submits, $func);
-//
-//		/*
-//		 * Present the table of submissions
-//		 */
-//		$html .= <<<HTML
-//<div class="left">
-//<table><tr><th>Submission Date</td></tr>
-//HTML;
-//
-//		foreach($submits as $submit) {
-//            $html .= $this->present_submission_row($user, $submit, $staffview, $func);
-//		}
-//
-//		$html .= "</table></div>";
-//
-//		$html .= $this->present_submits_message();
-//
-//		if($this->additional !== null) {
-//			$html .= $this->additional;
-//		}
-//
-//		return $html;
-//	}
-//
 
 	
 //	/** Handle a file submission
@@ -346,7 +284,18 @@ HTML;
 //		return $teamMembers->get_teams_in_teaming_by_tag($user, $this->teaming);
 //	}
 
-
+	/**
+	 * Validate that a file is acceptable for submission.
+	 *
+	 * The default returns null, which means no errors.
+	 * @param string $name File name
+	 * @param string $type File type
+	 * @param string $path File path
+	 * @return string Error message or null if file is acceptable.
+	 */
+	public function validateFile($name, $type, $path) {
+		return null;
+	}
 
 	/**
 	 * Is this submission visible on the user grades page?

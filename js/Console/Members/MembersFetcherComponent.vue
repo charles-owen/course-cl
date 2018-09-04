@@ -3,7 +3,7 @@
     <div class="full">
       <label style="display:none" ref="students-only" ><input type="checkbox" v-model="students" @change="studentsOnlyChanged"> Students Only</label>
       <fetcher :fetcher="fetcher" :fetching="fetching">
-        <slot :users="users"></slot>
+        <slot :users="users" :students="students"></slot>
         <p v-if="users.length == 0" class="centerbox comp center">
           There are currently no members enrolled in this section.</p>
       </fetcher>
@@ -15,8 +15,7 @@
     import {mapState} from 'vuex';
     import FetcherVue from 'users-cl/js/Lib/FetcherVue.vue';
     import {Member} from '../../Members/Member'
-
-    const LOCAL_STORAGE_STUDENTS_ONLY = 'cl_students_only';
+    import {StudentsOnly} from './StudentsOnly';
 
     export default {
         // If the fetching value it true, the using client
@@ -42,9 +41,7 @@
              * Add "Students Only" to the menu bar
              */
             addStudentsOnly() {
-                const localStorage = window.localStorage;
-                let s = localStorage.getItem(LOCAL_STORAGE_STUDENTS_ONLY);
-                this.students = s === 'yes';
+            	this.students = StudentsOnly.get();
 
                 let element = this.$refs['students-only'];
                 element.parentNode.removeChild(element);
@@ -56,8 +53,7 @@
                 this.studentsElement = element;
             },
             studentsOnlyChanged() {
-                const localStorage = window.localStorage;
-                localStorage.setItem(LOCAL_STORAGE_STUDENTS_ONLY, this.students ? 'yes' : 'no');
+            	StudentsOnly.set(this.students);
             }
         },
         computed: mapState({
@@ -77,6 +73,7 @@
             'fetcher': FetcherVue
         },
         mounted() {
+	        this.students = StudentsOnly.get();
             const member = this.$store.state.user.user.member;
             let query = {
                 semester: member.semester,

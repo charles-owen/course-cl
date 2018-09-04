@@ -3,6 +3,7 @@
 </template>
 
 <script>
+
   export default {
       props: ['user'],
       data: function() {
@@ -12,39 +13,40 @@
       },
       watch: {
           user: function(to, fm) {
-
               let user = this.user;
               let link = this.link;
 
-              if(user !== null && user.prev !== undefined) {
-                  this.$set(Site.Console.components, 'nav2left', {
-                      template: `<router-link title="Previous Member" :to="link + user.prev.member.id"><img :src="icon" alt="Previous Member"></router-link>`,
-                      data: function() {
-                          return {
-                              icon: Site.root + '/vendor/cl/site/img/previcon.png',
-                              user: user,
-                              link: link
-                          }
-                      }
-                  });
-              } else {
-                  this.$set(Site.Console.components, 'nav2left', null);
-              }
+	              if(user !== null && user.prev !== undefined) {
+		              this.$set(Site.Console.components, 'nav2left', {
+			              template: `<router-link title="Previous Member" :to="link + user.prev.member.id"><img :src="icon" alt="Previous Member"></router-link>`,
+			              data: function() {
+				              return {
+					              icon: Site.root + '/vendor/cl/site/img/previcon.png',
+					              user: user,
+					              link: link
+				              }
+			              }
+		              });
+	              } else {
+		              this.$set(Site.Console.components, 'nav2left', null);
+	              }
 
-              if(user !== null && user.next !== undefined) {
-                  this.$set(Site.Console.components, 'nav2right', {
-                      template: `<router-link title="Next Member" :to="link + user.next.member.id"><img :src="icon" alt="Next Member"></router-link>`,
-                      data: function() {
-                          return {
-                              icon: Site.root + '/vendor/cl/site/img/nexticon.png',
-                              user: user,
-                              link: link
-                          }
-                      }
-                  });
-              } else {
-                  this.$set(Site.Console.components, 'nav2right', null);
-              }
+	              if(user !== null && user.next !== undefined) {
+		              this.$set(Site.Console.components, 'nav2right', {
+			              template: `<router-link title="Next Member" :to="link + user.next.member.id"><img :src="icon" alt="Next Member"></router-link>`,
+			              data: function() {
+				              return {
+					              icon: Site.root + '/vendor/cl/site/img/nexticon.png',
+					              user: user,
+					              link: link
+				              }
+			              }
+		              });
+	              } else {
+		              this.$set(Site.Console.components, 'nav2right', null);
+	              }
+
+
           }
       },
       mounted() {

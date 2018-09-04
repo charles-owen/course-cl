@@ -16,27 +16,35 @@
         <p v-if="type === 'text'" class="center">Click on any submission date to display the submission</p>
         <p v-if="type === 'program'" class="center">Click on any submission for submission options</p>
         <p v-if="type === 'image'" class="center">Click on any submission to view and for submission options</p>
-        <pre class="cl-preview yellow-pad" v-if="preview !== null">{{preview}}</pre>
+        <div v-if="previewTxt !== null">
+          <pre class="cl-preview yellow-pad" v-if="previewTxt !== null">{{previewTxt}}</pre>
+          <p class="cl-preview-time">{{previewTime}}</p>
+        </div>
       </template>
     </div>
     <pre class="cl-analysis" v-if="result !== null">{{result}}</pre>
-    <figure v-if="previewImg !== null" class="cl-preview"><img :src="previewImg"></figure>
+    <div v-if="previewImg !== null">
+      <figure v-if="previewImg !== null" class="cl-preview"><img :src="previewImg"></figure>
+      <p class="cl-preview-time">{{previewTime}}</p>
+    </div>
   </div>
 </template>
 
 <script>
     /**
-     * @file
      * Component that displays the list of submissions.
+     * @constructor SubmittedVue
      */
   import SubmittedItemVue from './SubmittedItem.vue';
+  import {TimeFormatter} from 'site-cl/js/TimeFormatter';
 
   export default {
-      props: ['type', 'submissions', 'analysis'],
+      props: ['type', 'submissions', 'analysis', 'preview'],
       data: function() {
           return {
-              preview: null,
+              previewTxt: null,
               previewImg: null,
+              previewTime: null,
               result: null
           }
       },
@@ -46,6 +54,12 @@
       mounted() {
         if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
             this.previewImg = Site.root + '/cl/submission/view/' + this.submissions[0].id;
+            this.previewTime = TimeFormatter.relativeUNIX(this.submissions[0].date);
+        }
+
+        if(this.preview !== undefined) {
+        	this.previewTxt = this.preview.text;
+        	this.previewTime = TimeFormatter.relativeUNIX(this.preview.date);
         }
       },
       watch: {
@@ -62,7 +76,9 @@
             Site.api.get('/api/course/submission/get/' + submission.id, {})
                   .then((response) => {
                       if (!response.hasError()) {
-                          this.preview = response.getData('submission').attributes.text;
+                          const submission = response.getData('submission').attributes;
+                          this.previewTxt = submission.text;
+                          this.previewTime = TimeFormatter.relativeUNIX(submission.date);
                       } else {
                           Site.toast(this, response);
                       }
@@ -74,7 +90,8 @@
         },
         preview_img(submission) {
             if(submission.type.substr(0, 6) === 'image/') {
-                this.previewImg = Site.root + '/cl/submission/view/' + submission.id;
+            	this.previewImg = Site.root + '/cl/submission/view/' + submission.id;
+	            this.previewTime = TimeFormatter.relativeUNIX(submission.date);
             } else {
                 this.previewImg = null;
             }

@@ -113,14 +113,15 @@ SQL;
 
 	
 	/** Get a submission file
-	 * @param $id ID for the submission 
-	 * @returns An array with these keys:
-	 * 		type, binary, memberid, assigntag, submissiontag, name */
+	 * @param int $id ID for the submission
+	 * @return array with these keys:
+	 * 		type, binary, memberid, assigntag, submissiontag, name
+	 */
 	public function get_file($id) {
 		$pdo = $this->pdo();
 
 $sql = <<<SQL
-select `binary`, type, memberid, assigntag, submissiontag, name from $this->tablename
+select `binary`, type, memberid, assigntag, submissiontag, name, date from $this->tablename
 where id=?
 SQL;
 
@@ -130,7 +131,8 @@ SQL;
 		$assigntag = null;
 		$submissiontag = null;
 		$name = null;
-		
+		$date = 0;
+
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($id));
 		$stmt->bindColumn(1, $bin, \PDO::PARAM_LOB);
@@ -139,6 +141,7 @@ SQL;
 		$stmt->bindColumn(4, $assigntag, \PDO::PARAM_STR);
 		$stmt->bindColumn(5, $submissiontag, \PDO::PARAM_STR);
 		$stmt->bindColumn(6, $name, \PDO::PARAM_STR);
+		$stmt->bindColumn(7, $date, \PDO::PARAM_STR);
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
 		return array('type' => $type,
@@ -146,7 +149,8 @@ SQL;
 			'memberid' => $submissionMember,
 			'assigntag' => $assigntag,
 			'submissiontag' => $submissiontag,
-			'name' => $name);
+			'name' => $name,
+			'date'=>strtotime($date));
 	}
 	
 	/** Get a submission text
@@ -157,7 +161,7 @@ SQL;
 		$pdo = $this->pdo();
 
 		$sql = <<<SQL
-select text, memberid, assigntag, submissiontag, type from $this->tablename
+select text, memberid, assigntag, submissiontag, type, date from $this->tablename
 where id=?
 SQL;
 
@@ -166,6 +170,7 @@ SQL;
 		$assigntag = null;
 		$submissiontag = null;
 		$type = '';
+		$date = 0;
 		
 		$stmt = $pdo->prepare($sql);
 		$stmt->execute(array($id));
@@ -174,21 +179,22 @@ SQL;
 		$stmt->bindColumn(3, $assigntag, \PDO::PARAM_STR);
 		$stmt->bindColumn(4, $submissiontag, \PDO::PARAM_STR);
 		$stmt->bindColumn(5, $type, \PDO::PARAM_STR);
+		$stmt->bindColumn(6, $date, \PDO::PARAM_STR);
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
 		return array('text' => $text, 'type'=>$type, 'memberid' => +$submissionuser,
-			'assigntag' => $assigntag, 'submissiontag' => $submissiontag);
+			'assigntag' => $assigntag, 'submissiontag' => $submissiontag, 'date'=>strtotime($date));
 	}
 
 
 	/** Get all submissions there are in the database
-	 * @param User $user User we want the submissions for
+	 * @param int $memberId Member ID for the member we want the submissions for
 	 * @param string $assignTag Assignment we want the submissions for
 	 * @param string $submissionTag The tag for a specific submission within an assignment
 	 * @return array Array of submission records, empty if none. Each record with keys:
 	 *     id, date, name, type
 	 */
-	public function get_submissions(User $user, $assignTag, $submissionTag, $mostRecentOnly = false) {
+	public function get_submissions($memberId, $assignTag, $submissionTag, $mostRecentOnly = false) {
 		$pdo = $this->pdo();
 
 		$sql = <<<SQL
@@ -202,13 +208,50 @@ SQL;
 		}
 
 		$stmt = $pdo->prepare($sql);
-		$exec = [$user->member->id, $assignTag, $submissionTag];
+		$exec = [$memberId, $assignTag, $submissionTag];
 		// echo "<pre>\n" . $this->sub_sql($sql, $exec) . "</pre>";
 		$stmt->execute($exec);
 
 		$result = array();
 		foreach($stmt as $row) {
 			$result[] = array(
+				'id' => $row['id'],
+				'date' => strtotime($row['date']),
+				'name' => $row['name'],
+				'type' => $row['type']);
+		}
+
+		return $result;
+	}
+
+	/** Get all submissions there are in the database
+	 * @param int $memberId Member ID for the member we want the submissions for
+	 * @param string $assignTag Assignment we want the submissions for
+	 * @return array Array of submission records, empty if none. Each record with keys:
+	 *     id, date, name, type
+	 */
+	public function getAssignmentSubmissions($memberId, $assignTag) {
+		$pdo = $this->pdo();
+
+		$sql = <<<SQL
+select id, date, name, type, submissiontag from $this->tablename
+where memberid=? and assigntag=?
+order by submissiontag, date DESC
+SQL;
+
+
+		$stmt = $pdo->prepare($sql);
+		$exec = [$memberId, $assignTag];
+		// echo "<pre>\n" . $this->sub_sql($sql, $exec) . "</pre>";
+		$stmt->execute($exec);
+
+		$result = array();
+		foreach($stmt as $row) {
+			if(!isset($result[$row['submissiontag']])) {
+				$result[$row['submissiontag']] = [];
+			}
+
+			$result[$row['submissiontag']][] = array(
 				'id' => $row['id'],
 				'date' => strtotime($row['date']),
 				'name' => $row['name'],

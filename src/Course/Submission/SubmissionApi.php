@@ -85,7 +85,7 @@ class SubmissionApi extends \CL\Users\Api\Resource
 			throw new APIException("Analysis does not exist");
 		}
 
-		if(!$user->atLeast(Member::STAFF) && $user->member->id !== $analysis['memberid']) {
+		if(!$user->atLeast(Member::STAFF) && $user->member->id != $analysis['memberid']) {
 			throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
 		}
 
@@ -145,7 +145,7 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		$json = new JsonAPI();
 
 		foreach($assignment->submissions->submissions as $submission) {
-			$subs = $submissions->get_submissions($member, $assignment->tag, $submission->tag);
+			$subs = $submissions->get_submissions($member->member->id, $assignment->tag, $submission->tag);
 			$analysis = [];
 			foreach($submission->analysis as $an) {
 				$info = $an->info($site);
@@ -174,7 +174,7 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		$id = $params[1];
 		$submissions = new Submissions($site->db);
 		$submission = $submissions->get_text($id);
-		if(!$user->atLeast(Member::STAFF) && $submission['memberid'] !== $user->member->id) {
+		if(!$user->atLeast(Member::STAFF) && $submission['memberid'] != $user->member->id) {
 			throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
 		}
 
@@ -227,6 +227,11 @@ class SubmissionApi extends \CL\Users\Api\Resource
 			$name = $file["name"];
 			$path = $file["tmp_name"];
 
+			$validate = $submission->validateFile($name, $type, $path);
+			if($validate !== null) {
+				throw new APIException($validate);
+			}
+
 			// File upload submission
 			if ($file["error"] > 0 || $file["tmp_name"] == "") {
 				// Error return
@@ -270,7 +275,8 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		$assignment->submitted($user, $submission, $time);
 
 		$json = new JsonAPI();
-		$json->addData('submissions', 0, $submissions->get_submissions($user, $assignment->tag, $submission->tag));
+		$json->addData('submissions', 0,
+			$submissions->get_submissions($user->member->id, $assignment->tag, $submission->tag));
 		return $json;
 	}
 

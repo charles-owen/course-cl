@@ -8,7 +8,10 @@ namespace CL\Course\Submission;
 
 
 
-/** 
+use CL\Course\AssignmentView;
+use CL\Users\User;
+
+/**
  * Submission that is text content
  */
 class SubmissionText extends Submission {
@@ -78,6 +81,27 @@ class SubmissionText extends Submission {
 		$data['type'] = 'text';
 		$data['height'] = $this->height;
 	}
+
+	/**
+	 * Add actual submission data to the data array.
+	 *
+	 * This is used to add the actual Text submission to the
+	 * data send to the client so we can preview it immediately.
+	 * @param AssignmentView $view
+	 * @param User $user
+	 * @param array $submissions
+	 */
+	protected function addPreview(array &$data, AssignmentView $view, User $user, array $submissions) {
+		if(count($submissions) === 0) {
+			return;
+		}
+
+		$submissionsTable = new Submissions($view->site->db);
+		$submission = $submissionsTable->get_text($submissions[0]['id']);
+
+		$data['preview'] = ['text'=>$submission['text'], 'date'=>$submission['date']];
+	}
+
 
 
 //    /**

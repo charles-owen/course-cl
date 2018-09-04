@@ -279,6 +279,10 @@ class ApiMembers extends \CL\Users\Api\Resource
 			$params['search'] = $get['search'];
 		}
 
+		if(!empty($get['role'])) {
+			$params['role'] = $get['role'];
+		}
+
 		$members = new Members($site->db);
 		$result = $members->query($params);
 		$reply = [];
@@ -296,12 +300,20 @@ class ApiMembers extends \CL\Users\Api\Resource
 
 		if(!empty($get['prevnext']) && count($result) === 1) {
 			$user = $result[0];
-			$prevs = $members->query(['before'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1]);
+			$query = ['before'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1];
+			if(!empty($get['role'])) {
+				$query['role'] = $get['role'];
+			}
+			$prevs = $members->query($query);
 			if(count($prevs) > 0) {
 				$json->addData('prev-user', 0, $prevs[0]->data());
 			}
 
-			$nexts = $members->query(['after'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1]);
+			$query = ['after'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1];
+			if(!empty($get['role'])) {
+				$query['role'] = $get['role'];
+			}
+			$nexts = $members->query($query);
 			if(count($nexts) > 0) {
 				$json->addData('next-user', 0, $nexts[0]->data());
 			}

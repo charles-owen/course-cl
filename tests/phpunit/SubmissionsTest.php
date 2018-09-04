@@ -29,7 +29,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 		$dummy = new DummyMember();
 		$user = $dummy->create(887, 14, Member::STUDENT);
 
-		$submits = $submissions->get_submissions($user, 'design3', "task1");
+		$submits = $submissions->get_submissions($user->member->id, 'design3', "task1");
 		$this->assertEquals(2, count($submits));
 
 		$submit = $submits[0];
@@ -71,7 +71,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 		$time = strtotime("2015-01-10 14:00:00");
 		$submissions->submit_text($user, 'design3', 'task1', $time, "test text");
 
-		$submits = $submissions->get_submissions($user, 'design3', "task1");
+		$submits = $submissions->get_submissions($user->member->id, 'design3', "task1");
 		$this->assertEquals(3, count($submits));
 
 		$submit = $submits[0];
@@ -99,7 +99,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 
 		$this->assertNotFalse($result);
 
-		$submits = $submissions->get_submissions($user, 'design3', "task2", $user);
+		$submits = $submissions->get_submissions($user->member->id, 'design3', "task2", $user);
 
 		$this->assertEquals(2, count($submits));
 

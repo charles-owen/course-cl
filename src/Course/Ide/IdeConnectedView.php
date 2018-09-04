@@ -20,7 +20,7 @@ class IdeConnectedView extends \CL\Course\View {
 	const PLUGIN_VERSION_MAJOR = 1;
 
 	/// The current plugin minor version number
-	const PLUGIN_VERSION_MINOR = 15;
+	const PLUGIN_VERSION_MINOR = 17;
 
 	/**
 	 * IdeConnectedView constructor.

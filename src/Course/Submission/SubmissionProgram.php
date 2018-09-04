@@ -21,6 +21,28 @@ class SubmissionProgram extends Submission {
 	}
 
 	/**
+	 * Property get magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * type | string | Submission type: 'program'
+	 *
+	 * @param string $property Property name
+	 * @return mixed
+	 */
+	public function __get($property) {
+		switch ($property) {
+			case 'type':
+				return 'program';
+
+			default:
+				return parent::__get($property);
+		}
+	}
+
+
+	/**
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */

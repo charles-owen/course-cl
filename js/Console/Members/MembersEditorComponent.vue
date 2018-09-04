@@ -90,6 +90,25 @@
                 new Dialog({
                     content: content
                 });
+            },
+            computeStats() {
+	            let roleCnt  = [];
+	            for(let user of this.users) {
+		            let role = user.role();
+		            if(roleCnt[role] === undefined) {
+			            roleCnt[role] = 1;
+		            } else {
+			            roleCnt[role]++;
+		            }
+	            }
+
+	            this.stats = this.users.length + ' members';
+
+	            const user = this.$store.state.user.user;
+	            const roles = user.getRoles();
+	            for(let role in roleCnt) {
+		            this.stats += ' / ' + roleCnt[role] + ' ' + roles[role].name;
+	            }
             }
         },
         computed: mapState({
@@ -98,23 +117,7 @@
         }),
         watch: {
             users: function(to, fm) {
-                let roleCnt  = [];
-                for(let user of this.users) {
-                    let role = user.role();
-                    if(roleCnt[role] === undefined) {
-                        roleCnt[role] = 1;
-                    } else {
-                        roleCnt[role]++;
-                    }
-                }
-
-                this.stats = this.users.length + ' members';
-
-                const user = this.$store.state.user.user;
-                const roles = user.getRoles();
-                for(let role in roleCnt) {
-                    this.stats += ' / ' + roleCnt[role] + ' ' + roles[role].name;
-                }
+              this.computeStats();
             }
         },
         components: {
@@ -144,6 +147,7 @@
             }
 
             this.$store.dispatch('members/fetch');
+            this.computeStats();
         },
         beforeDestroy() {
             Site.Console.components.removeNav2(this, this.addComponent);

@@ -23,7 +23,7 @@ class CourseHomeView extends \CL\Course\View {
         parent::__construct($site, $options);
 
         $this->time = $time !== null ? $time : time();
-        $this->addCSS("vendor/cl/course/coursehome.css");
+       // $this->addCSS("vendor/cl/course/coursehome.css");
         $this->title = $this->course->desc;
 		$this->addBody('wider');
 

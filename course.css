@@ -1,4 +1,4 @@
-div.cl-submission form.file, div.cl-submission-view form.file, div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview, div.cl-submission pre.cl-preview, div.cl-submission-view pre.cl-preview, div.cl-submission pre.cl-analysis, div.cl-submission-view pre.cl-analysis {
+div.cl-submission form.file, div.cl-submission-view form.file, div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview, div.cl-submission pre.cl-preview, div.cl-submission-view pre.cl-preview, div.cl-submission pre.cl-analysis, div.cl-submission-view pre.cl-analysis, div.cl-course-home div.cl-calendar {
   -moz-box-shadow: 3px 3px 8px #ccc;
   -webkit-box-shadow: 3px 3px 8px #ccc;
   box-shadow: 3px 3px 8px #ccc; }
@@ -80,7 +80,7 @@ div.cl-submission form.file, div.cl-submission-view form.file {
   div.cl-submission form.file input[type=file], div.cl-submission-view form.file input[type=file] {
     width: 20em; }
 div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview {
-  margin: 1em 0;
+  margin: 1em 0 0 0;
   overflow: auto;
   border: 1px solid black;
   text-align: center; }
@@ -92,12 +92,18 @@ div.cl-submission figure.cl-preview, div.cl-submission-view figure.cl-preview {
     margin: 0; }
 div.cl-submission pre.cl-preview, div.cl-submission-view pre.cl-preview {
   border: thin solid black;
-  min-height: 5em; }
+  min-height: 5em;
+  margin-bottom: 0; }
 div.cl-submission pre.cl-analysis, div.cl-submission-view pre.cl-analysis {
   font-size: 0.80em;
   border: thin solid black;
   padding: 5px;
   background-color: #ffffcc; }
+div.cl-submission p.cl-preview-time, div.cl-submission-view p.cl-preview-time {
+  text-align: center;
+  font-size: 0.85em;
+  font-style: italic;
+  margin-top: 0.5em; }
 
 div.cl-error-help {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -119,4 +125,69 @@ div.cl-error-help {
 div.cl-error-help-page {
   padding: 0 5px 0.1em 5px; }
 
-/*# sourceMappingURL=course.css.map */
+div.cl-course-home {
+  padding: 0 0 1em 0; }
+  div.cl-course-home div.cl-main {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0; }
+    div.cl-course-home div.cl-main p {
+      text-align: left; }
+    div.cl-course-home div.cl-main p.shoutout {
+      text-align: center; }
+    div.cl-course-home div.cl-main > div:first-child {
+      flex: 1 1 auto;
+      padding: 0.25em 10px; }
+    div.cl-course-home div.cl-main > div:last-child {
+      flex: 0 1 225px;
+      box-shadow: none; }
+      div.cl-course-home div.cl-main > div:last-child iframe {
+        box-shadow: none; }
+    div.cl-course-home div.cl-main div.cl-controls {
+      float: right;
+      margin: 0 0 0 10px; }
+    div.cl-course-home div.cl-main p.cl-home-control {
+      text-align: center;
+      margin: 0.25em 0 0.5em 0;
+      width: 100px; }
+      div.cl-course-home div.cl-main p.cl-home-control button, div.cl-course-home div.cl-main p.cl-home-control select {
+        width: 100%; }
+  div.cl-course-home div.cl-calendar {
+    width: 100%;
+    max-width: 650px;
+    margin: 10px auto 0 auto;
+    background-color: #f2f2f2;
+    border: 1px #cccccc solid;
+    padding: 6px 4px 0 4px; }
+    div.cl-course-home div.cl-calendar .fc-toolbar {
+      text-align: left;
+      padding-left: 0.3rem; }
+  @media only screen and (max-width: 900px) {
+    div.cl-course-home .mobile {
+      display: inherit; }
+    div.cl-course-home div.cl-main > div:first-child {
+      padding: 0.25em 10px 0.25em 10px; }
+    div.cl-course-home div.cl-main > div:nth-child(2) {
+      right: 10px; }
+    div.cl-course-home div.cl-main > div:last-child {
+      display: none; } }
+  @media only screen and (max-width: 750px) {
+    div.cl-course-home body {
+      width: 100%;
+      max-width: 100%; }
+    div.cl-course-home h1 {
+      font-size: 1.3em; }
+    div.cl-course-home h2 {
+      font-size: 1.2em; }
+    div.cl-course-home #calendar {
+      border: 0;
+      box-shadow: none;
+      width: calc(100% + 10px);
+      margin-left: -5px; }
+    div.cl-course-home #sidebar {
+      display: none; } }
+  @media only screen and (max-width: 400px) {
+    div.cl-course-home div.cl-main > div:first-child {
+      font-size: 0.9em; } }

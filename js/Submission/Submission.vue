@@ -10,7 +10,7 @@
       </div>
       <component :is="submitter" v-if="options.open" :options="options" v-on:new_submissions="newSubmissions"></component>
     </div>
-    <submitted :analysis='options.analysis' :type="options.type" :submissions="options.submissions"></submitted>
+    <submitted :analysis='options.analysis' :type="options.type" :submissions="options.submissions" :preview="options.preview"></submitted>
     <div v-if="options.additional !== null" v-html="options.additional" class=""></div>
   </div>
 </template>

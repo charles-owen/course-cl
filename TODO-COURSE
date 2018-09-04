@@ -4,7 +4,7 @@ TEST: Large submissions fail with error message
 FIXME: Bulk upload does not refresh if drop cancelled
 TODO: Console displays assignment status ("EXPIRED", "no due date", etc.)
 
-TODO: before/after support for About Me
+TODO: before/after decor support for About Me
 TODO: About Me editor settings
 FUTURE: Persistent checklists
 FUTURE: Way to export and import rubrics

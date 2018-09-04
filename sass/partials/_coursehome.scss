@@ -1,0 +1,122 @@
+div.cl-course-home {
+  padding: 0 0 1em 0;
+
+  $main-padding: $margin;
+  $mobile-padding: $margin-mobile;
+  $sidebar-width: 225px;
+
+  div.cl-main {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0;
+
+    p {
+      text-align: left;
+    }
+
+    p.shoutout {
+      text-align: center;
+    }
+
+
+    > div:first-child {
+      flex: 1 1 auto;
+      padding: 0.25em $main-padding;
+    }
+
+    > div:last-child {
+      flex: 0 1 $sidebar-width;
+      box-shadow: none;
+
+      iframe {
+        box-shadow: none;
+      }
+    }
+
+    div.cl-controls {
+      float: right;
+      margin: 0 0 0 $main-padding;
+    }
+
+    p.cl-home-control {
+      text-align: center;
+      margin: 0.25em 0 0.5em 0;
+      width: 100px;
+
+      button, select {
+        width: 100%;
+      }
+    }
+  }
+
+  div.cl-calendar {
+    @extend %shadow;
+    width: 100%;
+    max-width: 650px;
+    margin: $main-padding auto 0 auto;
+    background-color: $card-heading-background;
+    border: 1px $card-border-color solid;
+    padding: 6px 4px 0 4px;
+
+    .fc-toolbar {
+      text-align: left;
+      padding-left: 0.3rem;
+    }
+  }
+
+  @media only screen and (max-width: $wide-width) {
+    .mobile {
+      display: inherit;
+    }
+
+    div.cl-main {
+      > div:first-child {
+        padding: 0.25em $main-padding 0.25em $main-padding;
+      }
+
+      > div:nth-child(2) {
+        right: $main-padding;
+      }
+
+      > div:last-child {
+        display: none;
+      }
+    }
+  }
+
+  @media only screen and (max-width: $medium-width) {
+    body {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    h1 {
+      font-size: 1.3em;
+    }
+
+    h2 {
+      font-size: 1.2em;
+    }
+
+    #calendar {
+      border: 0;
+      box-shadow: none;
+      width: calc(100% + #{$mobile-padding * 2});
+      margin-left: -$mobile-padding;
+    }
+
+    #sidebar {
+      display: none;
+    }
+  }
+
+  @media only screen and (max-width: $very-narrow-width) {
+    div.cl-main {
+      > div:first-child {
+        font-size: 0.9em;
+      }
+    }
+  }
+}

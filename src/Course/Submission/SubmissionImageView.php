@@ -43,7 +43,7 @@ class SubmissionImageView extends View {
 		if(!$this->user->atLeast(Member::STAFF)) {
 			// If not staff, only allow download of
 			// submissions that are our own
-			if($this->user->member->id !== $file['memberid']) {
+			if($this->user->member->id != $file['memberid']) {
 				return "<p>Not authorized to download this submission</p>";
 			}
 		}

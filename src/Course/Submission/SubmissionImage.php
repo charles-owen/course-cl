@@ -21,6 +21,27 @@ class SubmissionImage extends Submission {
 	}
 
 	/**
+	 * Property get magic method
+	 *
+	 * <b>Properties</b>
+	 * Property | Type | Description
+	 * -------- | ---- | -----------
+	 * type | string | Submission type: 'image'
+	 *
+	 * @param string $property Property name
+	 * @return mixed
+	 */
+	public function __get($property) {
+		switch ($property) {
+			case 'type':
+				return 'image';
+
+			default:
+				return parent::__get($property);
+		}
+	}
+
+	/**
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */
@@ -28,4 +49,27 @@ class SubmissionImage extends Submission {
 		$data['type'] = 'image';
 	}
 
+
+	/**
+	 * Validate that a file is acceptable for submission.
+	 *
+	 * The default returns null, which means no errors.
+	 * @param string $name File name
+	 * @param string $type File type
+	 * @param string $path File path
+	 * @return string Error message or null if file is acceptable.
+	 */
+	public function validateFile($name, $type, $path) {
+		$valid = [
+			'image/jpeg',
+			'image/png',
+			'image/gif'
+		];
+
+		if(!in_array($type, $valid)) {
+			return 'Not a valid image';
+		}
+
+		return null;
+	}
 }

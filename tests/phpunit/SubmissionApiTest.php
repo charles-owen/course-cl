@@ -52,7 +52,7 @@ class SubmissionApiTest extends CourseDatabaseTestBase {
 
 		// Is it working?
 		$submissions = new Submissions($this->site->db);
-		$x = $submissions->get_submissions($user22, 'step1', 'text');
+		$x = $submissions->get_submissions($user22->member->id, 'step1', 'text');
 		$t = $submissions->get_text($x[0]['id']);
 		$this->assertEquals('This is some text', $t['text']);
 

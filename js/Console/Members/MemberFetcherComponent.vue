@@ -6,6 +6,8 @@
 
 <script>
   import FetcherVue from 'users-cl/js/Lib/FetcherVue.vue';
+  import {StudentsOnly} from './StudentsOnly';
+  import {Member} from '../../Members/Member';
 
   export default {
       props: {
@@ -34,7 +36,15 @@
       },
       methods: {
           fetch() {
-              this.$store.dispatch('members/get', {id: this.id})
+          	  let query = {
+          	  	id: this.id
+              }
+
+              if(StudentsOnly.get()) {
+              	query.role = Member.STUDENT;
+              }
+
+              this.$store.dispatch('members/get', query)
                   .then((user) => {
                       this.user = user;
                       this.userId = user.userId;
