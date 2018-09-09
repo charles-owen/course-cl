@@ -5,12 +5,17 @@
     <div v-for="category in section.assignments.categories">
       <h2>{{category.name}}</h2>
       <ul>
-        <li v-for="assignment in category.assignments" :key="assignment.tag">{{assignment.name}} <span class="links">
-          <router-link :to="extensionsLink + assignment.tag">extensions</router-link>
-          <router-link v-if='assignment.submissions !== undefined' :to="submissionsLink + assignment.tag">submissions</router-link>
-          <span v-for="link in assignmentLinks">
-            <router-link :to="assignmentLink(assignment, link.route)" v-if="assignment[link.property] !== false">{{link.name}}</router-link>&nbsp;
-          </span>
+        <li v-for="assignment in category.assignments" :key="assignment.tag">{{assignment.name}}
+          <span class="small">
+            <span>
+              <router-link :to="extensionsLink + assignment.tag">extensions</router-link>&nbsp;
+            </span>
+            <span v-if='assignment.submissions !== undefined'>
+              <router-link :to="submissionsLink + assignment.tag">submissions</router-link>&nbsp;
+            </span>
+            <span v-for="link in assignmentLinks"  v-if="assignment[link.property] !== undefined && assignment[link.property] !== false">
+              <router-link :to="assignmentLink(assignment, link.route)">{{link.name}}</router-link>&nbsp;
+            </span>
           </span>
         </li>
       </ul>
@@ -38,6 +43,9 @@
             let member = user.member;
 
             this.section = this.$store.getters['course/section'](member.semester, member.section);
+
+            console.log(this.assignmentLinks);
+            console.log(this.section.assignments.categories);
         },
         methods: {
             assignmentLink: function(assignment, route) {
@@ -47,10 +55,3 @@
     }
 
 </script>
-
-<style lang="scss" scoped>
-  span.links {
-
-    font-size: 0.85em;
-  }
-</style>

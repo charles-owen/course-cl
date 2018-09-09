@@ -158,8 +158,8 @@ class AssignmentCategory {
 	 * Extend this class by adding a new function.
 	 * This is used by the Step system to add "add_step"
 	 * to the assignment category.
-	 * @param $name Name of the function
-	 * @param $closure Closure to call.
+	 * @param string $name Name of the function
+	 * @param \Closure $closure Closure to call.
 	 */
 	public function extend($name, $closure) {
 		$this->extensions[$name] = $closure;

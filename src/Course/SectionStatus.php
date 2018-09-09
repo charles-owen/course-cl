@@ -92,7 +92,7 @@ SQL;
      * @param User $user User of the section (must be a member)
      * @param string $assignTag The assignment tag
      * @param string $sectionTag The section tag
-     * @returns array with keys look, date, status. If no record,
+     * @return array with keys look, date, status. If no record,
      *    return NOTVISITED and zero dates.
      */
     public function get(User $user, $assignTag, $sectionTag) {
@@ -118,7 +118,7 @@ SQL;
      * Get all statuses for an assignment
      * @param User $user User of the section (must be a member)
      * @param string $assignTag The assignment tag
-     * @returns array Array of arrays, each with the keys: look, access, status. Each array has a
+     * @return array Array of arrays, each with the keys: look, access, status. Each array has a
      * key that is the section tag.
      */
     public function get_statuses(User $user, $assignTag) {
@@ -152,7 +152,7 @@ SQL;
 	 * @param string $semester Semester code
 	 * @param string $sectionId Section id
 	 * @param string $assignTag Assignment tag
-	 * @returns array result. First level key is the member ID, second level key is assignment section,
+	 * @return array result. First level key is the member ID, second level key is assignment section,
 	 * third level keys: look, date, status
 	 */
     public function get_statuses_assignment($semester, $sectionId, $assignTag) {

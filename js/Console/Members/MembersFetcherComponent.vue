@@ -1,13 +1,11 @@
 <template>
-  <div class="content">
-    <div class="full">
+  <div>
       <label style="display:none" ref="students-only" ><input type="checkbox" v-model="students" @change="studentsOnlyChanged"> Students Only</label>
       <fetcher :fetcher="fetcher" :fetching="fetching">
         <slot :users="users" :students="students"></slot>
         <p v-if="users.length == 0" class="centerbox comp center">
           There are currently no members enrolled in this section.</p>
       </fetcher>
-    </div>
   </div>
 </template>
 
