@@ -22,12 +22,14 @@
 <style lang="scss" scoped>
 
 div.cl-section-component {
+  white-space: nowrap;
+
   >span:first-child {
     padding: 0 14px 0 0;
   }
 
   >span:last-child {
-    padding: 0 0 0 14px;
+    padding: 0;
   }
 
   vertical-align: top;

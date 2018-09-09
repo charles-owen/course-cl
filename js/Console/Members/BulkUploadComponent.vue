@@ -114,7 +114,6 @@
                                   });
 
                                   // Create a Vue inside the dialog box
-                                  console.log(dropsForVue);
                                   new Vue({
                                       el: '#drops',
                                       data: function() {

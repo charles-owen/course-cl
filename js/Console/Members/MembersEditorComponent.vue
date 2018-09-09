@@ -150,7 +150,7 @@
             this.computeStats();
         },
         beforeDestroy() {
-            Site.Console.components.removeNav2(this, this.addComponent);
+            this.$site.console.components.removeNav2(this, this.addComponent);
         }
     }
 </script>
