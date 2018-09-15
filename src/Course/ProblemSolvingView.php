@@ -70,9 +70,10 @@ class ProblemSolvingView extends \CL\Course\View {
          * Ensure the page is open!
          */
         $delay = $this->assignment->section->assignments->problemSolvingDelay;
+
         if(!$this->user->atLeast(Member::GRADER) &&
-	        !$this->assignment->available($this->user, $time, $delay)) {
-	        $server->redirect($site->root . '/');
+	        !$this->assignment->available_due($this->user, $time, $delay)) {
+				$server->redirect($site->root . '/');
 	        return;
         }
 

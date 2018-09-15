@@ -3,7 +3,7 @@
     <div class="full">
       <membersfetcher>
         <template slot-scope="fetcher">
-          <p class="center">Click on a user to see view submissions for that user.</p>
+          <p class="center">Click on a user to view submissions for that user.</p>
           <table class="small">
             <tr>
               <th>User</th>

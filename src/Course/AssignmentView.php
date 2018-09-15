@@ -43,6 +43,8 @@ class AssignmentView extends \CL\Course\View {
 		if(get_class($this) === self::class) {
 			$site->amend($this);
 		}
+
+		$GLOBALS['assignment'] = $this->assignment;
 	}
 
     /**
@@ -158,11 +160,11 @@ class AssignmentView extends \CL\Course\View {
 		$tag = $this->assignment->tag;
 		
 		$html = <<<HTML
-<p class="grade" id="grade"><img src="$root/vendor/cl/grades/img/grading.png" width="114" height="50" alt=""/>
+<p class="grade"><img src="$root/vendor/cl/grades/img/grading.png" width="114" height="50" alt=""/>
 
 HTML;
 		$html .= \Backto::link($text,
-			"$libroot/grading/assignmentgrade.php?tag=$tag") . '</p>';
+			"$libroot/cl/grade/$tag") . '</p>';
 			
 		return $html;
 	}

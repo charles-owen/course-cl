@@ -18,6 +18,12 @@
 				submissions: []
 			}
 		},
+    watch: {
+			user() {
+				this.submissions = [];
+				this.fetch(this.user);
+      }
+    },
 		components: {
 			submission: SubmissionVue
 		},
