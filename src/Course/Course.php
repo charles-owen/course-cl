@@ -42,8 +42,12 @@ class Course extends \CL\Site\Plugin {
      * -------- | ---- | -----------
      * account | string | Account course runs under, like 'cse335'. Serves as a course tag.
      * desc | string | Course description.
-     * gradedispute | string | HTML for the grade dispute link for grading pages
+     * img | string | Path the the course-cl images directory
      * name | string | Name of the course, like 'CSE 335'.
+     * root | string | The root path for the site
+     * rootDir | string | The root directory for the site
+     * sections | array | The sections of this course
+     * site | Site | The Site object
      *
      * @param string $property
      * @return mixed Property value
@@ -57,20 +61,13 @@ class Course extends \CL\Site\Plugin {
 	        case 'desc':
 		        return $this->desc;
 
-	        case 'gradedispute':
-		        return $this->gradedispute;
-
 	        case 'name':
 	        	return $this->name;
 
-	        //
-	        // Pending documentation:
-	        //
-
 	        case 'sections':
-	        	return $this->sections;
+		        return $this->sections;
 
-	        // Convenience functions that duplicate functions from Site:
+	        // Convenience functions that duplicates the function from Site:
 	        case 'rootDir':
 	        	return $this->site->rootDir;
 
@@ -79,9 +76,6 @@ class Course extends \CL\Site\Plugin {
 
 	        case 'img':
 	        	return $this->site->root . '/vendor/cl/course/img';
-
-	        case 'sections':
-		        return $this->sections;
 
 	        case 'site':
 	        	return $this->site;
@@ -97,7 +91,6 @@ class Course extends \CL\Site\Plugin {
      * <b>Properties</b>
      * Property | Type | Description
      * -------- | ---- | -----------
-     * gradedispute | string | HTML for the grade dispute link for grading pages
      * site | Site | The Site object
 	 *
      * @param string $property Property name
@@ -105,10 +98,6 @@ class Course extends \CL\Site\Plugin {
      */
     public function __set($property, $value) {
     	switch($property) {
-		    case 'gradedispute':
-		    	$this->gradedispute = $value;
-		    	break;
-
 		    case 'site':
 		    	$this->site = $value;
 		    	break;
@@ -121,12 +110,13 @@ class Course extends \CL\Site\Plugin {
     }
 
 
-	/** Define the course
+	/**
+	 * Define the course
 	 *
 	 * Provides basic course information.
-	 * @param $account The course account (like 'cse335')
-	 * @param $name The course name (like 'CSE 335')
-	 * @param $desc Course description (like "Object-Oriented Programming")
+	 * @param string $account The course account (like 'cse335')
+	 * @param string $name The course name (like 'CSE 335')
+	 * @param string $desc Course description (like "Object-Oriented Programming")
 	 */
  	public function define($account, $name, $desc = '') {
 		$this->account = $account;
@@ -145,9 +135,9 @@ class Course extends \CL\Site\Plugin {
      * @param string $semester Semester code
      * @param string $section The section ID, like '001'
      * @param int $type Section type. The options are:
-     * Section::Normal, Section::Flipped, Section::Online, Section::Flipped
+     *    Section::Normal, Section::Flipped, Section::Online, Section::Flipped
      *
-	 * @returns Section object
+	 * @return Section object
 	 */
 	public function add_section($semester, $section, $type) {
         $obj = new Section($this, $semester, $section, $type);
@@ -173,7 +163,7 @@ class Course extends \CL\Site\Plugin {
 	/** Section
      * @param string $semester Semester ID (like FS18)
 	 * @param string $sectionId Section number/id (like 001)
-	 * @returns Section object or null if section number is invalid.
+	 * @return Section object or null if section number is invalid.
 	 */
 	public function get_section($semester, $sectionId) {
 	    foreach($this->sections as $section) {
@@ -240,6 +230,4 @@ class Course extends \CL\Site\Plugin {
 
 	private $sections = [];	        // All sections for this course
 	private $section0 = null;		// First section added
-
-	private $gradedispute = null;	// Grade dispute link content
 }

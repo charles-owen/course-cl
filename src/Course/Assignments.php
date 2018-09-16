@@ -38,6 +38,7 @@ class Assignments {
 	 * -------- | ---- | -----------
 	 * categories | array | AssignmentCategory collection
 	 * course | Course | Course object
+	 * gradeDispute | string | Grade dispute link (Usually an a tag)
 	 * problemSolvingDelay | int | Delay for release of problem solving pages
 	 * section | Section | Section object for this assignment
 	 * site | Site | Site object
@@ -52,6 +53,9 @@ class Assignments {
 
 			case 'course':
 				return $this->course;
+
+			case 'gradeDispute':
+				return $this->gradeDispute;
 
 			case 'section':
 				return $this->section;
@@ -89,6 +93,10 @@ class Assignments {
 				$this->problemSolvingDelay = $value;
 				break;
 
+			case 'gradeDispute':
+				$this->gradeDispute = $value;
+				break;
+
 			default:
 				$trace = debug_backtrace();
 				trigger_error(
@@ -103,7 +111,7 @@ class Assignments {
 
 		
 	/**
-	 * Add a grading category for this course
+	 * Add an assignment category for this course
 	 * @param string $tag Assignment category tag
 	 * @param string $name Name of the category
 	 * @param int|null $points Optional points for this category
@@ -139,7 +147,7 @@ class Assignments {
 	/**
 	 * Get an assignment based on its tag
 	 * @param string $tag Tag that identifies the assignment
-	 * @returns Assignment object
+	 * @return Assignment object
 	 */
 	public function get_assignment($tag) {
 		foreach($this->categories as $category) {
@@ -186,7 +194,7 @@ class Assignments {
 	/** Get all assignments that are released and not yet due
 	 * @param User $user User to get the assignments for
 	 * @param int $time Time to test
-	 * @returns array List of Assignment objects */
+	 * @return array List of Assignment objects */
 	public function getOpenAssignments(User $user, $time) {
 		$result =[];
 		
@@ -205,10 +213,10 @@ class Assignments {
 
     /**
      * Add a calendar event
-     * @param $name Event name
-     * @param $date Date as a string
-     * @param $url URL to link event to
-     * @param $displayTime If true, display at a time
+     * @param string $name Event name
+     * @param string $date Date as a string
+     * @param string $url URL to link event to
+     * @param bool $displayTime If true, display at a time
      */
     public function add_calendar($name, $date, $url=null, $displayTime=false) {
 		// Must manually call since this may be a recursive call
@@ -237,11 +245,15 @@ class Assignments {
 			$data[] = $category->data();
 		}
 
-		return ['categories' => $data];
+		return [
+			'categories' => $data,
+			'gradedispute'=> $this->gradeDispute
+		];
 	}
 
-	private $course = null;		    ///< Course object
-    private $section = null;        ///< Section we are associated with
-	private $categories = array();	///< The assignment categories
+	private $course = null;		    // Course object
+    private $section = null;        // Section we are associated with
+	private $categories = array();	// The assignment categories
 	private $problemSolvingDelay = 86400;   // Delay after due before problem solving released/24 hours
+	private $gradeDispute = null;   // Grade dispute link
 }

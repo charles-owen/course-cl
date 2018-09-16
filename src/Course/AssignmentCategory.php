@@ -16,7 +16,8 @@ namespace CL\Course;
  * @cond
  * @property array assignments
  * @property Section section
- * @enccond
+ * @property \CL\Grades\CategoryGrading grading
+ * @endcond
  */
 class AssignmentCategory {
 	/** Constructor 
@@ -47,7 +48,7 @@ class AssignmentCategory {
 	 * @param string $tag Assignment tag
 	 * @param string $name Name of the assignment
      * @param string $url URL for the assignment (optional)
-     * @returns Assignment object */
+     * @return Assignment object */
 	public function add_assignment($tag, $name, $url=null) {
 		return $this->add(new Assignment($tag, $name, $url));
 	}
