@@ -76,9 +76,23 @@ class AssignmentSubmissions {
 	/** Add a submission object to this assignment
 	 * @param string $tag Submission tag (local identifier)
 	 * @param Submission $submission The Submission object
-	 * @returns Submission object
+	 * @return Submission object
 	 */
 	public function add_submission($tag, Submission $submission) {
+		// Validate teaming
+		if($submission->teaming !== null) {
+			$site = $this->assignment->site;
+			if(!$site->installed('team')) {
+				$submission->teaming = null;
+				$trace = debug_backtrace();
+				trigger_error(
+					'Submission assigned a teaming without the teaming subsystem installed in ' .
+					$trace[1]['file'] . ' on line ' . $trace[1]['line'],
+					E_USER_NOTICE);
+			}
+
+		}
+
 		$this->submissions[$tag] = $submission;
 		$submission->assignment = $this->assignment;
 		return $submission;
@@ -89,7 +103,7 @@ class AssignmentSubmissions {
 	 * @param string $tag Submission tag (local identifier)
 	 * @param string $name Assignment name
 	 * @param string $teaming Teaming name if this is a team submission
-	 * @returns Submission object
+	 * @return Submission object
 	 */
 	public function add_program($tag, $name, $teaming=null) {
         return $this->add_submission($tag,
@@ -101,7 +115,7 @@ class AssignmentSubmissions {
 	 * @param string $tag Submission tag (local identifier)
 	 * @param string $name Assignment name
 	 * @param string $teaming Teaming name if this is a team submission
-	 * @returns Submission object
+	 * @return Submission object
 	 */
 	public function add_text($tag, $name, $teaming=null) {
 		return $this->add_submission($tag,
@@ -109,10 +123,10 @@ class AssignmentSubmissions {
 	}
 
 	/** Add a submission of type Image to this assignment
-	 * @param $tag Assignment tag
-	 * @param $name Assignment name
-	 * @param $teaming Teaming name if this is a team submission
-	 * @returns Submission object */
+	 * @param string $tag Assignment tag
+	 * @param string $name Assignment name
+	 * @param string $teaming Teaming name if this is a team submission
+	 * @return Submission object */
 	public function add_image($tag, $name, $teaming=null) {
         return $this->add_submission($tag,
             new SubmissionImage($tag, $name, $teaming));
@@ -122,7 +136,7 @@ class AssignmentSubmissions {
 	/**
 	 * Get a submission object
 	 * @param $tag Submission tag
-	 * @returns Submission object or null if invalid tag
+	 * @return Submission object or null if invalid tag
 	 */
 	public function get($tag) {
 		if(!isset($this->submissions[$tag])) {

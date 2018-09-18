@@ -5,10 +5,13 @@
  */
 namespace CL\Course\Submission;
 
+
 use CL\Site\Site;
 use CL\Site\System\Server;
 use CL\Site\Api\JsonAPI;
 use CL\Site\Api\APIException;
+use CL\Team\Submission\TeamSubmissions;
+use CL\Team\Teamings;
 use CL\Users\User;
 use CL\Users\Users;
 use CL\Course\Members;
@@ -19,13 +22,13 @@ use CL\Course\Analysis\AnalysisException;
 /**
  * API Resource for /api/course/members
  */
-class SubmissionApi extends \CL\Users\Api\Resource
+class SubmissionApi extends \CL\Course\Api\Resource
 {
 	/// Default query limit for membership queries.
 	const QUERY_LIMIT = 500;
 
 	/**
-	 * ApiMembers constructor.
+	 * SubmissionApi constructor.
 	 */
 	public function __construct() {
 		parent::__construct();
@@ -50,8 +53,8 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		}
 
 		switch ($params[0]) {
+			// /api/course/submission/submit/:assigntag/:submissiontag
 			case 'submit':
-				// /api/course/submission/submit/assigntag/submissiontag
 				return $this->submit($site, $user, $server, $params, $time);
 
 			// /api/course/submission/submissions/assigntag
@@ -60,37 +63,54 @@ class SubmissionApi extends \CL\Users\Api\Resource
 				return $this->submissions($site, $user, $params);
 
 			case 'get':
-				// /api/course/submission/get/id
+				// /api/course/submission/get/:assigntag/:submissiontag/:id
 				return $this->get($site, $user, $params);
 
+			// /api/course/submission/analysis/:assigntag/:submissiontag/:analysistag/:submissionid
 			case 'analysis':
-				// /api/course/submission/analysis/:tag/:submissionid
 				return $this->analysis($site, $user, $params);
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
 	}
 
+	/**
+	 * Get submission analysis
+	 *
+	 * /api/course/submission/analysis/:assigntag/:submissiontag/:analysistag/:submissionid
+	 * @param Site $site
+	 * @param User $user
+	 * @param array $params
+	 * @return JsonAPI
+	 * @throws APIException
+	 */
 	private function analysis(Site $site, User $user, array $params) {
-		if(count($params) < 3) {
+		if(count($params) < 5) {
 			throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
 		}
 
-		$analysisTag = $params[1];
-		$submissionId = +$params[2];
+		$assignTag = $params[1];
+		$submissionTag = $params[2];
+		$analysisTag = $params[3];
+		$submissionId = +$params[4];
 
-		$submissions = new Submissions($site->db);
-		$analysis = $submissions->get_analysis($submissionId);
-		if($analysis === null) {
-			throw new APIException("Analysis does not exist");
-		}
+		$assignment = $this->getAssignment($site, $user, $assignTag);
+		$submission = $this->getSubmission($assignment, $submissionTag);
 
-		if(!$user->atLeast(Member::STAFF) && $user->member->id != $analysis['memberid']) {
-			throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
-		}
+		if($submission->teaming === null) {
+			$submissions = new Submissions($site->db);
+			$analysis = $submissions->get_analysis($submissionId);
+			if($analysis === null) {
+				throw new APIException("Analysis does not exist");
+			}
 
-		if(!isset($analysis[$analysisTag])) {
-			throw new APIException("Analysis does not exist");
+			if(!$user->atLeast(Member::STAFF) && $user->member->id != $analysis['memberid']) {
+				throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
+			}
+
+			if(!isset($analysis[$analysisTag])) {
+				throw new APIException("Analysis does not exist");
+			}
 		}
 
 		$json = new JsonAPI();
@@ -99,8 +119,8 @@ class SubmissionApi extends \CL\Users\Api\Resource
 	}
 
 	/**
-	 * /api/course/submission/submissions/assigntag
-	 * /api/course/submission/submissions/assigntag/memberid
+	 * /api/course/submission/submissions/:assigntag
+	 * /api/course/submission/submissions/:assigntag/:memberid
 	 * Get all submissions for an assignment
 	 * @param Site $site Site object
 	 * @param User $user Current user object
@@ -120,32 +140,31 @@ class SubmissionApi extends \CL\Users\Api\Resource
 				throw new APIException("Not authorized", APIException::NOT_AUTHORIZED);
 			}
 			$memberId = +$params[2];
+			$members = new Members($site->db);
+			$member = $members->getAsUser($memberId);
+			$assignment = $this->getAssignment($site, $user, $assignTag, +$params[2]);
 		} else {
 			$memberId = $user->member->id;
+			$member = $user;
+			$assignment = $this->getAssignment($site, $user, $assignTag);
 		}
 
-		$members = new Members($site->db);
-		$member = $members->getAsUser($memberId);
-		if($member === null) {
-			throw new APIException("Member does not exist");
-		}
-
-		$section = $site->course->get_section_for($member);
-		if($section === null) {
-			throw new APIException("No section for this member.");
-		}
-		$assignment = $section->get_assignment($assignTag);
-		if($assignment === null) {
-			throw new APIException("Assignment not found");
-		}
-
-		$assignment->load();
-
-		$submissions = new Submissions($site->db);
 		$json = new JsonAPI();
 
 		foreach($assignment->submissions->submissions as $submission) {
-			$subs = $submissions->get_submissions($member->member->id, $assignment->tag, $submission->tag);
+			if($submission->teaming == null) {
+				$submissions = new Submissions($site->db);
+				$subs = $submissions->get_submissions($memberId, $assignment->tag, $submission->tag);
+			} else {
+				$teamings = new Teamings($site->db);
+				$team = $teamings->getTeamByMember($member, $submission->teaming);
+				if($team !== null) {
+					$submissions = new TeamSubmissions($site->db);
+					$subs = $submissions->get_submissions($team->id, $assignment->tag, $submission->tag);
+				} else {
+					$subs = [];
+				}
+			}
 			$analysis = [];
 			foreach($submission->analysis as $an) {
 				$info = $an->info($site);
@@ -166,12 +185,15 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		return $json;
 	}
 
+
 	private function get(Site $site, User $user, array $params) {
-		if(count($params) < 2) {
+		if(count($params) < 4) {
 			throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
 		}
 
-		$id = $params[1];
+		$assignTag = $params[1];
+		$submissionTag = $params[2];
+		$id = $params[3];
 		$submissions = new Submissions($site->db);
 		$submission = $submissions->get_text($id);
 		if(!$user->atLeast(Member::STAFF) && $submission['memberid'] != $user->member->id) {
@@ -204,7 +226,6 @@ class SubmissionApi extends \CL\Users\Api\Resource
 
 		//Determine the assignment
 		$assignment = $this->getAssignment($site, $user, $assignTag);
-		$assignment->load();
 
 		// Determine the submission
 		$submission = $assignment->submissions->get($tag);
@@ -278,26 +299,6 @@ class SubmissionApi extends \CL\Users\Api\Resource
 		$json->addData('submissions', 0,
 			$submissions->get_submissions($user->member->id, $assignment->tag, $submission->tag));
 		return $json;
-	}
-
-	/**
-	 * @param Site $site The site object
-	 * @param User $user The current user
-	 * @param string $assignTag The assignment tag
-	 * @return \CL\Course\Assignment
-	 * @throws APIException
-	 */
-	private function getAssignment(Site $site, User $user, $assignTag) {
-		// Determine the assignment and ensure it is open
-		$course = $site->course;
-		$section = $course->get_section_for($user);
-		$assignment = $section->get_assignment($assignTag);
-
-		if($assignment === null) {
-			throw new APIException("Assignment does not exist");
-		}
-
-		return $assignment;
 	}
 
 }

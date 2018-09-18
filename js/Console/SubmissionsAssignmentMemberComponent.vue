@@ -2,7 +2,7 @@
   <div>
     <div v-for="submission in submissions">
       <h2>{{submission.name}}</h2>
-      <submission :options="submission"></submission>
+      <submission-vue :submission="submission"></submission-vue>
     </div>
   </div>
 </template>
@@ -25,7 +25,7 @@
       }
     },
 		components: {
-			submission: SubmissionVue
+			submissionVue: SubmissionVue
 		},
 		mounted() {
 			this.fetch(this.user);

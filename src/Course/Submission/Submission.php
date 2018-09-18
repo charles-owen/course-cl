@@ -2,7 +2,10 @@
 /** @file
  * Base class for classes that model an assignment submission
  */
- 
+
+/**
+ * Classes associated with assignment submission
+ */
 namespace CL\Course\Submission;
 
 use CL\Course\Analysis\Analysis;
@@ -11,12 +14,14 @@ use CL\Site\Site;
 use CL\Users\User;
 use CL\Course\AssignmentView;
 use CL\Course\Analysis\Analyzer;
+use CL\Course\Assignment;
 
 /**
  * Base class for classes that model an assignment submission
  *
  * @cond
- * @property \CL\Course\Assignment assignment
+ * @property Assignment assignment
+ * @property string teaming
  * @endcond
  */
 abstract class Submission {
@@ -40,8 +45,11 @@ abstract class Submission {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * analysis | array | Collection of attached analysis components
+	 * assignment | Assignment | Assignment this is a submission for
 	 * name | string | Name associated with the submission
 	 * tag | string | Tag associated with the submission
+	 * teaming | string | Teaming name or null if none
 	 *
 	 * @param string $property Property name
 	 * @return mixed
@@ -62,6 +70,9 @@ abstract class Submission {
 			case 'analysis':
 				return $this->analysis;
 
+			case 'teaming':
+				return $this->teaming;
+
 			default:
 				$trace = debug_backtrace();
 				trigger_error(
@@ -79,7 +90,9 @@ abstract class Submission {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+	 * assignment | Assignment | Assignment this is a submission for
 	 * present_additional | string | Additional HTML content to present with the submission
+	 * teaming | string | Teaming name or null if none
 	 *
 	 * @param string $property Property name
 	 * @param mixed $value Value to set
@@ -92,6 +105,10 @@ abstract class Submission {
 
 			case 'assignment':
 				$this->assignment = $value;
+				break;
+
+			case 'teaming':
+				$this->teaming = $value;
 				break;
 
 			default:
@@ -116,8 +133,6 @@ abstract class Submission {
 	public function present(AssignmentView $view, User $user, $time=null) {
 		$time = $time !== null ? $time : time();
 
-		$submissions = new Submissions($view->site->db);
-
 		$assignment = $this->assignment;
 
 		$analysis = [];
@@ -137,9 +152,17 @@ abstract class Submission {
 			'tag' => $this->tag,
 			'additional' => $this->additional,
 			'analysis'=>$analysis,
-			'submissions' => $submissions->get_submissions($user->member->id,
-				$assignment->tag, $this->tag)
+			'teaming'=>$this->teaming
 		];
+
+		if($this->teaming === null) {
+			$submissions = new Submissions($view->site->db);
+			$data['submissions'] = $submissions->get_submissions($user->member->id,
+				$assignment->tag, $this->tag);
+		} else {
+			$teamings = new \CL\Team\Teamings($view->site->db);
+			$data['submissions'] = $teamings->get_submissions($user, $this->teaming, $assignment->tag, $this->tag);
+		}
 
 		$this->addData($data);
 		$this->addPreview($data, $view, $user, $data['submissions']);
@@ -159,6 +182,7 @@ HTML;
 		$data = [
 			'name' => $this->name,
 			'tag' => $this->tag,
+			'teaming' => $this->teaming
 		];
 
 		$this->addData($data);
@@ -185,34 +209,7 @@ HTML;
 	}
 
 
-	
 
-	
-//	/** Handle a file submission
-//	 * @param $user User the submission is for
-//	 * @param $time Submission time as PHP time value
-//	 * @param $file Path to the file to submit
-//	 * @param $name Name of the file as submitted
-//	 * @param $type Type of the submission file */
-//	public function submit_file(User $user, $time, $file, $name, $type) {
-//		$course = $this->assignment->course;
-//
-//		if($this->get_teaming() !== null) {
-//			$teams = $this->get_teams($user);
-//			if(count($teams) == 0) {
-//				return json_encode(array('ok'=>false, 'msg'=>"Not a member of a team"));
-//			}
-//
-//			$submissions = new \Team\TeamSubmissions($course );
-//			$result = $submissions->submit_file($teams[0], $user, $this, $time, $file, $name, $type);
-//		} else {
-//			$submissions = new \Assignments\Submissions($course );
-//			$result = $submissions->submit_file($user, $this, $time, $file, $name, $type);
-//		}
-//
-//		$this->submitted($user, $time);
-//		return $result;
-//	}
 
 	/**
 	 * Set the analysis for a submission.
@@ -221,13 +218,12 @@ HTML;
 	 * @param array $analysis Analysis to set
 	 */
 	public function set_analysis(Site $site, $id, $analysis) {
-//		if($this->get_teaming() !== null) {
-//			$submissions = new \Team\TeamSubmissions($site->db);
-//		} else {
-//			$submissions = new Submissions($site->db);
-//		}
+		if($this->teaming !== null) {
+			$submissions = new \CL\Team\Submission\TeamSubmissions($site->db);
+		} else {
+			$submissions = new Submissions($site->db);
+		}
 
-		$submissions = new Submissions($site->db);
 		$submissions->set_analysis($id, $analysis);
 	}
 
@@ -326,8 +322,7 @@ HTML;
 	private $name;		    // Submission name
 	private $additional = null; // Additional text to display with the submission tool
 
-
 	/// Any Analysis components we will use
 	protected $analysis = [];
-	private $teaming;	///< Any teaming this submission is for
+	private   $teaming;	///< Any teaming this submission is for
 }

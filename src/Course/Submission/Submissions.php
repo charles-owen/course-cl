@@ -27,7 +27,7 @@ class Submissions extends SubmissionsBase {
 	 * @param int $date Submission date as PHP time value
 	 * @param string $text The text to submit
 	 * @param string $type MIME type for the submission (default: 'text/plain')
-	 * @returns int ID for the new submission or false if fail
+	 * @return int ID for the new submission or false if fail
 	 */
 	public function submit_text(User $user, $assignTag, $submissionTag,
 	                            $date, $text, $type="text/plain") {

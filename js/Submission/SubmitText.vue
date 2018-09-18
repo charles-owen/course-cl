@@ -11,11 +11,11 @@
   import {Editor} from 'site-cl/js/UI/Editor';
 
   export default {
-      props: ['options'],
+      props: ['submission'],
       mounted() {
           const element = this.$refs['editor'];
           this.editor = new Editor(element, {
-              height: this.options.height,
+              height: this.submission.height,
               classes: ['yellow-pad']
           });
       },
@@ -32,19 +32,20 @@
                 text: text
             }
 
-            Site.api.post(`/api/course/submission/submit/${this.options.assignTag}/${this.options.tag}`, params)
+            const system = this.submission.teaming !== null ? 'team' : 'course';
+            this.$site.api.post(`/api/${system}/submission/submit/${this.submission.assignTag}/${this.submission.tag}`, params)
                 .then((response) => {
                     if (!response.hasError()) {
                         this.editor.textarea.value = '';
                         this.$emit('new_submissions', response.getData('submissions').attributes);
-                        Site.toast(this, "Submission successfully saved to the server");
+	                      this.$site.toast(this, "Submission successfully saved to the server");
                     } else {
-                        Site.toast(this, response);
+	                      this.$site.toast(this, response);
                     }
 
                 })
                 .catch((error) => {
-                    Site.toast(this, error);
+	                  this.$site.toast(this, error);
                 });
           }
       }

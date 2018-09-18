@@ -304,6 +304,10 @@ HTML;
 		return $html;
 	}
 
+	/**
+	 * Get the course staff.
+	 * @return array of users that are the course staff.
+	 */
 	public function staff() {
 		$users = new Members($this->site->db);
 		return $users->query([

@@ -53,12 +53,12 @@ class CoursePlugin extends Course {
 				return $view->whole();
 			});
 
-			$router->addRoute(['submission', 'download', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
+			$router->addRoute(['course', 'submission', 'download', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new SubmissionDownloadView($site, $server, $properties);
 				return $view->whole();
 			});
 
-			$router->addRoute(['submission', 'view', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
+			$router->addRoute(['course', 'submission', 'view', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new SubmissionImageView($site, $server, $properties);
 				return $view->whole();
 			});

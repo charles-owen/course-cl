@@ -2,23 +2,24 @@ import SubmissionVue from './Submission.vue';
 
 export const Submission = function(element, site) {
 
-    const options = JSON.parse(element.textContent);
+    const submission = JSON.parse(element.textContent);
     element.innerHTML = '';
 
-    let store = Site.store;
+    let store = site.store;
 
     new site.Vue({
         el: element,
         store,
+	    site,
         data: function() {
             return {
-                options: options
+                submission: submission
             }
         },
         components: {
-            submission: SubmissionVue
+            submissionVue: SubmissionVue
         },
-        template: `<submission :options="options"></submission>`
+        template: `<submission-vue :submission="submission"></submission-vue>`
     })
 }
 

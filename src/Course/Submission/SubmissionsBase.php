@@ -53,11 +53,12 @@ SQL;
 	 * @return mixed|null The analysis data stored or null if none. Also includes
 	 *   'userid', 'assigntag', and 'submissiontag' in the array
 	 */
-	public function get_analysis($id) {
+	public function get_analysis($id, $team=false) {
 		$pdo = $this->pdo();
 
+		$teamItem = $team ? ', teamid' : '';
 		$sql = <<<SQL
-select memberid, assigntag, submissiontag, analysis from $this->tablename
+select memberid, assigntag, submissiontag, analysis$teamItem from $this->tablename
 where id=?
 SQL;
 
@@ -67,13 +68,18 @@ SQL;
 		$assignTag = null;
 		$submissionTag = null;
 		$json = null;
+		$teamId = null;
 
-		$stmt->bindParam(1, $id, \PDO::PARAM_STR);
+		$stmt->bindParam(1, $id, \PDO::PARAM_INT);
 		$stmt->execute();
-		$stmt->bindColumn(1, $memberId, \PDO::PARAM_STR);
+
+		$stmt->bindColumn(1, $memberId, \PDO::PARAM_INT);
 		$stmt->bindColumn(2, $assignTag, \PDO::PARAM_STR);
 		$stmt->bindColumn(3, $submissionTag, \PDO::PARAM_STR);
 		$stmt->bindColumn(4, $json, \PDO::PARAM_STR);
+		if($team) {
+			$stmt->bindColumn(5, $teamId, \PDO::PARAM_INT);
+		}
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
 		if($json === null) {
@@ -84,6 +90,10 @@ SQL;
 		$result['memberid'] = $memberId;
 		$result['assigntag'] = $assignTag;
 		$result['submissiontag'] = $submissionTag;
+
+		if($team) {
+			$result['teamid'] = +$teamId;
+		}
 
 		return $result;
 	}

@@ -9,16 +9,16 @@
           <tr>
             <th>Submissions</th>
           </tr>
-          <tr v-for="submission in submissions">
-            <td><submitted-item :submission="submission" :analysis="analysis" @result='analysisResult' v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
+          <tr v-for="submitted in submissions">
+            <td><submitted-item :assigntag="submission.assignTag" :tag="submission.tag" :submission="submitted" :analysis="submission.analysis" :teaming="submission.teaming" @result='analysisResult' v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
           </tr>
         </table>
-        <p v-if="type === 'text'" class="center">Click on any submission date to display the submission</p>
-        <p v-if="type === 'program'" class="center">Click on any submission for submission options</p>
-        <p v-if="type === 'image'" class="center">Click on any submission to view and for submission options</p>
+        <p v-if="submission.type === 'text'" class="center">Click on any submission date to display the submission</p>
+        <p v-if="submission.type === 'program'" class="center">Click on any submission for submission options</p>
+        <p v-if="submission.type === 'image'" class="center">Click on any submission to view and for submission options</p>
         <div v-if="previewTxt !== null">
           <pre class="cl-preview yellow-pad" v-if="previewTxt !== null">{{previewTxt}}</pre>
-          <p class="cl-preview-time">{{previewTime}}</p>
+          <p class="cl-preview-time" v-html="previewTime"></p>
         </div>
       </template>
     </div>
@@ -39,7 +39,7 @@
   import {TimeFormatter} from 'site-cl/js/TimeFormatter';
 
   export default {
-      props: ['type', 'submissions', 'analysis', 'preview'],
+      props: ['submission', 'submissions'],
       data: function() {
           return {
               previewTxt: null,
@@ -52,20 +52,22 @@
           submittedItem: SubmittedItemVue
       },
       mounted() {
+	      const service = this.submission.teaming !== null ? 'team' : 'course';
         if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
-            this.previewImg = Site.root + '/cl/submission/view/' + this.submissions[0].id;
+            this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
             this.previewTime = TimeFormatter.relativeUNIX(this.submissions[0].date);
         }
 
-        if(this.preview !== undefined) {
-        	this.previewTxt = this.preview.text;
-        	this.previewTime = TimeFormatter.relativeUNIX(this.preview.date);
+        if(this.submission.preview !== undefined) {
+        	this.previewTxt = this.submission.preview.text;
+        	this.previewTime = TimeFormatter.relativeUNIX(this.submission.preview.date);
         }
       },
       watch: {
         submissions: function() {
-            if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
-                this.previewImg = Site.root + '/cl/submission/view/' + this.submissions[0].id;
+	        const service = this.submission.teaming !== null ? 'team' : 'course';
+	        if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
+                this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
             } else {
                 this.previewImg = null;
             }
@@ -73,24 +75,28 @@
       },
       methods: {
         previewer(submission) {
-            Site.api.get('/api/course/submission/get/' + submission.id, {})
+        	this.previewTxt = "\n";
+        	this.previewTime = '&nbsp;';
+            const service = this.submission.teaming === null ? 'course' : 'team';
+            this.$site.api.get(`/api/${service}/submission/get/${this.submission.assignTag}/${this.submission.tag}/${submission.id}`, {})
                   .then((response) => {
                       if (!response.hasError()) {
                           const submission = response.getData('submission').attributes;
                           this.previewTxt = submission.text;
                           this.previewTime = TimeFormatter.relativeUNIX(submission.date);
                       } else {
-                          Site.toast(this, response);
+	                      this.$site.toast(this, response);
                       }
 
                   })
                   .catch((error) => {
-                      Site.toast(this, error);
+	                  this.$site.toast(this, error);
                   });
         },
         preview_img(submission) {
-            if(submission.type.substr(0, 6) === 'image/') {
-            	this.previewImg = Site.root + '/cl/submission/view/' + submission.id;
+	        const service = this.submission.teaming === null ? 'course' : 'team';
+	        if(submission.type.substr(0, 6) === 'image/') {
+            	this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${submission.id}`;
 	            this.previewTime = TimeFormatter.relativeUNIX(submission.date);
             } else {
                 this.previewImg = null;

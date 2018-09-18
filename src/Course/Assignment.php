@@ -40,7 +40,7 @@ class Assignment extends Extendible {
 		$this->tag = $tag;
 		$this->name = $name;
 		$this->shortname = $name;
-		$this->url = $url;
+		$this->url = $url !== null ? $url : $tag;
 	}
 
 	/**

@@ -1,17 +1,17 @@
 <template>
   <div class="cl-submission">
-    <div v-if="options.submit" class="">
-      <div v-if="!options.open">
+    <div v-if="submission.submit" class="">
+      <div v-if="!submission.open">
         <p class="centerbox comp center">This assignment is not open for submissions.</p>
         <div v-if="staff" class="centerbox primary">
           <p class="center"><em>...Staff only for submission testing...</em></p>
-          <component :is="submitter" :options="options" v-on:new_submissions="newSubmissions"></component>
+          <component :submission="submission" :is="submitter" v-on:new_submissions="newSubmissions"></component>
         </div>
       </div>
-      <component :is="submitter" v-if="options.open" :options="options" v-on:new_submissions="newSubmissions"></component>
+      <component v-if="submission.open" :submission="submission" :is="submitter" v-on:new_submissions="newSubmissions"></component>
     </div>
-    <submitted :analysis='options.analysis' :type="options.type" :submissions="options.submissions" :preview="options.preview"></submitted>
-    <div v-if="options.additional !== null" v-html="options.additional" class=""></div>
+    <submitted :submission="submission" :submissions="submissions"></submitted>
+    <div v-if="submission.additional !== null" v-html="submission.additional" class=""></div>
   </div>
 </template>
 
@@ -25,11 +25,12 @@
     import {TEXT_TYPES} from './SubmittedItem.vue';
 
     export default {
-      props: ['options'],
+      props: ['submission'],
       data: function() {
           return {
               staff: false,
-              submitter: 'submit-text'
+              submitter: 'submit-text',
+              submissions: []
           }
       },
       components: {
@@ -40,9 +41,11 @@
           submitted: SubmittedVue
       },
       mounted() {
+      	this.submissions = this.submission.submissions;
+
           let user = this.$store.state.user.user;
           this.staff = user.atLeast(Member.STAFF);
-          switch(this.options.type) {
+          switch(this.submission.type) {
               case 'program':
                   this.submitter = 'submit-program';
                   break;
@@ -62,7 +65,7 @@
       },
       methods: {
         newSubmissions(value) {
-            this.options.submissions = value;
+            this.submissions = value;
         }
       }
   }

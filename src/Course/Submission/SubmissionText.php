@@ -9,6 +9,7 @@ namespace CL\Course\Submission;
 
 
 use CL\Course\AssignmentView;
+use CL\Team\Submission\TeamSubmissions;
 use CL\Users\User;
 
 /**
@@ -96,44 +97,13 @@ class SubmissionText extends Submission {
 			return;
 		}
 
-		$submissionsTable = new Submissions($view->site->db);
+		$submissionsTable = $this->teaming === null ?
+			new Submissions($view->site->db) :
+			new TeamSubmissions($view->site->db);
 		$submission = $submissionsTable->get_text($submissions[0]['id']);
 
 		$data['preview'] = ['text'=>$submission['text'], 'date'=>$submission['date']];
 	}
-
-
-
-//    /**
-//     * Construct a single row of the submissions table
-//     * @param \User $user User this submission is for
-//     * @param array $submit The submission record from the table
-//     * @param $staffview True if this is a staff view
-//     * @param $func The name of the JavaScript function to call to bring up the submission
-//     * @return string HTML for the row
-//     */
-//    protected function present_submission_row(\User $user, array $submit, $staffview, $func) {
-//        $date = date('l, m-d-Y, g:i:sa', $submit['date']);
-//        $id = $submit['id'];
-//
-//		$by = "";
-//		if(isset($submit['userid'])) {
-//			$users = new \Users($this->get_assignment()->get_course());
-//			$user = $users->get_user($submit['userid']);
-//			if($user !== null) {
-//				$by = " by " . $user->get_displayname();
-//			} else {
-//				$by = " by unknown user";
-//			}
-//		}
-//
-//        $html = <<<HTML
-//
-//<tr><td><div class="menu"><a href="javascript:;" onclick="$func('$id')">$date$by</a></div></td></tr>
-//HTML;
-//
-//        return $html;
-//    }
 
 	private $height = "10em";
 }
