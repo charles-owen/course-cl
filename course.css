@@ -140,10 +140,10 @@ div.cl-course-home {
     div.cl-course-home div.cl-main > div:first-child {
       flex: 1 1 auto;
       padding: 0.25em 10px; }
-    div.cl-course-home div.cl-main > div:last-child {
+    div.cl-course-home div.cl-main > div.cl-sidebar {
       flex: 0 1 225px;
       box-shadow: none; }
-      div.cl-course-home div.cl-main > div:last-child iframe {
+      div.cl-course-home div.cl-main > div.cl-sidebar iframe {
         box-shadow: none; }
     div.cl-course-home div.cl-main div.cl-controls {
       float: right;
