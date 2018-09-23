@@ -290,8 +290,13 @@ HTML;
 <ul>
 <li><a href="$root/cl/aboutme">About Me and Preferences...</a></li>
 <li><a href="$root/cl/calendar">Personal Calendar</a></li>
+HTML;
+
+			if($this->site->installed('grades')) {
+				$html .= <<<HTML
 <li><a href="$root/cl/grades">Grades</a></li>
 HTML;
+			}
 
 			// Are there any peer reviews in the assignments?
 			$assignments = $this->section->assignments;
