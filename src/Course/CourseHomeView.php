@@ -233,7 +233,10 @@ HTML;
 
 			// Display release status for staff
 			if($staff) {
-				if($assignment->after_release($this->time)) {
+				$due = $assignment->get_due();
+				if($due !== null && $this->time > $due) {
+					$html .= ' <span class="staff-note">**closed**</span>';
+				} else if($assignment->after_release($this->time)) {
 					$html .= ' <span class="staff-note red">**active**</span>';
 				} else {
 				    if($assignment->release !== false) {

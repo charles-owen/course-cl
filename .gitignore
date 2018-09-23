@@ -5,12 +5,6 @@ tests/config.php
 _notes
 dwsync.xml
 
-# compiled output
-/dist
-/dist-server
-/tmp
-/out-tsc
-
 # IDEs and editors
 /.idea
 .project

@@ -14,11 +14,21 @@
       "CL\\Course\\": "src/Course"
     }
   },
+  "require": {
+    "cl/site": "^2.0",
+    "cl/user": "^2.0",
+    "cl/console": "^2.0"
+  },
   "repositories": [
     {
       "type": "vcs",
       "url": "https://github.com/charles-owen/course-cl.git"
     }
-  ]
+  ],
+  "extra": {
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
+  }
 }
 

@@ -17,10 +17,11 @@ class AssignmentView extends \CL\Course\View {
 	 * View constructor.
 	 * @param Site $site The Site object
 	 * @param string $assignTag Tag for the assignment to view
+	 * @param array $options Options to pass to Site::start()
 	 * @param Server|null $server Optional dependency injection of Server
 	 * @param int $time Time we are viewing or null for time()	 */
-	public function __construct(Site $site, $assignTag, Server $server = null, $time=null) {
-		parent::__construct($site, []);
+	public function __construct(Site $site, $assignTag, $options=[], Server $server = null, $time=null) {
+		parent::__construct($site, $options);
 
 		$this->time = $time !== null ? $time : time();
 		$server = $server !== null ? $server : new Server();

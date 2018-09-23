@@ -28,7 +28,7 @@ class AssignmentViewTest extends CourseTestBase {
 
 		$server = new ServerMock();
 
-		$view = new AssignmentView($site, 'step1', $server, $time);
+		$view = new AssignmentView($site, 'step1', [], $server, $time);
 		$view->flush();
 		$this->assertNull($server->redirected);
 		$this->assertEquals('Step 1', $view->title);
@@ -44,7 +44,7 @@ class AssignmentViewTest extends CourseTestBase {
 //
 //		// Redirects due to bad assignment
 //		$server = new ServerMock();
-//		$view = new AssignmentView($site, 'badassignment', $server);
+//		$view = new AssignmentView($site, 'badassignment', [], $server);
 //		$this->assertEquals('/', $server->redirected);
 //	}
 }
