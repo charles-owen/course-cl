@@ -149,7 +149,7 @@ class CoursePlugin extends Course {
 		// Get and configure the course object
 		$course = $site->course;
 
-		$installer = $site->rootDir . '/course/course.inc.php';
+		$installer = $site->rootDir . '/' . $site->config . '/course.inc.php';
 		if(file_exists($installer)) {
 			$function = require($installer);
 			$function($course);
