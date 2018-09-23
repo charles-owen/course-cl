@@ -216,7 +216,7 @@ class CoursePlugin extends Course {
 							// one section as a guest or route to the section selector.
 							if(count($course->sections) === 1) {
 								$member = new Member();
-								$member->role = Member::GUEST;
+								$member->role = $user->atLeast(User::ADMIN) ? Member::ADMIN : Member::GUEST;
 								$member->userId = $user->userId;
 								$member->semester = $course->sections[0]->semester;
 								$member->sectionId = $course->sections[0]->id;

@@ -21,8 +21,10 @@ use CL\Users\User;
 class Assignments {
 
 	
-	/** Load assignment set from a file
-	 * @param string $file File to load from */
+	/**
+	 * Load assignment set from a file
+	 * @param string $file File to load from
+	 */
 	public function load($file) {
 		$function = require $file;
 		if(is_callable($function)) {

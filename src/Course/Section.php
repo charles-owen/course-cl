@@ -186,9 +186,11 @@ class Section {
 			$this->assignments = new Assignments();
 			$this->assignments->section = $this;
 
-			if($this->course->site !== null) {
-				$rootdir = $this->course->site->rootDir;
-				$file1 = $rootdir . '/course/assignments.' . $this->getSemesterLC() . '.' . $this->id . '.php';
+			$site = $this->course->site;
+			if($site !== null) {
+				$file1 = $site->rootDir . '/' .
+					$site->config .
+					'/assignments.' . $this->getSemesterLC() . '.' . $this->id . '.php';
 				$this->assignments->load($file1);
 			}
 		}
