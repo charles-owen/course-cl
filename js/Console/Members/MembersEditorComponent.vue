@@ -4,7 +4,7 @@
 
       <div v-if="fetcher.fetched">
         <div v-if="users.length > 0">
-        <table >
+        <table class="small">
           <tr>
             <th scope="col"></th>
             <th scope="col">User</th>
@@ -47,10 +47,10 @@
 <script>
     import Dialog from 'dialog-cl';
     import {Member} from '../../Members/Member.js';
-    import {mapState} from 'vuex';
     import BulkUploadComponent from './BulkUploadComponent.vue';
 
     const FetcherVue = Users.FetcherVue;
+    const mapState = Site.Vuex.mapState;
 
 
     export default {
@@ -79,7 +79,7 @@
                     });
             },
             presentUser: function(user) {
-                let content = `<div class="cl-members-editor-dlg">
+                let content = `<div class="cl-dialog">
 <div class="tabular">
 <p><span class="label">User ID: </span><span>${user.userId}</span></p>
 <p><span class="label">Name: </span><span>${user.name}</span></p>
@@ -154,48 +154,3 @@
         }
     }
 </script>
-
-// Notice: Not scoped!
-<style lang="scss">
-div.cl-members-editor {
-
-  table {
-    font-size: 0.9em;
-    margin-top: 1.2em;
-    margin-bottom: 1.2em;
-  }
-
-  td:first-child {
-    text-align: center;
-  }
-
-}
-
-div.cl-members-editor-dlg {
-  padding: 1em;
-
-  div.tabular {
-    display: table;
-    margin: 0 auto;
-
-    p {
-      display: table-row;
-
-      span:first-child {
-        padding-right: 1em;
-        font-style: italic;
-        text-align: right;
-      }
-
-      span {
-        display: table-cell;
-      }
-    }
-
-
-  }
-
-
-}
-
-</style>
