@@ -19,7 +19,7 @@
                 <div class="flatpickr">
                 <flat-pickr v-model="extensions[+user.member.id]" :config="fpConfig"
                 @on-change="change($event, user)" data-input></flat-pickr>
-                  <a data-toggle title="Toggle Calendar"><span class="icons-cl icons-cl-calendar"></span></a> <a data-clear><img :src="srcX" alt="delete" title="Delete"></a>
+                  <a data-toggle title="Toggle Calendar"><span class="icons-cl icons-cl-calendar"></span></a> <a data-clear><img :src="root + '/vendor/cl/site/img/x.png'" alt="delete" title="Delete"></a>
                 </div>
               </td>
             </tr>
@@ -51,8 +51,7 @@
                     defaultHour: 23,
                     defaultMinute: 55,
                     wrap: true
-                },
-                srcX: Site.root + '/vendor/cl/site/img/x.png'
+                }
             }
         },
         components: {

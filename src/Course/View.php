@@ -23,11 +23,13 @@ class View extends \CL\Users\View {
 
 		$this->member = $site->users->user->member;
 		$this->course = $site->course;
+		$this->semester = $this->member->semester;
 		$this->section = $this->member !== null ? $this->course->get_section($this->member->semester, $this->member->sectionId) : null;
 
 		// Some globals that make page creation easier
 		$GLOBALS['member'] = $this->member;
 		$GLOBALS['course'] = $this->course;
+		$GLOBALS['semester'] = $this->semester;
 		$GLOBALS['section'] = $this->section;
 
 		$this->addCSS('vendor/cl/course/course.css');
@@ -57,6 +59,9 @@ class View extends \CL\Users\View {
 
 			case 'section':
 				return $this->section;
+
+			case 'semester':
+				return $this->semester;
 
 			default:
 				return parent::__get($property);
@@ -90,4 +95,6 @@ class View extends \CL\Users\View {
 
 	/* @var Section $section */
 	protected $section; ///< Section object for current user
+
+	private $semester;  ///< string Semester
 }
