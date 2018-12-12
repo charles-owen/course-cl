@@ -186,6 +186,19 @@ HTML;
 		];
 
 		$this->addData($data);
+
+		$links = [];
+		foreach($this->analysis as $analysis) {
+			$link = $analysis->get_link();
+			if($link !== null) {
+				$links[] = $link;
+			}
+		}
+
+		if(count($links) > 0) {
+			$data['links'] = $links;
+		}
+
 		return $data;
 	}
 
@@ -265,20 +278,6 @@ HTML;
 	}
 
 
-//	/**
-//	 * Get the team for a user for this submission
-//	 * @ param User $user
-//	 * @ return array of team ID's for false if failure
-//	 */
-//	public function get_teams(User $user) {
-//		if($this->teaming === null) {
-//			return false;
-//		}
-//
-//		$course = $this->assignment->course;
-//		$teamMembers = new \Team\TeamMembers($course);
-//		return $teamMembers->get_teams_in_teaming_by_tag($user, $this->teaming);
-//	}
 
 	/**
 	 * Validate that a file is acceptable for submission.

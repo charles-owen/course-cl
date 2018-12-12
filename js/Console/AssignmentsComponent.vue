@@ -8,10 +8,10 @@
         <li v-for="assignment in category.assignments" :key="assignment.tag">{{assignment.name}}
           <span class="small">
             <span>
-              <router-link :to="extensionsLink + assignment.tag">extensions</router-link>&nbsp;
+              <router-link :to="root + '/cl/console/course/extensions/' + assignment.tag">extensions</router-link>&nbsp;
             </span>
             <span v-if='assignment.submissions !== undefined'>
-              <router-link :to="submissionsLink + assignment.tag">submissions</router-link>&nbsp;
+              <router-link :to="root + '/cl/console/course/submissions/' + assignment.tag">submissions</router-link>&nbsp;
             </span>
             <span v-for="link in assignmentLinks"  v-if="assignment[link.property] !== undefined && assignment[link.property] !== false">
               <router-link :to="assignmentLink(assignment, link.route)">{{link.name}}</router-link>&nbsp;
@@ -26,32 +26,35 @@
 </template>
 
 <script>
-    export default {
-        data: function() {
-            return {
-                course: this.$store.state.course.course,
-                section: null,
-                assignmentLinks: Site.Console.course.assignmentLinks,
-                extensionsLink: Site.root + '/cl/console/course/extensions/',
-                submissionsLink: Site.root + '/cl/console/course/submissions/'
-            }
-        },
-        created() {
-            this.$parent.setTitle(': Assignments');
 
-            let user = this.$store.state.user.user;
-            let member = user.member;
+	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
 
-            this.section = this.$store.getters['course/section'](member.semester, member.section);
+	/**
+	 * View for Course Assignments
+	 * /cl/console/course/assignments
+	 *
+	 * Displays all assignments with links for options.
+   * @constructor AssignmentsComponentVue
+	 */
+	export default {
+		'extends': ConsoleComponentBase,
+		data: function () {
+			return {
+				section: null,
+				assignmentLinks: this.$site.console.course.assignmentLinks
+			}
+		},
+		created() {
+			this.$parent.setTitle(': Assignments');
+			let member = this.user.member;
 
-            console.log(this.assignmentLinks);
-            console.log(this.section.assignments.categories);
-        },
-        methods: {
-            assignmentLink: function(assignment, route) {
-                return Site.root + '/cl/console' + route.replace(':assigntag', assignment.tag);
-            }
-        }
-    }
+			this.section = this.$store.getters['course/section'](member.semester, member.section);
+		},
+		methods: {
+			assignmentLink: function (assignment, route) {
+				return this.$site.root + '/cl/console' + route.replace(':assigntag', assignment.tag);
+			}
+		}
+	}
 
 </script>

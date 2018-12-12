@@ -1,9 +1,5 @@
-/**
- * @file
- * Factory to create the Course object.
- */
-
-import {Member} from './Members/Member.js';
+import {Course} from './Course';
+import {Member} from './Members/Member';
 
 import {StoreModuleCourse} from './State/StoreModuleCourse';
 import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
@@ -15,22 +11,25 @@ import AboutMeVue from './AboutMe/AboutMe.vue';
 import {PageVue} from 'site-cl/js/Vue/PageVue';
 import PageNav from 'site-cl/js/Vue/PageNav.vue';
 
-let CourseFactory = function() {
+/**
+ * Factory to create the Course object.
+ * @constructor
+ */
+export const CourseFactory = function() {
 }
 
 /**
  * Factory method to create a Course object.
  *
  * This allows for injection of the store for testing purposes.
- * @param store Vuex store object
- * @returns {Course} object.
+ * @param site The Site object
+ * @return {Course} object.
  */
 CourseFactory.create = function(site) {
 
-    let Course = function() {
-    }
+    let course = new Course();
 
-    console.log('CourseFactory');
+    site.Course = course;
 
     //
     // Modify User to add the ability to instantiate
@@ -91,10 +90,5 @@ CourseFactory.create = function(site) {
         SpoofingRestore.install(site);
     })
 
-    return Course;
+    return course;
 }
-
-
-export {CourseFactory};
-
-

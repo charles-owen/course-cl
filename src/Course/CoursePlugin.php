@@ -15,6 +15,7 @@ use CL\Console\ConsoleView;
 use CL\Course\System\SectionSelectorView;
 use CL\Site\Router;
 use CL\Course\Submission\SubmissionDownloadView;
+use CL\Course\Submission\SubmissionsDownloadView;
 use CL\Course\Submission\SubmissionImageView;
 use CL\Course\ErrorHelp\ErrorHelpRouter;
 
@@ -55,6 +56,11 @@ class CoursePlugin extends Course {
 
 			$router->addRoute(['course', 'submission', 'download', ':id'], function(Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new SubmissionDownloadView($site, $server, $properties);
+				return $view->whole();
+			});
+
+			$router->addRoute(['course', 'submissions', ':assign', ':submission'], function(Site $site, Server $server, array $params, array $properties, $time) {
+				$view = new SubmissionsDownloadView($site, $server, $properties);
 				return $view->whole();
 			});
 

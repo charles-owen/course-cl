@@ -94,6 +94,7 @@ class DoxygenAnalysis extends Analysis {
 			$exec = "doxygen";
 		} else {
 			$quote = "'";
+			// TODO: Get rid of link to cbowen doxygen
 			$exec = "/user/cbowen/doxygen/doxygen-1.8.11/bin/doxygen";
 			//$exec = "doxygen";
 		}

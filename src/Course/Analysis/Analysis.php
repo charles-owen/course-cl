@@ -9,7 +9,9 @@
  */
 namespace CL\Course\Analysis;
 
+use CL\Course\Submission\Submissions;
 use CL\Site\Site;
+use CL\Course\Member;
 
 /**
  * Base class for any analysis components.
@@ -96,10 +98,34 @@ abstract class Analysis {
 
 	/**
 	 * Get any grading page link for analysis
-	 * @return string HTML
+	 * @return null|array If a link is provided, it has the keys 'link', 'text', and 'atLeast'
 	 */
 	public function get_link() {
-		return '';
+		return null;
+	}
+
+	/**
+	 * Get the submission data from the user
+	 *
+	 * The basic version assumes only a single submission file. Derived classes
+	 * may override this functionality to support multiple-file submissions.
+	 *
+	 * @param Site $site The Site object
+	 * @param Member $member we are getting the data for
+	 * @return array Array of submission file data. Each item is filename=>data
+	 */
+	public function get_data(Site $site, Member $member) {
+		$assignment = $this->submission->assignment;
+		$submittag = $this->submission->tag;
+
+		$submissions = new Submissions($site->db);
+		$submits = $submissions->get_submissions($member->id, $assignment->tag, $submittag, true);
+		if(count($submits) == 0) {
+			return [];
+		}
+
+		$data = $submissions->get_file($submits[0]['id']);
+		return [$submits[0]['name'] => $data];
 	}
 
 	/// The submission this is analysis for

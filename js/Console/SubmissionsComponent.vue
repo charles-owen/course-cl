@@ -4,6 +4,7 @@
       <membersfetcher>
         <template slot-scope="fetcher">
           <p class="center">Click on a user to view submissions for that user.</p>
+          <submissions-links :assignment="assignment"></submissions-links>
           <table class="small">
             <tr>
               <th>User</th>
@@ -24,30 +25,40 @@
 </template>
 
 <script>
-  import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
+	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
+	import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
+  import SubmissionsLinksVue from './SubmissionsLinks.vue';
 
-    export default {
-        props: ['assigntag'],
-        data: function() {
-            return {
-                link: Site.root + '/cl/console/course/submissions/' + this.assigntag + '/'
-            }
-        },
-        components: {
-            'membersfetcher': MembersFetcherComponent
-        },
-        mounted() {
-            const member = this.$store.state.user.user.member;
-            let query = {
-                semester: member.semester,
-                section: member.section
-            };
+  /**
+   * Vue for submissions for all students.
+   * Provides links to a view of an individual student's submissions.
+   * @constructor SubmissionsComponentVue
+   */
+	export default {
+		'extends': ConsoleComponentBase,
+		props: ['assigntag'],
+		data: function () {
+			return {
+				link: Site.root + '/cl/console/course/submissions/' + this.assigntag + '/',
+				assignment: null
+			}
+		},
+		components: {
+			'membersfetcher': MembersFetcherComponent,
+      'submissionsLinks': SubmissionsLinksVue
+		},
+		mounted() {
+			const member = this.$store.state.user.user.member;
+			let query = {
+				semester: member.semester,
+				section: member.section
+			};
 
-            this.section = this.$store.getters['course/section'](member.semester, member.section);
-            this.assignment = this.section.getAssignment(this.assigntag);
+			this.section = this.$store.getters['course/section'](member.semester, member.section);
+			this.assignment = this.section.getAssignment(this.assigntag);
 
-            this.$parent.setTitle(': ' + this.assignment.shortname + ' Submissions');
+			this.$parent.setTitle(': ' + this.assignment.shortname + ' Submissions');
 
-        }
-    }
+		}
+	}
 </script>

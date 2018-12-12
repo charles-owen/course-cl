@@ -15,6 +15,11 @@
     import {Member} from '../../Members/Member'
     import {StudentsOnly} from './StudentsOnly';
 
+    /**
+     * Member fetcher component that can be used by views.
+     *
+     * @constructor MembersFetcherComponentVue
+     */
     export default {
         // If the fetching value it true, the using client
         // is fetching more than just the membership and we will
@@ -37,6 +42,7 @@
             },
             /**
              * Add "Students Only" to the menu bar
+             * @memberof MembersFetcherComponentVue
              */
             addStudentsOnly() {
             	this.students = StudentsOnly.get();

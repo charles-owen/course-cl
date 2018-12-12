@@ -4,6 +4,8 @@ tests/config.php
 /vendor
 _notes
 dwsync.xml
+doc/js
+
 
 # IDEs and editors
 /.idea

@@ -14,35 +14,34 @@
 </template>
 
 <script>
-  import SubmissionsAssignmentMemberComponent from './SubmissionsAssignmentMemberComponent.vue';
+	import SubmissionsAssignmentMemberComponent from './SubmissionsAssignmentMemberComponent.vue';
 
-    import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
-    import PrevNextMemberVue from './Members/PrevNextMember.vue';
-    import MemberFetcherComponent from './Members/MemberFetcherComponent.vue';
-    import SubmissionVue from '../Submission/Submission.vue';
+	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
+	import PrevNextMemberVue from './Members/PrevNextMember.vue';
+	import MemberFetcherComponent from './Members/MemberFetcherComponent.vue';
 
-    export default {
-        'extends': ConsoleComponentBase,
-        props: ['assigntag', 'memberid'],
-        data: function() {
-            return {
-                submissionsLink: '/cl/console/course/submissions/' + this.assigntag
-            }
-        },
-        components: {
-            memberfetcher: MemberFetcherComponent,
-            prevNext: PrevNextMemberVue,
-            submissions: SubmissionsAssignmentMemberComponent
-        },
-        mounted() {
-            this.$parent.setTitle(': Submissions');
-            this.addNav2Link('Exit', 4, '/cl/console/course/submissions/' + this.assigntag);
-        },
-        methods: {
-            fetched(user) {
-                let assignment = user.member.getAssignment(this.$store, this.assigntag);
-                this.$parent.setTitle(': ' + user.name + ' ' + assignment.shortname + ' Submissions');
-            }
-        }
-    }
+	export default {
+		'extends': ConsoleComponentBase,
+		props: ['assigntag', 'memberid'],
+		data: function () {
+			return {
+				submissionsLink: '/cl/console/course/submissions/' + this.assigntag
+			}
+		},
+		components: {
+			memberfetcher: MemberFetcherComponent,
+			prevNext: PrevNextMemberVue,
+			submissions: SubmissionsAssignmentMemberComponent
+		},
+		mounted() {
+			this.$parent.setTitle(': Submissions');
+			this.addNav2Link('Exit', 4, '/cl/console/course/submissions/' + this.assigntag);
+		},
+		methods: {
+			fetched(user) {
+				let assignment = user.member.getAssignment(this.$store, this.assigntag);
+				this.$parent.setTitle(': ' + user.name + ' ' + assignment.shortname + ' Submissions');
+			}
+		}
+	}
 </script>

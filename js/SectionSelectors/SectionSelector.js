@@ -1,9 +1,4 @@
 /**
- * @file
- * The section selector page /cl/sectionselector
- */
-
-/**
  * The section selector page /cl/sectionselector
  * @param element Page element (#cl-section-selector)
  * @param site Site object

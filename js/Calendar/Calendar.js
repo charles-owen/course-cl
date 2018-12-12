@@ -4,10 +4,13 @@ import './_calendar.scss';
 import $ from 'jquery';
 
 /**
-* Create a calendar with course events in it.
-* The div contains JSON for the events as an array of objects like this:
-* {title: 'Step 1', start: '2018-05-17', url: '/step1'},
-* @constructor
+ * A calendar with course events in it.
+ *
+ * Replaces div.cl-calendar
+ *
+ * The div contains JSON for the events as an array of objects like this:
+ * {title: 'Step 1', start: '2018-05-17', url: '/step1'},
+ * @constructor
 */
 const Calendar = function () {
     let sel = 'div.cl-calendar';

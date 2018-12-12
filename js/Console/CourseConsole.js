@@ -1,8 +1,3 @@
-/**
- * @file
- * Course console components
- */
-
 import {Member} from '../Members/Member';
 import MembersEditorComponent from './Members/MembersEditorComponent.vue';
 import MemberEditorComponent from './Members/MemberEditorComponent.vue';
@@ -14,8 +9,15 @@ import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
 import CourseEmailVue from './CourseEmail.vue';
 import SpoofingVue from './Spoofing.vue';
 
+import SubmissionsLinksVue from './SubmissionsLinks.vue';
 
-export let CourseConsole = function(site, Console) {
+/**
+ * Course console components
+ * @param site The Site object
+ * @constructor
+ */
+export let CourseConsole = function(site) {
+    const Console = site.console;
 
     //
     // Assignment links are linked added to the assignment page next to an
@@ -109,6 +111,11 @@ export let CourseConsole = function(site, Console) {
 
 
     Console.components.addNav2(SectionComponent, 10);
+
+    //
+    // Exports
+    //
+    this.SubmissionsLinksVue = SubmissionsLinksVue;
 }
 
 
