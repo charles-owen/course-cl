@@ -155,7 +155,7 @@ HTML;
 	private function process_zip($output, $user, $data) {
 		$analyzer = new \Analysis\Analyzer($this->submission);
 		
-		$dir = $analyzer->get_temp_dir($user->get_userid());
+		$dir = $analyzer->get_temp_dir($user->userId);
 		$path = $dir . DIRECTORY_SEPARATOR . 'submit.zip';
 		$fp = fopen($path, "wb");
 		fwrite($fp, $data['binary']);
