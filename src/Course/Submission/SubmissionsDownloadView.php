@@ -23,7 +23,7 @@ class SubmissionsDownloadView extends View {
 	 * @param array $properties Parameters passed to route ('id')
 	 */
 	public function __construct(Site $site, Server $server, $properties) {
-		parent::__construct($site, ['atLeast'=>Member::STAFF]);
+		parent::__construct($site, ['at-least'=>Member::STAFF]);
 
 		$this->setTitle('Bulk Download');
 
