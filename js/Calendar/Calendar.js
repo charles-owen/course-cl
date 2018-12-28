@@ -33,7 +33,9 @@ const Calendar = function () {
             })
 
             calendar.style.display = 'block';
-            $(calendar).fullCalendar('render');
+            setTimeout(() => {
+	            $(calendar).fullCalendar('render');
+            }, 30);
         }
     });
 }

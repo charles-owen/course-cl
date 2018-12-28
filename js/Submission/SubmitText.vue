@@ -8,13 +8,12 @@
 </template>
 
 <script>
-  import {Editor} from 'site-cl/js/UI/Editor';
 
   export default {
       props: ['submission'],
       mounted() {
           const element = this.$refs['editor'];
-          this.editor = new Editor(element, {
+          this.editor = new this.$site.Editor(element, {
               height: this.submission.height,
               classes: ['yellow-pad']
           });

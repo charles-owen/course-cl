@@ -8,8 +8,6 @@ import {Submission} from './Submission/Submission';
 import {ErrorHelp} from './ErrorHelp/ErrorHelp';
 import {SpoofingRestore} from './Util/SpoofingRestore';
 import AboutMeVue from './AboutMe/AboutMe.vue';
-import {PageVue} from 'site-cl/js/Vue/PageVue';
-import PageNav from 'site-cl/js/Vue/PageNav.vue';
 
 /**
  * Factory to create the Course object.
@@ -79,7 +77,7 @@ CourseFactory.create = function(site) {
             store.commit('user/set', JSON.parse(en.textContent));
         }
 
-	    PageVue.create('div.cl-course-aboutme', 'Example Vue', AboutMeVue, PageNav);
+	    site.PageVue.create('div.cl-course-aboutme', 'Example Vue', AboutMeVue, site.PageNav);
 
     })
 

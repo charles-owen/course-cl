@@ -1,4 +1,5 @@
 
+FIXME: If a .txt file is submitted as a program, the previewer and download both do not work.
 TEST: Large submissions fail with error message
 FIXME: Bulk upload does not refresh if drop cancelled
 

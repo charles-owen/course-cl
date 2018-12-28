@@ -36,7 +36,6 @@
      * @constructor SubmittedVue
      */
   import SubmittedItemVue from './SubmittedItem.vue';
-  import {TimeFormatter} from 'site-cl/js/TimeFormatter';
 
   export default {
       props: ['submission', 'submissions'],
@@ -55,12 +54,12 @@
 	      const service = this.submission.teaming !== null ? 'team' : 'course';
         if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
             this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
-            this.previewTime = TimeFormatter.relativeUNIX(this.submissions[0].date);
+            this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submissions[0].date);
         }
 
         if(this.submission.preview !== undefined) {
         	this.previewTxt = this.submission.preview.text;
-        	this.previewTime = TimeFormatter.relativeUNIX(this.submission.preview.date);
+        	this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submission.preview.date);
         }
       },
       watch: {
@@ -83,7 +82,7 @@
                       if (!response.hasError()) {
                           const submission = response.getData('submission').attributes;
                           this.previewTxt = submission.text;
-                          this.previewTime = TimeFormatter.relativeUNIX(submission.date);
+                          this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
                       } else {
 	                      this.$site.toast(this, response);
                       }
@@ -97,7 +96,7 @@
 	        const service = this.submission.teaming === null ? 'course' : 'team';
 	        if(submission.type.substr(0, 6) === 'image/') {
             	this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${submission.id}`;
-	            this.previewTime = TimeFormatter.relativeUNIX(submission.date);
+	            this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
             } else {
                 this.previewImg = null;
             }

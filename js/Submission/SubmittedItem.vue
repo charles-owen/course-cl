@@ -24,8 +24,8 @@
 </template>
 
 <script>
-  import {TimeFormatter} from 'site-cl/js/TimeFormatter';
-  import MenuVue from 'site-cl/js/UI/Menu.vue';
+//  import MenuVue from 'site-cl/js/UI/Menu.vue';
+  const MenuVue = Site.Site.MenuVue;
 
   export const TEXT_TYPES = ['text/plain', 'text/html']
   export const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
@@ -53,7 +53,7 @@
 	          return IMG_TYPES.indexOf(this.submission.type) >= 0
           },
           display() {
-              let disp = TimeFormatter.absoluteUNIX(this.submission.date, "long");
+              let disp = this.$site.TimeFormatter.absoluteUNIX(this.submission.date, "long");
               if(this.submission.name !== null) {
                   disp += ': ' + this.submission.name;
               }
