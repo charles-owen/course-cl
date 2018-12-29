@@ -34,7 +34,7 @@ export let CourseConsole = function(site) {
 
     Console.tables.add({
         title: 'Course',
-        order: 10,
+        order: 20,
         api: '/api/course/tables'
     });
 

@@ -255,8 +255,8 @@ SQL;
 	 * Add a member to the system, including creating the user if necessary
 	 * @param array $params Array with keys: user, name, email, semester, section, role
 	 * @param int $time Current time.
-	 * @return ['ok'=>true, 'member'=>Member] if successful,
-	 *         ['ok'=>false, 'msg'=>Error Message] if failure
+	 * @return array ['ok'=>true, 'member'=>Member] if successful,
+	 *               ['ok'=>false, 'msg'=>Error Message] if failure
 	 */
 	function addComplete($params, $time) {
 		//
