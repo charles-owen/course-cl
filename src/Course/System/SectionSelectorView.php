@@ -15,13 +15,16 @@ use CL\Course\Members;
 /**
  * View class for the course section selector page
  */
-class SectionSelectorView extends \CL\Course\View {
+class SectionSelectorView extends \CL\Users\View {
 	/**
 	 * SectionSelectorView constructor.
 	 * @param Site $site Site object
 	 */
 	public function __construct(Site $site) {
 		parent::__construct($site, ['open-section']);
+
+		$this->addCSS('vendor/cl/course/course.css');
+		$this->addJS('course');
 
 		$this->setTitle('Section Selector');
 

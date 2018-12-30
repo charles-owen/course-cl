@@ -10,7 +10,7 @@
             <th>Submissions</th>
           </tr>
           <tr v-for="submitted in submissions">
-            <td><submitted-item :assigntag="submission.assignTag" :tag="submission.tag" :submission="submitted" :analysis="submission.analysis" :teaming="submission.teaming" @result='analysisResult' v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
+            <td><submitted-item :type="submission.type" :assigntag="submission.assignTag" :tag="submission.tag" :submission="submitted" :analysis="submission.analysis" :teaming="submission.teaming" @result='analysisResult' v-on:preview_img="preview_img" v-on:preview="previewer"></submitted-item></td>
           </tr>
         </table>
         <p v-if="submission.type === 'text'" class="center">Click on any submission date to display the submission</p>

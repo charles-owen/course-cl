@@ -44,3 +44,4 @@ Thumbs.db
 /doc/latex
 /doc/rtf
 /doc/*.tmp
+/dev/CourseLibSubmit/nbproject/private/

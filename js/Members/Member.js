@@ -62,6 +62,7 @@ Member.DROPPED = 'D';   ///< User has dropped the course
 Member.STUDENT = 'T';   ///< Enrolled student in course
 Member.STAFF = 'S';     ///< Any course staff
 Member.GRADER = 'R';    ///< Graders
+Member.ULA = 'L';       ///< Undergraduate Learning Assistant
 Member.TA = 'E';        ///< Teaching assistant
 Member.INSTRUCTOR = 'I';    ///< Course instructor
 Member.ADMIN = 'A';     ///< Admin
@@ -73,9 +74,10 @@ Member.prototype.getRoles = function() {
     roles[Member.USER] = {name: 'User', priority: 3, skip: true};
     roles[Member.STUDENT] = {name: 'Student', priority: 4};
     roles[Member.STAFF] = {name: 'Staff', priority: 5, skip: true};
-    roles[Member.GRADER] = {name: 'Grader', priority: 6};
-    roles[Member.TA] = {name: 'Teaching Assistant', priority: 7};
-    roles[Member.INSTRUCTOR] = {name: 'Instructor', priority: 8};
+	roles[Member.GRADER] = {name: 'Grader', priority: 6};
+	roles[Member.ULA] = {name: 'Undergraduate Learning Assistant', short: 'ULA', priority: 7};
+    roles[Member.TA] = {name: 'Teaching Assistant', priority: 8};
+    roles[Member.INSTRUCTOR] = {name: 'Instructor', priority: 9};
     roles[Member.ADMIN] = {name: 'Admin', priority: 100};
 
     return roles;

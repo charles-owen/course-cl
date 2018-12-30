@@ -27,6 +27,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 	const STUDENT = "T";	///< Enrolled student in course
 	const STAFF = "S";		///< Any course staff
 	const GRADER = 'R';     ///< Graders
+	const ULA = 'L';        ///< Undergraduate learning assistant
 	const TA = 'E';         ///< Teaching assistant
 	const INSTRUCTOR = "I";	///< Course instructor
 	const ADMIN = 'A';      ///< Admin
@@ -239,8 +240,9 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			self::STUDENT => array('name' => "Student", 'priority' => 4),
 			self::STAFF => array('name' => "Staff", 'priority' => 5),
 			self::GRADER => array('name' => "Grader", 'priority' => 6),
-			self::TA => array('name' => "Teaching Assistant", 'priority' => 7),
-			self::INSTRUCTOR => array('name' => "Instructor", 'priority' => 8),
+			self::ULA => array('name' => "Undergraduate Learning Assistant", 'priority' => 7),
+			self::TA => array('name' => "Teaching Assistant", 'priority' => 8),
+			self::INSTRUCTOR => array('name' => "Instructor", 'priority' => 9),
 			self::ADMIN => array('name' => "Admin", 'priority' => 100)
 		);
 	}

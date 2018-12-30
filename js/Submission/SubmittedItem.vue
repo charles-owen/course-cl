@@ -31,7 +31,7 @@
   export const IMG_TYPES = ['image/png', 'image/jpeg', 'image/gif'];
 
   export default {
-      props: ['assigntag', 'tag', 'submission', 'analysis', 'teaming'],
+      props: ['assigntag', 'tag', 'submission', 'analysis', 'teaming', 'type'],
       data: function() {
           return {
           	root: Site.root,
@@ -44,10 +44,12 @@
       mounted() {
 	      const service = this.teaming !== null ? 'team' : 'course';
 	      this.toDownload = `${this.$site.root}/cl/${service}/submission/download/${this.submission.id}`;
+
+	      console.log(this.type);
       },
       methods: {
           isText() {
-              return TEXT_TYPES.indexOf(this.submission.type) >= 0
+              return this.type !== 'program' && TEXT_TYPES.indexOf(this.submission.type) >= 0
           },
           isImage() {
 	          return IMG_TYPES.indexOf(this.submission.type) >= 0

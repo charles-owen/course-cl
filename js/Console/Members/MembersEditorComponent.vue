@@ -28,7 +28,7 @@
             <td v-if="!management"><a @click.prevent="presentUser(user)" href="javascript:;">{{user.userId}}</a></td>
             <td v-if="!management"><a @click.prevent="presentUser(user)" href="javascript:;">{{user.name}}</a></td>
             <td>{{user.email}}</td>
-            <td>{{user.roleName()}}</td>
+            <td>{{user.roleName(true)}}</td>
           </tr>
         </table>
           <p class="center small"><em>{{stats}}</em></p>
@@ -107,7 +107,9 @@
 	            const user = this.$store.state.user.user;
 	            const roles = user.getRoles();
 	            for(let role in roleCnt) {
-		            this.stats += ' / ' + roleCnt[role] + ' ' + roles[role].name;
+	            	const r = roles[role];
+	            	const roleName = r.short !== undefined ? r.short : r.name;
+		            this.stats += ' / ' + roleCnt[role] + ' ' + roleName;
 	            }
             }
         },
