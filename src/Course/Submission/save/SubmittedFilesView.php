@@ -61,11 +61,11 @@ class SubmittedFilesView  extends \View {
 
                 if ($rename) {
                     $ext = pathinfo($name, PATHINFO_EXTENSION);
-                    $name = $user->userid . '.' . $ext;
+                    $name = $user->userId . '.' . $ext;
                     file_put_contents($submissions_dir . "/" . $name, $bin);
                 } else {
-                    mkdir($submissions_dir . "/" . $user->userid);
-                    file_put_contents($submissions_dir . "/" . $user->userid . "/" . $name, $bin);
+                    mkdir($submissions_dir . "/" . $user->userId);
+                    file_put_contents($submissions_dir . "/" . $user->userId . "/" . $name, $bin);
                 }
             }
         }

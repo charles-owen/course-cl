@@ -51,7 +51,7 @@ class AssignmentsTest extends CourseTestBase {
 //		$step = get_course()->get_section("FS14", '001')->get_assignment("step1");
 //		$this->assertInstanceOf('\Step\Step', $step);
 //
-//		$grading = $step->get_grading();
+//		$grading = $step->grading;
 //		$this->assertInstanceOf('\Assignments\Grading', $grading);
 //	}
 //
