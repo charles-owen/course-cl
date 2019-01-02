@@ -293,7 +293,7 @@ class Assignment extends Extendible {
 	 * will work. An option format is:
 	 *
 	 * '-14 days' : 14 days prior to the due date
-	 * 'no' or 'none' : No release date at all
+	 * 'no', 'none', or 'never': No release date at all
 	 *
 	 *
 	 * @param int $release The release date (time as a string as in '9/02/2014 11:55pm')
@@ -306,7 +306,7 @@ class Assignment extends Extendible {
 			$this->set_due($due, $revised);
 		}
 
-		if (preg_match('/no/i', $release)) {
+		if (preg_match('/^\s*(no)|(none)|(never)\s*$/i', $release)) {
 			$this->release = false;
 		} else if (preg_match('/^-([0-9]+)\s+days?/i', $release, $matches)) {
 			$this->release = $this->due - $matches[1] * 86400;

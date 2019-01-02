@@ -22,9 +22,9 @@
 </template>
 
 <script>
+  import Dialog from 'dialog-cl';
   const UserVueBase = Site.UserVueBase;
   const MaskVue = Site.MaskVue;
-  const Dialog = Site.Dialog;
 
 	export default {
 		'extends': UserVueBase,
