@@ -6,7 +6,7 @@
 require_once __DIR__ . '/init.php';
 use CL\Course\Handbook\HandbookCategory;
 
-class HandbookCategoryTest extends \PHPUnit_Framework_TestCase
+class HandbookCategoryTest extends \PHPUnit\Framework\TestCase
 {
 	/** Test the constructor and the getters: 
 	 * get_tag(), get_name(), get_deduct() */

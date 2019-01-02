@@ -2,12 +2,13 @@ import {Course} from './Course';
 import {Member} from './Members/Member';
 
 import {StoreModuleCourse} from './State/StoreModuleCourse';
-import {StoreModuleUsers} from 'users-cl/js/StoreModuleUsers';
 import {SectionSelector} from './SectionSelectors/SectionSelector';
 import {Submission} from './Submission/Submission';
 import {ErrorHelp} from './ErrorHelp/ErrorHelp';
 import {SpoofingRestore} from './Util/SpoofingRestore';
 import AboutMeVue from './AboutMe/AboutMe.vue';
+
+import {SectionStatus} from './SectionStatus';
 
 /**
  * Factory to create the Course object.
@@ -40,6 +41,8 @@ CourseFactory.create = function(site) {
             return null;
         }
     }
+
+    const StoreModuleUsers = site.StoreModuleUsers;
 
     //
     // Install the course store modules
@@ -87,6 +90,8 @@ CourseFactory.create = function(site) {
         ErrorHelp.install(site);
         SpoofingRestore.install(site);
     })
+
+    site.SectionStatus = SectionStatus;
 
     return course;
 }

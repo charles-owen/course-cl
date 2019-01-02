@@ -5,8 +5,9 @@
 </template>
 
 <script>
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
 	import {Member} from '../Members/Member';
+
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
 
   export default {
 	  'extends': ConsoleComponentBase,

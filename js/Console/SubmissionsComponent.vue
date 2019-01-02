@@ -25,9 +25,11 @@
 </template>
 
 <script>
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
 	import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
   import SubmissionsLinksVue from './SubmissionsLinks.vue';
+
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
+
 
   /**
    * Vue for submissions for all students.

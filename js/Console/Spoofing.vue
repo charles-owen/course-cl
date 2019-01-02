@@ -25,7 +25,8 @@
 
 <script>
 	import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
+
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
 
 	export default {
 		'extends': ConsoleComponentBase,

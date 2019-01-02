@@ -16,11 +16,13 @@
 <script>
 	import SubmissionsAssignmentMemberComponent from './SubmissionsAssignmentMemberComponent.vue';
 
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
 	import PrevNextMemberVue from './Members/PrevNextMember.vue';
 	import MemberFetcherComponent from './Members/MemberFetcherComponent.vue';
 
-	export default {
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
+
+
+  export default {
 		'extends': ConsoleComponentBase,
 		props: ['assigntag', 'memberid'],
 		data: function () {

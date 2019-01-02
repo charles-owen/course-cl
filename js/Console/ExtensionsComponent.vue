@@ -32,12 +32,13 @@
 </template>
 
 <script>
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
   import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
   import flatPickr from 'vue-flatpickr-component';
   import 'flatpickr/dist/flatpickr.css';
 
-    export default {
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
+
+  export default {
 	    'extends': ConsoleComponentBase,
         props: ['assigntag'],
         data: function() {

@@ -100,8 +100,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 		$this->assertNotFalse($result);
 
 		$submits = $submissions->get_submissions($user->member->id, 'design3', "task2", $user);
-
-		$this->assertEquals(2, count($submits));
+		$this->assertEquals(1, count($submits));
 
 
 		$submit = $submits[0];

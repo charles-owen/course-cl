@@ -1,8 +1,7 @@
 /**
- * @file
- * Constants the represent SectionStatus possible values.
+ * Constants that represent SectionStatus possible values.
+ * @constructor
  */
-
 export let SectionStatus = function() {
 }
 

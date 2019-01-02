@@ -43,10 +43,10 @@
 </template>
 
 <script>
-    import {mapState} from 'vuex';
     import {Member} from '../../Members/Member.js';
     import PrevNextMemberVue from './PrevNextMember.vue';
-    import FetcherVue from 'users-cl/js/Lib/FetcherVue.vue';
+
+    const FetcherVue = Site.FetcherVue;
 
     export default {
         props: ['id'],
@@ -82,7 +82,7 @@
                 this.take();
             }
         },
-        computed: mapState({
+        computed: Site.Vuex.mapState({
             fetcher: state => state.members.fetcher
 
         }),

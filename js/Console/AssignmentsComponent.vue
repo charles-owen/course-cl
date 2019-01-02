@@ -26,8 +26,7 @@
 </template>
 
 <script>
-
-	import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
+  const ConsoleComponentBase = Site.ConsoleComponentBase;
 
 	/**
 	 * View for Course Assignments

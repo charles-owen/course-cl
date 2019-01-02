@@ -5,9 +5,11 @@
 </template>
 
 <script>
-  import FetcherVue from 'users-cl/js/Lib/FetcherVue.vue';
   import {StudentsOnly} from './StudentsOnly';
   import {Member} from '../../Members/Member';
+
+  const FetcherVue = Site.FetcherVue;
+
 
   export default {
       props: {

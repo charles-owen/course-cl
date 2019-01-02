@@ -9,7 +9,7 @@ require_once __DIR__ . '/init.php';
 use CL\Course\Course;
 use CL\Course\Section;
 
-class SectionTest extends \PHPUnit_Framework_TestCase
+class SectionTest extends \PHPUnit\Framework\TestCase
 {
 	public function test_construct() {
 		$site = new \CL\Site\Site(__DIR__);

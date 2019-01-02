@@ -22,10 +22,9 @@
 </template>
 
 <script>
-	import UserVueBase from 'users-cl/js/Vue/UserVueBase.vue';
-  import Dialog from 'dialog-cl';
-  import MaskVue from 'site-cl/js/Vue/Mask.vue';
-
+  const UserVueBase = Site.UserVueBase;
+  const MaskVue = Site.MaskVue;
+  const Dialog = Site.Dialog;
 
 	export default {
 		'extends': UserVueBase,
@@ -65,24 +64,21 @@
           let params = {
             email: this.email
           }
-          Site.api.post('/api/users/userupdate', params)
+          this.$site.api.post('/api/users/userupdate', params)
               .then((response) => {
           	      this.mask = false;
                   if (!response.hasError()) {
                   	const user = new Users.User(response.getData('user').attributes);
 	                  this.$store.commit('user/set', user);
-          console.log(this.$store.state.user.user);
-
-
                     this.editing = false;
                   } else {
-                      Site.toast(this, response);
+	                  this.$site.toast(this, response);
                   }
 
               })
               .catch((error) => {
-          	      this.mask = false;
-                  Site.toast(this, error);
+              	this.mask = false;
+	              this.$site.toast(this, error);
               });
       },
       validEmail: function (email) {

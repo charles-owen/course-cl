@@ -10,8 +10,6 @@
 </template>
 
 <script>
-  import {APIResponse} from 'site-cl/js/APIResponse';
-
   export default {
       props: ['submission'],
       data: function() {
@@ -36,20 +34,19 @@
               let json = frames['upload_target_' + this.submission.tag].document.getElementsByTagName("body")[0].innerHTML;
               let response;
               try {
-	              response = new APIResponse(JSON.parse(json));
+	              response = new this.$site.APIResponse(JSON.parse(json));
               } catch(exception) {
               	console.log(exception);
-              	console.log(json);
-	              Site.toast(this, "Error during submission");
+	              this.$site.toast(this, "Error during submission");
               	return;
               }
 
               if (!response.hasError()) {
                   this.$refs['form'].reset();
                   this.$emit('new_submissions', response.getData('submissions').attributes);
-                  Site.toast(this, "Submission successfully saved to the server");
+	                this.$site.toast(this, "Submission successfully saved to the server");
               } else {
-                  Site.toast(this, response);
+	                this.$site.toast(this, response);
               }
           },
           submit() {

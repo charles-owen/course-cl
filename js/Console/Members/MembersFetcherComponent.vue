@@ -11,9 +11,10 @@
 
 <script>
     import {mapState} from 'vuex';
-    import FetcherVue from 'users-cl/js/Lib/FetcherVue.vue';
     import {Member} from '../../Members/Member'
     import {StudentsOnly} from './StudentsOnly';
+
+    const FetcherVue = Site.FetcherVue;
 
     /**
      * Member fetcher component that can be used by views.

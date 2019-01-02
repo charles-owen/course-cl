@@ -10,7 +10,7 @@ use CL\Users\User;
 use CL\Site\MetaData;
 
 
-class MemberTest extends \PHPUnit_Framework_TestCase
+class MemberTest extends \PHPUnit\Framework\TestCase
 {
 	public function test() {
 		$member = new Member();

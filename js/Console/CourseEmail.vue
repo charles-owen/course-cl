@@ -29,9 +29,10 @@
 
 <script>
     import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
-    import ConsoleComponentBase from 'console-cl/js/ConsoleComponentBase.vue';
     import EmailEditorComponent from './EmailEditorComponent.vue';
     import Dialog from 'dialog-cl';
+
+    const ConsoleComponentBase = Site.ConsoleComponentBase;
 
 
     export default {

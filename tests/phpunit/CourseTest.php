@@ -8,7 +8,7 @@ require_once __DIR__ . '/cls/CourseTestBase.php';
 
 use CL\Course\Course;
 
-class CourseTest extends \PHPUnit_Framework_TestCase
+class CourseTest extends \PHPUnit\Framework\TestCase
 {
 
 

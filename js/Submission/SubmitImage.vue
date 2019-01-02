@@ -10,43 +10,41 @@
 </template>
 
 <script>
-  import {APIResponse} from 'site-cl/js/APIResponse';
+	export default {
+		props: ['submission'],
+		data: function () {
+			return {
+				files: null,
+				action: null,
+				submitting: false
+			}
+		},
+		mounted() {
+			const system = this.submission.teaming !== null ? 'team' : 'course';
+			this.action = `${this.$site.root}/cl/api/${system}/submission/submit/${this.submission.assignTag}/${this.submission.tag}`;
+		},
+		methods: {
+			load() {
+				if (!this.submitting) {
+					return;
+				}
 
-  export default {
-      props: ['submission'],
-      data: function() {
-          return {
-              files: null,
-              action: null,
-              submitting: false
-          }
-      },
-      mounted() {
-	      const system = this.submission.teaming !== null ? 'team' : 'course';
-        this.action = `${this.$site.root}/cl/api/${system}/submission/submit/${this.submission.assignTag}/${this.submission.tag}`;
-      },
-      methods: {
-          load() {
-              if(!this.submitting) {
-                  return;
-              }
+				this.submitting = false;
 
-              this.submitting = false;
+				let json = frames['upload_target_' + this.submission.tag].document.getElementsByTagName("body")[0].innerHTML;
+				let response = new this.$site.APIResponse(JSON.parse(json));
 
-              let json = frames['upload_target_' + this.submission.tag].document.getElementsByTagName("body")[0].innerHTML;
-              let response = new APIResponse(JSON.parse(json));
-
-              if (!response.hasError()) {
-                  this.$refs['form'].reset();
-                  this.$emit('new_submissions', response.getData('submissions').attributes);
-                  Site.toast(this, "Submission successfully saved to the server");
-              } else {
-                  Site.toast(this, response);
-              }
-          },
-          submit() {
-              this.submitting = true;
-          }
-      }
-  }
+				if (!response.hasError()) {
+					this.$refs['form'].reset();
+					this.$emit('new_submissions', response.getData('submissions').attributes);
+					this.$site.toast(this, "Submission successfully saved to the server");
+				} else {
+					this.$site.toast(this, response);
+				}
+			},
+			submit() {
+				this.submitting = true;
+			}
+		}
+	}
 </script>
