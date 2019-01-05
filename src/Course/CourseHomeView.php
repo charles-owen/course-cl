@@ -243,7 +243,7 @@ HTML;
                         $release = date('n-d-y', $assignment->release);
                         $html .= ' <span class="staff-note blu">**releases:&nbsp;' . $release . '**</span>';
                     } else {
-                        $html .= ' <span class="staff-note blu">**no release**</span>';
+                        $html .= ' <span class="staff-note notice">**no release**</span>';
                     }
 
 				}
