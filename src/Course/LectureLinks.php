@@ -13,12 +13,13 @@ use CL\Course\Section;
  * Support for class home page lecture links
  */
 class LectureLinks {
-    /**
-     * Constructor
-     * @param Course $course The Course object
-     * @param User $user User that is viewing the links
-     * @param string $dir Optional directory for lecture content and toetippers
-     */
+	/**
+	 * LectureLinks constructor.
+	 * @param Site $site The Site object
+	 * @param User $user Current user
+	 * @param \CL\Course\Section $section Course section object
+	 * @param string $dir Optional directory for lecture content and toetippers
+	 */
 	public function __construct(Site $site, User $user, Section $section, $dir='.') {
 		$this->site = $site;
         $this->user = $user;

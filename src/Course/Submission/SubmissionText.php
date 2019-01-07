@@ -88,6 +88,7 @@ class SubmissionText extends Submission {
 	 *
 	 * This is used to add the actual Text submission to the
 	 * data send to the client so we can preview it immediately.
+	 * @param array $data Data array to add to
 	 * @param AssignmentView $view
 	 * @param User $user
 	 * @param array $submissions

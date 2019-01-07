@@ -50,6 +50,7 @@ SQL;
 	/**
 	 * Get the analysis for a submission
 	 * @param int $id Submission ID
+	 * @param boolean $team Is this getting a team submission?
 	 * @return mixed|null The analysis data stored or null if none. Also includes
 	 *   'userid', 'assigntag', and 'submissiontag' in the array
 	 */

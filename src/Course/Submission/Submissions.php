@@ -187,10 +187,12 @@ SQL;
 	}
 
 
-	/** Get all submissions there are in the database
+	/**
+	 * Get all submissions there are in the database
 	 * @param int $memberId Member ID for the member we want the submissions for
 	 * @param string $assignTag Assignment we want the submissions for
 	 * @param string $submissionTag The tag for a specific submission within an assignment
+	 * @param boolean $mostRecentOnly If true, only hte most recent submission is returned
 	 * @return array Array of submission records, empty if none. Each record with keys:
 	 *     id, date, name, type
 	 */
