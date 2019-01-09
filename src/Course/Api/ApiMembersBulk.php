@@ -146,7 +146,7 @@ class ApiMembersBulk extends \CL\Users\Api\Resource {
 				$student = $existing[$userid];
 				if($student->role === Member::DROPPED) {
 					$student->member->role = Member::STUDENT;
-					$membersTable->update($student, $time);
+					$membersTable->update($student->member, $time);
 				}
 
 				$updated[] = $existing[$userid];
