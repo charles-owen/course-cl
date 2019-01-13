@@ -10,10 +10,10 @@
               <th>Name</th>
               <th>Role</th>
             </tr>
-            <tr v-for="user in fetcher.users">
-              <td><a @click.prevent="select(user)">{{user.userId}}</a></td>
-              <td><a @click.prevent="select(user)">{{user.name}}</a></td>
-              <td>{{user.roleName()}}</td>
+            <tr v-for="user1 in fetcher.users" v-if="user.atLeast(user1.role())">
+              <td><a @click.prevent="select(user1)">{{user1.userId}}</a></td>
+              <td><a @click.prevent="select(user1)">{{user1.name}}</a></td>
+              <td>{{user1.roleName()}}</td>
             </tr>
           </table>
         </template>
@@ -24,16 +24,12 @@
 </template>
 
 <script>
-	import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
+	import MembersFetcherComponent from './Members/MembersFetcherComponent.vue';
 
   const ConsoleComponentBase = Site.ConsoleComponentBase;
 
 	export default {
 		'extends': ConsoleComponentBase,
-		data: function() {
-			return {
-			}
-		},
 		components: {
 			'membersfetcher': MembersFetcherComponent
 		},
@@ -47,17 +43,17 @@
           member: user.member.id
 				};
 
-				Site.api.post('/api/course/members/spoof', params)
+				this.$site.api.post('/api/course/members/spoof', params)
 				    .then((response) => {
 				        if (!response.hasError()) {
 				        	window.location = this.root + '/';
 				        } else {
-				            Site.toast(this, response);
+			        this.$site.toast(this, response);
 				        }
 
 				    })
 				    .catch((error) => {
-				        Site.toast(this, error);
+			          this.$site.toast(this, error);
 				    });
       }
 		}

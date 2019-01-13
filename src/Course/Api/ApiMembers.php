@@ -126,6 +126,10 @@ class ApiMembers extends \CL\Users\Api\Resource
 				throw new APIException("Member does not exist");
 			}
 
+			if(!$user->atLeast($member->role)) {
+				throw new APIException('Cannot spoof a member with an elevated role');
+			}
+
 			$member->setJWT(Member::JWT_MEMBER_ACTUAL, $user->member->id);
 
 			//
