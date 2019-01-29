@@ -22,23 +22,30 @@ class Calendar {
 
     /**
      * Add a calendar event
-     * @param $name Event name
-     * @param $date Date as a string
-     * @param $url URL to link event to
-     * @param $displayTime If true, display at a time
+     * @param string $name Event name
+     * @param string $date Date as a string
+     * @param string $url URL to link event to
+     * @param boolean $displayTime If true, display at a time
+     * @param string color Optional color to apply to the event
      */
-    public function add($name, $date, $url=null, $displayTime = false) {
-        $this->events[] = array('name' => $name, 'date' => strtotime($date),
-            'url' => $url, 'displayTime' => $displayTime);
+    public function add($name, $date, $url=null, $displayTime = false, $color = null) {
+    	$event = ['title' => $name, 'date' => strtotime($date),
+		    'url' => $url, 'displayTime' => $displayTime];
+    	if($color !== null) {
+    		$event['color'] = $color;
+	    }
+        $this->events[] = $event;
     }
 
-    /**
-     * Get all calendar events
-     *
-     * Gets the provided events plus all assignment due dates for a given user
-     *
-     * @return array Array of events, each with four values: name, date, url, displayTime
-     */
+	/**
+	 * Get all calendar events
+	 *
+	 * Gets the provided events plus all assignment due dates for a given user
+	 *
+	 * @param User $user User to present events for
+	 * @param integer $time Current time. If null, time() is used.
+	 * @return array Array of events, each with four values: title, date, url, displayTime
+	 */
     public function getEvents(User $user=null, $time=null) {
 	    if ($time === null) {
 		    $time = time();
@@ -54,14 +61,16 @@ class Calendar {
 					    continue;
 				    }
 
-				    $course = $this->section->course;
-
 				    $due = $assignment->get_due($user);
 				    $url = $assignment->rawUrl;
 				    if($due != null) {
 					    $name = $assignment->shortName;
-					    $events[] = array('name' => $name, 'date' => $due,
-						    'url' => $url, 'displayTime' => false);
+					    $event = ['title' => $name, 'date' => $due,
+						    'url' => $url, 'displayTime' => false];
+					    if(!$assignment->after_release($time)) {
+					    	$event['color'] = '#888888';
+					    }
+					    $events[] = $event;
 				    }
 			    }
 		    }

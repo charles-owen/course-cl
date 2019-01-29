@@ -6,6 +6,7 @@
 
 namespace CL\Course;
 
+use CL\Site\View;
 
 
 /**
@@ -24,7 +25,7 @@ class CalendarView extends \CL\Site\ViewAux {
 	 * Called when this auxiliary view is installed in a view
 	 * @param View $view View we are installing into
 	 */
-	protected function install(\CL\Site\View $view) {
+	protected function install(View $view) {
 		parent::install($view);
 
 		$view->addJS('calendar');
@@ -50,12 +51,20 @@ class CalendarView extends \CL\Site\ViewAux {
 
 	    $items = [];
 	    foreach($events as $event) {
-		    $name = $event['name'];
+		    $name = $event['title'];
 		    $date = date('Y-m-d', $event['date']);
 
 		    $evt = ['title'=>$name, 'start'=>$date];
 		    if($event['url'] !== null) {
-			    $evt['url'] = $this->site->root . '/' . $event['url'];
+		    	if(substr($event['url'], 0, 4) === 'http') {
+				    $evt['url'] = $event['url'];
+			    } else {
+				    $evt['url'] = $this->site->root . '/' . $event['url'];
+			    }
+		    }
+
+		    if(isset($event['color'])) {
+		    	$evt['color'] = $event['color'];
 		    }
 
 		    $items[] = $evt;

@@ -219,10 +219,11 @@ class Assignments {
      * @param string $date Date as a string
      * @param string $url URL to link event to
      * @param bool $displayTime If true, display at a time
+     * @param string color Optional color to apply to the event
      */
-    public function add_calendar($name, $date, $url=null, $displayTime=false) {
+    public function add_calendar($name, $date, $url=null, $displayTime=false, $color = null) {
 		// Must manually call since this may be a recursive call
-        $this->section->__get('calendar')->add($name, $date, $url, $displayTime);
+        $this->section->__get('calendar')->add($name, $date, $url, $displayTime, $color);
     }
 
 	/**

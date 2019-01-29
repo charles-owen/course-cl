@@ -12,9 +12,9 @@ import $ from 'jquery';
  * {title: 'Step 1', start: '2018-05-17', url: '/step1'},
  * @constructor
 */
-const Calendar = function () {
+const Calendar = function (site) {
     let sel = 'div.cl-calendar';
-    Site.Site.ready(() => {
+    site.ready(() => {
         let calendars = document.querySelectorAll(sel);
         for(let i=0; i<calendars.length; i++) {
             let calendar = calendars[i];
@@ -40,5 +40,5 @@ const Calendar = function () {
     });
 }
 
-new Calendar();
+new Calendar(Site.Site);
 
