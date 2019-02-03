@@ -15,6 +15,8 @@ use \CL\Site\Site;
  *
  * @cond
  * @property int id
+ * @property string semester
+ * @property string sectionId
  * @endcond
  */
 class Member extends \CL\Users\Membership implements MetaDataOwner {
@@ -270,7 +272,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 
 
 	/** Is this user an instructor?
-	 * @returns TRUE if user is an instructor */
+	 * @return TRUE if user is an instructor */
 	public function isInstructor() {
 		return $this->role === self::ADMIN || $this->role === self::INSTRUCTOR;
 	}
@@ -278,7 +280,7 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 
 	/** Is this user in a specified section?
 	 * @param $sectionId Section to check (as in '001')
-	 * @returns TRUE if user is in section */
+	 * @return TRUE if user is in section */
 	public function inSection($sectionId) {return $this->sectionId === $sectionId;}
 
 	/**

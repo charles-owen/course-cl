@@ -18,6 +18,8 @@ use CL\Course\Submission\SubmissionDownloadView;
 use CL\Course\Submission\SubmissionsDownloadView;
 use CL\Course\Submission\SubmissionImageView;
 use CL\Course\ErrorHelp\ErrorHelpRouter;
+use CL\Users\Preferences\PreferenceName;
+use CL\Users\Preferences\PreferenceUserId;
 
 /**
  * Plugin class for the Course Subsystem
@@ -29,6 +31,11 @@ class CoursePlugin extends Course {
 	 */
 	public function install(Site $site) {
 		parent::install($site);
+
+		// Added preferences
+		$site->users->preferenceAdd(new Preferences\PreferenceSemester());
+		$site->users->preferenceAdd(new Preferences\PreferenceSection());
+
 
 		$site->addStartup(function(Site $site, Server $server, $time) {
 			return $this->startup($site, $server, $time);
@@ -84,10 +91,6 @@ class CoursePlugin extends Course {
 				return $view->whole();
 			});
 
-			$router->addRoute(['aboutme'], function(Site $site, Server $server, array $params, array $properties, $time) {
-				$view = new AboutMeView($site, $server);
-				return $view->vue();
-			});
 
 			$router->addRoute(['ide'], function(Site $site, Server $server, array $params, array $properties, $time) {
 				$view = new Ide\IdeConnectedView($site, $server);
@@ -152,6 +155,7 @@ class CoursePlugin extends Course {
 	}
 
 	private function startup(Site $site, Server $server, $time) {
+
 		// Get and configure the course object
 		$course = $site->course;
 
