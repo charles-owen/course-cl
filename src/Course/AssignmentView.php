@@ -119,7 +119,7 @@ class AssignmentView extends \CL\Course\View {
 		$cnt = 0;
 		
 		foreach($assignment->submissions->submissions as $submission) {
-			if($titles !== null) {
+			if($titles !== null && $cnt < count($titles)) {
 				$html .= '<h3>' . $titles[$cnt] . '</h3>';
 				$cnt++;
 			}

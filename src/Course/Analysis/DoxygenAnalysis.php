@@ -88,16 +88,8 @@ class DoxygenAnalysis extends Analysis {
 			throw new AnalysisException('Doxygen configuration file does not exist');
 		}
 
-		$sys = strtoupper(PHP_OS);
-		if(substr($sys,0,3) === "WIN") {
-			$quote = '"';
-			$exec = "doxygen";
-		} else {
-			$quote = "'";
-			// TODO: Get rid of link to cbowen doxygen
-			$exec = "/user/cbowen/doxygen/doxygen-1.8.11/bin/doxygen";
-			//$exec = "doxygen";
-		}
+		$quote = '"';
+		$exec = "doxygen";
 
         chdir($dir);
 		//echo "<p>" . "doxygen $quote" . $doxyfile . "$quote 2>&1" . "</p>";

@@ -45,6 +45,12 @@ class SubmissionsDownloadView extends View {
 			return;
 		}
 
+		// Deal with team submissions
+		if($this->submission->teaming !== null) {
+			$server->redirect($site->root . '/cl/team/submissions/' . $this->assignment->tag . '/' . $this->submission->tag);
+			return;
+		}
+
 		$this->setTitle('Bulk download for ' . $this->assignment->name . '/' . $this->submission->name);
 	}
 
@@ -105,6 +111,7 @@ class SubmissionsDownloadView extends View {
 
 		}
 
+		error_reporting(E_ERROR | E_PARSE);
 		exec("cd $temp_dir; zip -r submissions submissions");
 
 		$fp = fopen($temp_dir . "/submissions.zip", 'rb');
