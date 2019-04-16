@@ -11,14 +11,12 @@ div.cl-calendar {
     background-color: #005500;
     color: white;
     font-size: 0.7em;
-
-
+    text-decoration: none;
   }
 
   a.fc-event, a.fc-event:visited, a.fc-event:link {
-         color: white;
-         text-decoration: none;
-       }
+     color: white;
+   }
 
   a.fc-event:hover {
     color: #ffcccc;
