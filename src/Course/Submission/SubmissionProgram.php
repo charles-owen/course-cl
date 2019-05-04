@@ -6,6 +6,9 @@
 
 namespace CL\Course\Submission;
 
+use CL\Site\Site;
+use CL\Users\User;
+
 /** 
  * Submission that is a program or binary file
  */
@@ -36,6 +39,9 @@ class SubmissionProgram extends Submission {
 			case 'type':
 				return 'program';
 
+            case 'bulk':
+                return true;
+
 			default:
 				return parent::__get($property);
 		}
@@ -46,7 +52,7 @@ class SubmissionProgram extends Submission {
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */
-	protected function addData(array &$data) {
+	protected function addData(array &$data, Site $site=null, User $user=null) {
 		$data['type'] = 'program';
 	}
 

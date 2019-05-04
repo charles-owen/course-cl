@@ -5,21 +5,21 @@
 </template>
 
 <script>
-	import {Member} from '../Members/Member';
+  import {Member} from '../Members/Member';
 
   const ConsoleComponentBase = Site.ConsoleComponentBase;
 
   export default {
-	  'extends': ConsoleComponentBase,
+    'extends': ConsoleComponentBase,
     props: ['assignment'],
-    data: function() {
-    	return {
-    		links: []
+    data: function () {
+      return {
+        links: []
       }
     },
     watch: {
-	  	assignment: function() {
-	  		this.take();
+      assignment: function () {
+        this.take();
       }
     },
     mounted() {
@@ -27,31 +27,32 @@
     },
     methods: {
       take() {
-      	if(this.assignment !== null) {
-      		this.links = [];
+        this.links = [];
 
-	        // Collect up the submission links
-	        if (this.assignment.submissions !== undefined) {
-		        for (let submission of this.assignment.submissions) {
-		        	let bulk = {
+        if (this.assignment !== null && this.assignment.submissions !== undefined) {
+          // Collect up the submission links
+          for (let submission of this.assignment.submissions) {
+            if(submission.bulk === true) {
+              let bulk = {
                 text: 'Bulk download of ' + submission.name,
                 url: '/cl/course/submissions/' + this.assignment.tag + '/' + submission.tag,
                 atLeast: Member.STAFF
               };
               this.links.push(bulk);
+            }
 
-			        if (submission.links !== undefined) {
-				        for (let link of submission.links) {
-					        this.links.push(link);
-				        }
-			        }
+            // Any additional submission links
+            if (submission.links !== undefined) {
+              for (let link of submission.links) {
+                this.links.push(link);
+              }
+            }
 
-		        }
-	        }
+          }
         }
       }
 
-	  }
+    }
   }
 
 </script>

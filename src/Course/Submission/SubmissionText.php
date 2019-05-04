@@ -11,6 +11,7 @@ namespace CL\Course\Submission;
 use CL\Course\AssignmentView;
 use CL\Team\Submission\TeamSubmissions;
 use CL\Users\User;
+use CL\Site\Site;
 
 /**
  * Submission that is text content
@@ -45,6 +46,9 @@ class SubmissionText extends Submission {
 			case 'type':
 				return 'text';
 
+            case 'bulk':
+                return true;
+
 			default:
 				return parent::__get($property);
 		}
@@ -78,7 +82,7 @@ class SubmissionText extends Submission {
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */
-	protected function addData(array &$data) {
+	protected function addData(array &$data, Site $site=null, User $user=null) {
 		$data['type'] = 'text';
 		$data['height'] = $this->height;
 	}

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-if="submission.manual !== true">
       <template v-if="submissions.length === 0">
         <p class="large center">No submissions, yet.</p>
       </template>
@@ -27,84 +27,85 @@
       <figure v-if="previewImg !== null" class="cl-preview"><img :src="previewImg"></figure>
       <p class="cl-preview-time">{{previewTime}}</p>
     </div>
+    <div v-if="submission.html !== undefined" v-html="submission.html"></div>
   </div>
 </template>
 
 <script>
-    /**
-     * Component that displays the list of submissions.
-     * @constructor SubmittedVue
-     */
+  /**
+   * Component that displays the list of submissions.
+   * @constructor SubmittedVue
+   */
   import SubmittedItemVue from './SubmittedItem.vue';
 
   export default {
-      props: ['submission', 'submissions'],
-      data: function() {
-          return {
-              previewTxt: null,
-              previewImg: null,
-              previewTime: null,
-              result: null
-          }
-      },
-      components: {
-          submittedItem: SubmittedItemVue
-      },
-      mounted() {
-	      const service = this.submission.teaming !== null ? 'team' : 'course';
-        if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
-            this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
-            this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submissions[0].date);
-        }
-
-        if(this.submission.preview !== undefined) {
-        	this.previewTxt = this.submission.preview.text;
-        	this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submission.preview.date);
-        }
-      },
-      watch: {
-        submissions: function() {
-	        const service = this.submission.teaming !== null ? 'team' : 'course';
-	        if(this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
-                this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
-            } else {
-                this.previewImg = null;
-            }
-        }
-      },
-      methods: {
-        previewer(submission) {
-        	this.previewTxt = "\n";
-        	this.previewTime = '&nbsp;';
-            const service = this.submission.teaming === null ? 'course' : 'team';
-            this.$site.api.get(`/api/${service}/submission/get/${this.submission.assignTag}/${this.submission.tag}/${submission.id}`, {})
-                  .then((response) => {
-                      if (!response.hasError()) {
-                          const submission = response.getData('submission').attributes;
-                          this.previewTxt = submission.text;
-                          this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
-                      } else {
-	                      this.$site.toast(this, response);
-                      }
-
-                  })
-                  .catch((error) => {
-	                  this.$site.toast(this, error);
-                  });
-        },
-        preview_img(submission) {
-	        const service = this.submission.teaming === null ? 'course' : 'team';
-	        if(submission.type.substr(0, 6) === 'image/') {
-            	this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${submission.id}`;
-	            this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
-            } else {
-                this.previewImg = null;
-            }
-        },
-        analysisResult(result) {
-        	this.result = result;
-        }
-
+    props: ['submission', 'submissions'],
+    data: function () {
+      return {
+        previewTxt: null,
+        previewImg: null,
+        previewTime: null,
+        result: null
       }
+    },
+    components: {
+      submittedItem: SubmittedItemVue
+    },
+    mounted() {
+      const service = this.submission.teaming !== null ? 'team' : 'course';
+      if (this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
+        this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
+        this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submissions[0].date);
+      }
+
+      if (this.submission.preview !== undefined) {
+        this.previewTxt = this.submission.preview.text;
+        this.previewTime = this.$site.TimeFormatter.relativeUNIX(this.submission.preview.date);
+      }
+    },
+    watch: {
+      submissions: function () {
+        const service = this.submission.teaming !== null ? 'team' : 'course';
+        if (this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
+          this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
+        } else {
+          this.previewImg = null;
+        }
+      }
+    },
+    methods: {
+      previewer(submission) {
+        this.previewTxt = "\n";
+        this.previewTime = '&nbsp;';
+        const service = this.submission.teaming === null ? 'course' : 'team';
+        this.$site.api.get(`/api/${service}/submission/get/${this.submission.assignTag}/${this.submission.tag}/${submission.id}`, {})
+                .then((response) => {
+                  if (!response.hasError()) {
+                    const submission = response.getData('submission').attributes;
+                    this.previewTxt = submission.text;
+                    this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
+                  } else {
+                    this.$site.toast(this, response);
+                  }
+
+                })
+                .catch((error) => {
+                  this.$site.toast(this, error);
+                });
+      },
+      preview_img(submission) {
+        const service = this.submission.teaming === null ? 'course' : 'team';
+        if (submission.type.substr(0, 6) === 'image/') {
+          this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${submission.id}`;
+          this.previewTime = this.$site.TimeFormatter.relativeUNIX(submission.date);
+        } else {
+          this.previewImg = null;
+        }
+      },
+      analysisResult(result) {
+        this.result = result;
+      }
+
+    }
   }
 </script>

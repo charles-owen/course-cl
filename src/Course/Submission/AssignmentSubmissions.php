@@ -7,6 +7,8 @@
 namespace CL\Course\Submission;
 
 use CL\Course\Assignment;
+use CL\Site\Site;
+use CL\Users\User;
 
 /**
  * Submissions associated with an assignment
@@ -78,7 +80,9 @@ class AssignmentSubmissions {
 	 * @param Submission $submission The Submission object
 	 * @return Submission object
 	 */
-	public function add_submission($tag, Submission $submission) {
+	public function add_submission(Submission $submission) {
+	    $tag = $submission->tag;
+
 		// Validate teaming
 		if($submission->teaming !== null) {
 			$site = $this->assignment->site;
@@ -106,8 +110,7 @@ class AssignmentSubmissions {
 	 * @return Submission object
 	 */
 	public function add_program($tag, $name, $teaming=null) {
-        return $this->add_submission($tag,
-            new SubmissionProgram($tag, $name, $teaming));
+        return $this->add_submission(new SubmissionProgram($tag, $name, $teaming));
 	}
 
 	/**
@@ -118,8 +121,7 @@ class AssignmentSubmissions {
 	 * @return Submission object
 	 */
 	public function add_text($tag, $name, $teaming=null) {
-		return $this->add_submission($tag,
-			new SubmissionText($tag, $name, $teaming));
+		return $this->add_submission(new SubmissionText($tag, $name, $teaming));
 	}
 
 	/** Add a submission of type Image to this assignment
@@ -128,8 +130,7 @@ class AssignmentSubmissions {
 	 * @param string $teaming Teaming name if this is a team submission
 	 * @return Submission object */
 	public function add_image($tag, $name, $teaming=null) {
-        return $this->add_submission($tag,
-            new SubmissionImage($tag, $name, $teaming));
+        return $this->add_submission(new SubmissionImage($tag, $name, $teaming));
 	}
 
 
@@ -150,14 +151,14 @@ class AssignmentSubmissions {
 	 * Create data suitable for JSON to send to runtime
 	 * @return array or null if no submissions
 	 */
-	public function data() {
+	public function data(Site $site=null, User $user=null) {
 		if(count($this->submissions) === 0) {
 			return null;
 		}
 
 		$data = [];
 		foreach($this->submissions as $submission) {
-			$data[] = $submission->data();
+			$data[] = $submission->data($site, $user);
 		}
 
 		return $data;

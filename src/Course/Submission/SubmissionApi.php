@@ -174,7 +174,7 @@ class SubmissionApi extends \CL\Course\Api\Resource
 				}
 			}
 
-			$data = $submission->data();
+			$data = $submission->data($site, $member);
 			$data['assignTag'] = $assignment->tag;
 			$data['submissions'] = $subs;
 			$data['analysis'] = $analysis;

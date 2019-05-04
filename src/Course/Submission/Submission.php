@@ -12,6 +12,7 @@ use CL\Course\Analysis\Analysis;
 
 use CL\Site\Site;
 use CL\Users\User;
+use CL\Course\Member;
 use CL\Course\AssignmentView;
 use CL\Course\Analysis\Analyzer;
 use CL\Course\Assignment;
@@ -47,6 +48,7 @@ abstract class Submission {
 	 * -------- | ---- | -----------
 	 * analysis | array | Collection of attached analysis components
 	 * assignment | Assignment | Assignment this is a submission for
+     * bulk | boolean | Supports bulk download of submissions?
 	 * name | string | Name associated with the submission
 	 * tag | string | Tag associated with the submission
 	 * teaming | string | Teaming name or null if none
@@ -72,6 +74,9 @@ abstract class Submission {
 
 			case 'teaming':
 				return $this->teaming;
+
+            case 'bulk':
+                return false;
 
 			default:
 				$trace = debug_backtrace();
@@ -164,9 +169,8 @@ abstract class Submission {
 			$data['submissions'] = $teamings->get_submissions($user, $this->teaming, $assignment->tag, $this->tag);
 		}
 
-		$this->addData($data);
+		$this->addData($data, $view->site, $user);
 		$this->addPreview($data, $view, $user, $data['submissions']);
-
 		$json = htmlspecialchars(json_encode($data), ENT_NOQUOTES);
 
 		return <<<HTML
@@ -178,14 +182,18 @@ HTML;
 	 * Create a data array that describes this submission suitable for sending to a client.
 	 * @return array Data
 	 */
-	public function data() {
+	public function data(Site $site=null, User $user=null) {
 		$data = [
 			'name' => $this->name,
 			'tag' => $this->tag,
 			'teaming' => $this->teaming
 		];
 
-		$this->addData($data);
+		if($this->bulk) {
+		    $data['bulk'] = true;
+        }
+
+		$this->addData($data, $site, $user);
 
 		$links = [];
 		foreach($this->analysis as $analysis) {
@@ -206,13 +214,13 @@ HTML;
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */
-	protected function addData(array &$data) {
+	protected function addData(array &$data, Site $site=null, User $user=null) {
 	}
 
 	/**
 	 * Add actual submission data to the data array.
 	 *
-	 * This is used to add the actual Text submission to the
+	 * This is used to add the actual submission to the
 	 * data send to the client so we can preview it immediately.
 	 * @param array $data Data array to add to
 	 * @param AssignmentView $view
@@ -306,15 +314,30 @@ HTML;
 		return true;
 	}
 
+
     /**
-     * Get any link to a bulk-download page for this submission type.
+     * Get the submission data from the user
      *
-     * Default is none, override for classes that support bulk downloading.
-     * @param User $user User who is viewing this information
-     * @return string HTML
+     * The basic version assumes only a single submission file. Derived classes
+     * may override this functionality to support multiple-file submissions.
+     *
+     * @param Site $site The Site object
+     * @param User $user we are getting the data for
+     * @return array Array of submission file data. Each item is filename=>data
      */
-	public function get_bulk_download_link(User $user) {
-	    return '';
+    public function get_data(Site $site, User $user, $include, $exclude) {
+        $member = $user->member;
+        $assignment = $this->assignment;
+        $submitTag = $this->tag;
+
+        $submissions = new Submissions($site->db);
+        $submits = $submissions->get_submissions($member->id, $assignment->tag, $submitTag, true);
+        if(count($submits) == 0) {
+            return [];
+        }
+
+        $data = $submissions->get_file($submits[0]['id']);
+        return [$submits[0]['name'] => $data];
     }
 
     private $assignment;    // Assignment this submission is for
@@ -322,7 +345,6 @@ HTML;
 	private $name;		    // Submission name
 	private $additional = null; // Additional text to display with the submission tool
 
-	/// Any Analysis components we will use
-	protected $analysis = [];
-	private   $teaming;	///< Any teaming this submission is for
+	protected $analysis = [];   // Any Analysis components we will use
+	private   $teaming;	        // Any teaming this submission is for
 }

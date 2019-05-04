@@ -6,6 +6,9 @@
 
 namespace CL\Course\Submission;
 
+use CL\Site\Site;
+use CL\Users\User;
+
 /** 
  * Submission that is an image
  */
@@ -36,6 +39,9 @@ class SubmissionImage extends Submission {
 			case 'type':
 				return 'image';
 
+            case 'bulk':
+                return true;
+
 			default:
 				return parent::__get($property);
 		}
@@ -45,7 +51,7 @@ class SubmissionImage extends Submission {
 	 * Add additional content to the JSON data send to the client
 	 * @param array $data Data array to add to
 	 */
-	protected function addData(array &$data) {
+	protected function addData(array &$data, Site $site=null, User $user=null) {
 		$data['type'] = 'image';
 	}
 

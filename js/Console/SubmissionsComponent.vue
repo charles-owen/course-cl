@@ -46,8 +46,8 @@
 			}
 		},
 		components: {
-			'membersfetcher': MembersFetcherComponent,
-      'submissionsLinks': SubmissionsLinksVue
+          'membersfetcher': MembersFetcherComponent,
+          'submissionsLinks': SubmissionsLinksVue
 		},
 		mounted() {
 			const member = this.$store.state.user.user.member;
