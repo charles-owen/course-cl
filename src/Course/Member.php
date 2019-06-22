@@ -131,6 +131,9 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			case 'semester':
 				return $this->semester;
 
+            case 'semesterLC':
+                return strtolower($this->semester);
+
 			case 'summer':
 				return substr($this->semester, 0, 2) === 'US';
 
@@ -301,7 +304,8 @@ class Member extends \CL\Users\Membership implements MetaDataOwner {
 			'id'=>$this->id,
 			'role'=>$this->role,
 			'semester'=>$this->semester,
-			'section'=>$this->sectionId
+			'section'=>$this->sectionId,
+            'created'=>$this->created
 		];
 
 		return $data;

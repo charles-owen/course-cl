@@ -24,23 +24,17 @@
 </template>
 
 <script>
-	import MembersFetcherComponent from 'course-cl/js/Console/Members/MembersFetcherComponent.vue';
+  import MembersFetcherComponent from './MembersFetcherComponent.vue';
 
   const ConsoleComponentBase = Site.ConsoleComponentBase;
 
-	export default {
-		'extends': ConsoleComponentBase,
-		data: function() {
-			return {
-			}
-		},
-		components: {
-			'membersfetcher': MembersFetcherComponent
-		},
-		mounted() {
-			this.setTitle(': Member Listing');
-		},
-		methods: {
-		}
-	}
+  export default {
+    'extends': ConsoleComponentBase,
+    components: {
+      'membersfetcher': MembersFetcherComponent
+    },
+    mounted() {
+      this.setTitle(': Member Listing');
+    }
+  }
 </script>

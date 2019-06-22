@@ -1,10 +1,10 @@
-/**
- * @file Member of a course
- * Attaches to a user Object
- */
-
 import {Membership} from '../../../users/js/Users/Membership.js';
 
+/**
+ * Member of a course
+ * Attaches to a user Object
+ * @constructor
+ */
 let Member = function(json) {
     Membership.call(this);
 
@@ -14,11 +14,13 @@ let Member = function(json) {
         this.id = json.id;
         this.semester = json.semester;
         this.section = json.section;
+        this.created = json.created !== undefined ? json.created : null;
         role = json.role;
     } else {
         this.id = 0;    // System membership ID
         this.semester = null;   // Semester code
         this.section = null;  // Section Id
+        this.created = null;    // When user was created
         role = null;       // Membership role
     }
 
@@ -76,7 +78,7 @@ Member.prototype.getRoles = function() {
     roles[Member.STAFF] = {name: 'Staff', priority: 5, skip: true};
 	roles[Member.GRADER] = {name: 'Grader', priority: 6};
 	roles[Member.ULA] = {name: 'Undergraduate Learning Assistant', short: 'ULA', priority: 7};
-    roles[Member.TA] = {name: 'Teaching Assistant', priority: 8};
+    roles[Member.TA] = {name: 'Teaching Assistant', short: 'TA', priority: 8};
     roles[Member.INSTRUCTOR] = {name: 'Instructor', priority: 9};
     roles[Member.ADMIN] = {name: 'Admin', priority: 100};
 

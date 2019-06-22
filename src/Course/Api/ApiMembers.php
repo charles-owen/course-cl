@@ -304,16 +304,41 @@ class ApiMembers extends \CL\Users\Api\Resource
 
 		if(!empty($get['prevnext']) && count($result) === 1) {
 			$user = $result[0];
+
+			//
+            // Get before
+            //
 			$query = ['before'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1];
+            if(!empty($get['section'])) {
+                $query['section'] = $get['section'];
+            }
+
+            if(!empty($get['semester'])) {
+                $query['semester'] = $get['semester'];
+            }
+
 			if(!empty($get['role'])) {
 				$query['role'] = $get['role'];
 			}
+
 			$prevs = $members->query($query);
-			if(count($prevs) > 0) {
+            if(count($prevs) > 0) {
 				$json->addData('prev-user', 0, $prevs[0]->data());
 			}
 
+            //
+            // Get after
+            //
 			$query = ['after'=>['name'=>$user->name, 'userId'=>$user->id], 'limit'=>1];
+
+            if(!empty($get['section'])) {
+                $query['section'] = $get['section'];
+            }
+
+            if(!empty($get['semester'])) {
+                $query['semester'] = $get['semester'];
+            }
+
 			if(!empty($get['role'])) {
 				$query['role'] = $get['role'];
 			}

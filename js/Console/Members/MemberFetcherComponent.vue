@@ -38,8 +38,11 @@
       },
       methods: {
           fetch() {
+            const member = this.$store.state.user.user.member;
           	  let query = {
-          	  	id: this.id
+          	  	id: this.id,
+                semester: member.semester,
+                section: member.section
               }
 
               if(StudentsOnly.get()) {

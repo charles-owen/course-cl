@@ -72,7 +72,6 @@ class CalendarView extends \CL\Site\ViewAux {
 
 	    $json = htmlspecialchars(json_encode($items), ENT_NOQUOTES);
 
-
 	    return "<div class=\"full\"><div class=\"cl-calendar\">$json</div></div>";
     }
 

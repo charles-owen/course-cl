@@ -141,6 +141,7 @@ class AssignmentCategory {
 	 * __call() is triggered when invoking inaccessible methods in an object context.
 	 * @param string $name Name of non-existent function
 	 * @param array $arguments Arguments to the function call
+     * @return mixed
 	 */
 	public function __call($name, $arguments) {
 		if(isset($this->extensions[$name])) {

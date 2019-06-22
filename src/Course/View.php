@@ -30,6 +30,7 @@ class View extends \CL\Users\View {
 		$GLOBALS['member'] = $this->member;
 		$GLOBALS['course'] = $this->course;
 		$GLOBALS['semester'] = $this->semester;
+        $GLOBALS['semesterLC'] = strtolower($this->semester);
 		$GLOBALS['section'] = $this->section;
 
 		$this->addCSS('vendor/cl/course/course.css');
