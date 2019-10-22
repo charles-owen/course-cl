@@ -8,6 +8,7 @@ namespace CL\Course;
 
 use CL\Site\Site;
 use CL\Site\System\Server;
+use CL\Users\User;
 
 /**
  * View class for assignments
@@ -97,7 +98,7 @@ class AssignmentView extends \CL\Course\View {
 
 	
 	/** Get the due date presentation for this assignment 
-	 * @returns HTML for the due date */
+	 * @returns string HTML for the due date */
 	public function due_present($name = null) {
 		return $this->assignment->due_present($this->user, $name);
 	}
@@ -108,8 +109,11 @@ class AssignmentView extends \CL\Course\View {
 	 * each of the submissions
 	 * @return string HTML
 	 */
-	public function present_submissions(array $titles=null) {
-		$user = $this->user;
+	public function present_submissions(array $titles=null, User $user=null) {
+	    if($user === null) {
+            $user = $this->user;
+        }
+
 		$html = '';
 		
 		/*
@@ -132,21 +136,17 @@ class AssignmentView extends \CL\Course\View {
 		 */
 		if($assignment->reviewing !== null) {
 			$html .= $assignment->reviewing->presentReviews($user);
-//			$reviewing = $assignment->get_reviewing();
-//
-//			$html .= '<p class="reviewsappear">Reviews of this assignment appear here.</p>';
-//
-//			$view = $reviewing->create_view();
-//			$html .= $view->present_reviews($user, $user);
 		}
 
 		return $html;
 	}
 	
-	/** Display the link for the assignment grading page 
-	 * @param $text Optional text to use in the link. Default is "Assignment Grading Page"
-	 * @param $url Link to the page relative to the root
-	 * @returns string HTML for the grading link */
+	/**
+     * Display the link for the assignment grading page
+	 * @param string $text Optional text to use in the link. Default is "Assignment Grading Page"
+	 * @param string $url Link to the page relative to the root
+	 * @return string HTML for the grading link
+     */
 	public function grading_link($text=null, $url=null) {
 		if($text === null) {
 			$text = "Assignment Grading Page";

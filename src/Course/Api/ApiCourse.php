@@ -100,7 +100,8 @@ class ApiCourse extends \CL\Users\Api\Resource {
 					'assign'=>$open->tag,
 					'assignName'=>$open->name,
 					'submitTag'=>$submission->tag,
-					'submitName'=>$submission->name
+					'submitName'=>$submission->name,
+                    'teaming'=>$submission->teaming
 				];
 
 				$due = $open->get_due($user);

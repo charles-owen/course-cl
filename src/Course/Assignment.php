@@ -27,6 +27,8 @@ use CL\Course\Submission\AssignmentSubmissions;
  * @property \CL\Review\Reviewing reviewing
  * @property string tag
  * @property string name
+ * @property string semester
+ * @property string semesterLC
  * @endcond
  */
 class Assignment extends Extendible {
@@ -58,6 +60,8 @@ class Assignment extends Extendible {
 	 * reviewing | Reviewing | Optional reviewing object if reviewing installed
 	 * revised | boolean | true if the due date has been revised.
 	 * section | Section | Course Section object/section this assignment is for
+     * semester | string | Semester for this course/section (as in FS19)
+     * semesterLC | string | Semester for this course/section in lowercase (as in fs19)
 	 * shortName | string | Assignment short name (like "Step 1")
 	 * site | Site | The Site object
 	 * solving | string | Path to problem solving document
@@ -110,6 +114,12 @@ class Assignment extends Extendible {
 
 			case 'revised':
 				return $this->revised;
+
+            case 'semester':
+                return $this->section->semester;
+
+            case 'semesterLC':
+                return $this->section->semesterLC;
 
 			case 'solving':
 				return $this->solving;
@@ -171,6 +181,8 @@ class Assignment extends Extendible {
 				break;
 
 			case 'solving':
+                $value = str_replace('{semester}', $this->section->getSemesterLC(), $value);
+                $value = str_replace('{section}', $this->section->id, $value);
 				$this->solving = $value;
 				break;
 
@@ -206,6 +218,16 @@ class Assignment extends Extendible {
 		$this->due = strtotime($due);
 		$this->revised = $revised;
 	}
+
+    /**
+     * Extend an assignment due date.
+     *
+     * This is the same thing as calling set_due($due, true)
+     * @param string $due New extended due date.
+     */
+	public function extension($due) {
+	    $this->set_due($due, true);
+    }
 
 	/** The assignment due date as a PHP time
 	 * @param User $user User we want the due date for or null to get the fixed due date
@@ -293,6 +315,7 @@ class Assignment extends Extendible {
 	 * will work. An option format is:
 	 *
 	 * '-14 days' : 14 days prior to the due date
+     * '-2 weeks' : 2 weeks prior to the due date
 	 * 'no', 'none', or 'never': No release date at all
 	 *
 	 *
@@ -310,7 +333,9 @@ class Assignment extends Extendible {
 			$this->release = false;
 		} else if (preg_match('/^-([0-9]+)\s+days?/i', $release, $matches)) {
 			$this->release = $this->due - $matches[1] * 86400;
-		} else {
+		} else if (preg_match('/^-([0-9]+)\s+weeks?/i', $release, $matches)) {
+            $this->release = $this->due - $matches[1] * 86400 * 7;
+        } else {
 			$this->release = strtotime($release);
 		}
 	}

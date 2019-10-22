@@ -6,6 +6,7 @@
 
 namespace CL\Course;
 
+use CL\Tables\TableException;
 use CL\Users\User;
 use CL\Users\Users;
 use CL\Course\Members;
@@ -73,18 +74,21 @@ SQL;
      * @param number $time Time for this status
      */
     public function set(User $user, $assignTag, $sectionTag, $status, $time) {
-        $pdo = $this->pdo();
+        try {
+            $pdo = $this->pdo();
 
-        $sql = <<<SQL
+            $sql = <<<SQL
 INSERT INTO $this->tablename(memberid, assigntag, sectiontag, look, access, status)
 VALUES(?, ?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE access=?, status=?
 SQL;
-
-        $stmt = $pdo->prepare($sql);
-	    $datetime =  $this->timeStr($time);
-	    $stmt->execute([$user->member->id, $assignTag, $sectionTag,
-	        $datetime, $datetime, $status, $datetime, $status]);
+            $stmt = $pdo->prepare($sql);
+            $datetime =  $this->timeStr($time);
+            $stmt->execute([$user->member->id, $assignTag, $sectionTag,
+                $datetime, $datetime, $status, $datetime, $status]);
+        } catch (TableException $e) {
+            // Fail silently...
+        }
     }
 
     /**
@@ -94,6 +98,7 @@ SQL;
      * @param string $sectionTag The section tag
      * @return array with keys look, date, status. If no record,
      *    return NOTVISITED and zero dates.
+     * @throws \CL\Tables\TableException
      */
     public function get(User $user, $assignTag, $sectionTag) {
         $pdo = $this->pdo();
@@ -120,6 +125,7 @@ SQL;
      * @param string $assignTag The assignment tag
      * @return array Array of arrays, each with the keys: look, access, status. Each array has a
      * key that is the section tag.
+     * @throws \CL\Tables\TableException
      */
     public function get_statuses(User $user, $assignTag) {
         $pdo = $this->pdo();
@@ -154,6 +160,7 @@ SQL;
 	 * @param string $assignTag Assignment tag
 	 * @return array result. First level key is the member ID, second level key is assignment section,
 	 * third level keys: look, date, status
+     * @throws \CL\Tables\TableException
 	 */
     public function get_statuses_assignment($semester, $sectionId, $assignTag) {
         $pdo = $this->pdo();
