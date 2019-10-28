@@ -1,12 +1,12 @@
 <?php
 require '../../site/use/site.php';
 $view = new CL\Site\Doc\DocView($site);
-$view->title = 'cl/survey installation';
+$view->title = 'cl/course installation';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="../../../../cl/site.css" type="text/css" rel="stylesheet" />
+    <link href="../../../../cl/course.css" type="text/css" rel="stylesheet" />
 <?php echo $view->head(); ?>
 </head>
 

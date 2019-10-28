@@ -107,6 +107,7 @@ class AssignmentView extends \CL\Course\View {
 	 * Present all submissions and the peer review system if included
 	 * @param array $titles An optional array of titles to use for
 	 * each of the submissions
+     * @param User $user Optional user to present for. This is used for administration pages.
 	 * @return string HTML
 	 */
 	public function present_submissions(array $titles=null, User $user=null) {

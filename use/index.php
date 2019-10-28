@@ -16,6 +16,8 @@ $view->title = 'cl/course';
 <p>The cl/course component installs support for courses, including sections and membership.</p>
 <ul>
     <li><a class="cl-autoback" href="install.php">Installation and Configuration</a></li>
+    <li><a class="cl-autoback" href="course.php">course.inc.php</a></li>
+    <li><a class="cl-autoback" href="assignments.php">The Assignments file</a></li>
 </ul>
 
 <?php echo $view->footer(); ?>
