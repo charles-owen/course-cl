@@ -203,6 +203,7 @@ class Section {
 	 * @return Assignment object
 	 */
 	public function get_assignment($tag) {
+	    $tag = $this->substituteLC($tag);
 		$this->ensureLoaded();
 		return $this->assignments->get_assignment($tag);
 	}
@@ -269,6 +270,39 @@ class Section {
 	public function getSemesterLC() {
 		return strtolower($this->semester);
 	}
+
+    /**
+     * Standard name substitutions.
+     *
+     * Replaces: {semester} with the semester and
+     * {section} with the section ID.
+     *
+     * @param $value
+     * @return mixed
+     */
+	public function substitute($value) {
+        $value = str_replace('{semester}', $this->semester, $value);
+        $value = str_replace('{section}', $this->id, $value);
+        return $value;
+    }
+
+
+    /**
+     * Standard name substitutions.
+     *
+     * Replaces: {semester} with the strtolower(semester) and
+     * {section} with the section ID.
+     *
+     * This version is usually used for paths/directories and tags.
+     *
+     * @param $value
+     * @return mixed
+     */
+    public function substituteLC($value) {
+        $value = str_replace('{semester}', strtolower($this->semester), $value);
+        $value = str_replace('{section}', $this->id, $value);
+        return $value;
+    }
 
 	/**
 	 * Magic function to disable displaying the section

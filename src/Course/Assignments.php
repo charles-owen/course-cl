@@ -222,6 +222,8 @@ class Assignments {
      * @param string $color Optional color to apply to the event
      */
     public function add_calendar($name, $date, $url=null, $displayTime=false, $color = null) {
+        $url = $this->section->substituteLC($url);
+
 		// Must manually call since this may be a recursive call
         $this->section->__get('calendar')->add($name, $date, $url, $displayTime, $color);
     }

@@ -29,6 +29,7 @@ use CL\Course\Submission\AssignmentSubmissions;
  * @property string name
  * @property string semester
  * @property string semesterLC
+ * @property string url
  * @endcond
  */
 class Assignment extends Extendible {
@@ -173,7 +174,7 @@ class Assignment extends Extendible {
 
 			case 'category':
 				$this->category = $value;
-				$this->section = $this->category->section;
+				$this->set_section($this->category->section);
 				break;
 
 			case 'reviewing':
@@ -181,9 +182,7 @@ class Assignment extends Extendible {
 				break;
 
 			case 'solving':
-                $value = str_replace('{semester}', $this->section->getSemesterLC(), $value);
-                $value = str_replace('{section}', $this->section->id, $value);
-				$this->solving = $value;
+				$this->solving = $this->section->substituteLC($value);
 				break;
 
 			default:
@@ -201,6 +200,19 @@ class Assignment extends Extendible {
 				break;
 		}
 	}
+
+    /**
+     * Set the section.
+     *
+     * This revises the assignment tag to match the section.
+     *
+     * @param Section $section
+     */
+	private function set_section(Section $section) {
+	    $this->section = $section;
+	    $this->tag = $section->substituteLC($this->tag);
+	    $this->url = $section->substituteLC($this->url);
+    }
 
 
 	/**

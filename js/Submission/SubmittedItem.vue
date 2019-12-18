@@ -44,8 +44,6 @@
       mounted() {
 	      const service = this.teaming !== null ? 'team' : 'course';
 	      this.toDownload = `${this.$site.root}/cl/${service}/submission/download/${this.submission.id}`;
-
-	      console.log(this.type);
       },
       methods: {
           isText() {

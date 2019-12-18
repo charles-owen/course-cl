@@ -158,7 +158,7 @@ LINK;
 	/**
 	 * All assignments for a category
 	 * @param string $tag Assignment category tag
-	 * @returns string HTML for the assignments
+	 * @return string HTML for the assignments
 	 */
 	public function assignments($tag) {
 		$category = $this->section->assignments->get_category($tag);
@@ -167,7 +167,6 @@ LINK;
 		}
 
 		$html = '<ul>';
-		$assignments = $category->assignments;
 		$any = false;
 		foreach($category->assignments as $assignment) {
 			$link = $this->assignmentLink($assignment);
@@ -198,11 +197,12 @@ LINK;
 
 		if($staff || $assignment->after_release($this->time)) {
 			$tag = $assignment->tag;
+			$url = $assignment->url;
 			$name = $assignment->name;
 			$due = $assignment->get_due($this->user, $this->time);
 			$solving = $assignment->solving;
 
-			$html .= "<li><A href=\"$tag/\">$name</A>";
+			$html .= "<li><A href=\"$url/\">$name</A>";
 
 			if($due !== null) {
 				$duedate = date('n-d-y', $due);

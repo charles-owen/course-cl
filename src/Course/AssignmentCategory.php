@@ -44,11 +44,13 @@ class AssignmentCategory {
 		return $assignment;
 	}
 	
-	/** Add a conventional assignment
+	/**
+     * Add a conventional assignment
 	 * @param string $tag Assignment tag
 	 * @param string $name Name of the assignment
      * @param string $url URL for the assignment (optional)
-     * @return Assignment object */
+     * @return Assignment object
+     */
 	public function add_assignment($tag, $name, $url=null) {
 		return $this->add(new Assignment($tag, $name, $url));
 	}

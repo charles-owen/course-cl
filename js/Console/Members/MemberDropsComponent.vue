@@ -40,7 +40,6 @@
           }
       },
       mounted() {
-          console.log(this.$parent);
           this.drops = this.$parent.drops;
       }
   }
