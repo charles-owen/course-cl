@@ -560,6 +560,7 @@ class ApiMembers extends \CL\Users\Api\Resource
 	private function setMembership(Site $site, Server $server, User $user, Member $member, $time) {
 		// We have a membership, attach it to the user
 		$user->member = $member;
+
 		//
 		// A new session cookie is created
 		//

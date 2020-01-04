@@ -18,8 +18,7 @@ use CL\Course\Submission\SubmissionDownloadView;
 use CL\Course\Submission\SubmissionsDownloadView;
 use CL\Course\Submission\SubmissionImageView;
 use CL\Course\ErrorHelp\ErrorHelpRouter;
-use CL\Users\Preferences\PreferenceName;
-use CL\Users\Preferences\PreferenceUserId;
+
 
 /**
  * Plugin class for the Course Subsystem
@@ -184,6 +183,7 @@ class CoursePlugin extends Course {
 			if(isset($user->dataJWT[Member::JWT_ID])) {
 				// We know the membership from JWT
 				$memberId = $user->dataJWT[Member::JWT_ID];
+
 				if($memberId === 0 &&
 					isset($user->dataJWT[Member::JWT_SEMESTER]) &&
 					isset($user->dataJWT[Member::JWT_SECTION])) {
