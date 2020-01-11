@@ -24,8 +24,8 @@
 div.cl-section-component {
   white-space: nowrap;
 
-  >span:first-child {
-    padding: 0 14px 0 0;
+  >span {
+    padding: 0 0.4em 0 0;
   }
 
   >span:last-child {
