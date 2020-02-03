@@ -147,6 +147,7 @@ SQL;
         return $result;
     }
 
+
     /**
      *
      * @param string $assignTag The assignment tag
