@@ -90,6 +90,7 @@ CourseFactory.create = function(site) {
     })
 
     site.SectionStatus = SectionStatus;
+    site.Member = Member;
 
     return course;
 }
