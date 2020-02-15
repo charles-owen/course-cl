@@ -6,7 +6,6 @@ import {SectionSelector} from './SectionSelectors/SectionSelector';
 import {Submission} from './Submission/Submission';
 import {ErrorHelp} from './ErrorHelp/ErrorHelp';
 import {SpoofingRestore} from './Util/SpoofingRestore';
-
 import {SectionStatus} from './SectionStatus';
 
 /**
