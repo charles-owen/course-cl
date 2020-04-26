@@ -25,6 +25,8 @@ class SubmissionsDownloadView extends View {
 	public function __construct(Site $site, Server $server, $properties) {
 		parent::__construct($site, ['at-least'=>Member::STAFF]);
 
+		$this->server = $server;
+
 		$this->setTitle('Bulk Download');
 
 		// Get the assignment
@@ -71,6 +73,18 @@ class SubmissionsDownloadView extends View {
 			'atLeast' => Member::STUDENT
 		]);
 
+		$from = null;
+		$to = null;
+
+		$get = $this->server->get;
+		if(isset($get['fm'])) {
+		    $from = strip_tags(strtolower($get['fm']));
+        }
+
+        if(isset($get['to'])) {
+            $to = strip_tags(strtolower($get['to']));
+        }
+
 		$submissions = new Submissions($this->site->db);
 
 		$temp_dir = $this->get_temp_dir();
@@ -79,6 +93,9 @@ class SubmissionsDownloadView extends View {
 
 		$cnt = 0;
 		foreach($all as $user) {
+		    if(($from !== null && strtolower($user->userId) < $from) || ($to !== null && strtolower($user->userId) > $to)) {
+		        continue;
+            }
 
 			$submits = $submissions->get_submissions($user->member->id, $this->assignment->tag, $this->submission->tag, true);
 			if (count($submits) > 0) {
@@ -165,6 +182,7 @@ class SubmissionsDownloadView extends View {
 
 	private $assignment;
 	private $submission;
+	private $server;
 
 	// Optional limit on how number of students to download
 	// If set to zero, there is no limit

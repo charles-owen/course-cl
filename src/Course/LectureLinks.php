@@ -63,6 +63,8 @@ HTML;
 					$link = $this->toetipper_link($child['toetipper']);
 				} else if(array_key_exists('powerpoint', $child)) {
 					$link = $this->powerpoint_link($child['powerpoint'], $child['title']);
+				} else if(array_key_exists('video', $child)) {
+					$link = $this->video_link($child['video'], $child['title']);
 				}
 				
 				if($link !== null) {
@@ -180,6 +182,26 @@ HTML;
 
 		return $html;
 	}
+
+	/**
+	 * Create HTML for a powerpoint link
+	 * @param int $num Toetipper number
+	 * @return string HTML
+	 */
+	private function video_link($file, $title) {
+		$path = $this->dir . '/' . $file;
+			
+		//
+		// This is a video link
+		//
+		$html = <<<HTML
+ <li class="star">
+ <a href="$path">$title</a></li>
+HTML;
+
+		return $html;
+	}
+	
 	
 	/** Add a lecture to the set of links 
 	 * param 1 Base file name for the lecture (like 'lecture1')
@@ -232,6 +254,18 @@ HTML;
 		$last = &$this->lecture;
 		if($last !== null) {
 			$last['children'][] = array('powerpoint' => $file, 'title' => $title);
+		}
+	}
+
+    /**
+     * Add additional video content to a lecture
+     * @param string $file The name of the video file
+     * @param string $title The title of the presentation
+     */
+	public function video($file, $title) {
+		$last = &$this->lecture;
+		if($last !== null) {
+			$last['children'][] = array('video' => $file, 'title' => $title);
 		}
 	}
 	
