@@ -29,6 +29,7 @@ use CL\Course\Submission\AssignmentSubmissions;
  * @property string name
  * @property string semester
  * @property string semesterLC
+ * @property boolean summer
  * @property string url
  * @endcond
  */
@@ -63,6 +64,7 @@ class Assignment extends Extendible {
 	 * section | Section | Course Section object/section this assignment is for
      * semester | string | Semester for this course/section (as in FS19)
      * semesterLC | string | Semester for this course/section in lowercase (as in fs19)
+     * summer | boolean | True if this is a summer session
 	 * shortName | string | Assignment short name (like "Step 1")
 	 * site | Site | The Site object
 	 * solving | string | Path to problem solving document
@@ -118,6 +120,9 @@ class Assignment extends Extendible {
 
             case 'semester':
                 return $this->section->semester;
+
+            case 'summer':
+                return $this->section->summer;
 
             case 'semesterLC':
                 return $this->section->semesterLC;

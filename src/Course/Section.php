@@ -21,6 +21,7 @@ namespace CL\Course;
  * @property string name
  * @property string season
  * @property string semester
+ * @property boolean summer
  * @property int type
  * @property string year
  * @endcond
