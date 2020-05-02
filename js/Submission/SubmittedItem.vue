@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <template v-if="isText()">
       <a @click.prevent="selectText()">{{display()}}</a>
     </template>

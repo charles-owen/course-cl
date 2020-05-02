@@ -24,7 +24,7 @@
     </div>
     <pre class="cl-analysis" v-if="result !== null">{{result}}</pre>
     <div v-if="previewImg !== null">
-      <figure v-if="previewImg !== null" class="cl-preview"><img :src="previewImg"></figure>
+      <figure v-if="previewImg !== null" class="cl-preview"><a :href="previewImg" :target="'_' + submission.tag"><img :src="previewImg"></a></figure>
       <p class="cl-preview-time">{{previewTime}}</p>
     </div>
     <div v-if="submission.html !== undefined" v-html="submission.html"></div>
@@ -52,6 +52,7 @@
       submittedItem: SubmittedItemVue
     },
     mounted() {
+      console.log(this.submission);
       const service = this.submission.teaming !== null ? 'team' : 'course';
       if (this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
         this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
