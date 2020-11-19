@@ -596,17 +596,21 @@ SQL;
 			$semA = substr($semesterA, 0, 2);
 			$semB = substr($semesterB, 0, 2);
 			if($semA !== $semB) {
-				if($semA === 'SS') {
-					return -1;
-				}
+			    switch($semA) {
+                    case 'SS':
+                        return -1;
 
-				if($semA === 'US') {
-					if($semB === 'SS') {
-						return 1;
-					}
-				} else {
-					return -1;
-				}
+                    case 'US':
+                        if($semB === 'SS') {
+                            return 1;
+                        } else {
+                            return -1;
+                        }
+                        break;
+
+                    case 'FS':
+                        return 1;
+                }
 
 				return 1;
 			}
