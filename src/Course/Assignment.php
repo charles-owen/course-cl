@@ -224,15 +224,16 @@ class Assignment extends Extendible {
 	 * The assignment due date
 	 *
 	 * The format for a due date is a time string as in
+     * mon-1 11:55pm Monday of the first week of the semester
 	 * '9/02/2014 11:55pm'. Any time that can be read by PHP's strtotime
 	 * will work.
 	 *
 	 * @param int $due The due date (time as a string as in '9/02/2014 11:55pm')
 	 * @param bool $revised true if the due date is a revision
 	 */
-	public function set_due($due, $revised = FALSE)
-	{
-		$this->due = strtotime($due);
+	public function set_due($due, $revised = FALSE) {
+
+		$this->due = $this->relative_time($due);
 		$this->revised = $revised;
 	}
 
@@ -273,6 +274,15 @@ class Assignment extends Extendible {
 
 		return $due;
 	}
+
+    /**
+     * Function to convert optional relative times.
+     * @param string $time Time as a string
+     * @return int PHP Time value
+     */
+	public function relative_time($time) {
+        return $this->category->owner->relative_time($time);
+    }
 
 	/**
 	 * Is the due date an extension?
@@ -334,7 +344,8 @@ class Assignment extends Extendible {
 	 * '-14 days' : 14 days prior to the due date
      * '-2 weeks' : 2 weeks prior to the due date
 	 * 'no', 'none', or 'never': No release date at all
-	 *
+	 * 'now': Immediately
+     * 'tue 3 11:55pm' : 3rd tuesday of semester at 11:55pm
 	 *
 	 * @param int $release The release date (time as a string as in '9/02/2014 11:55pm')
 	 * @param int $due Optional due date (time as a string as in '9/02/2014 11:55pm')
@@ -346,19 +357,30 @@ class Assignment extends Extendible {
 			$this->set_due($due, $revised);
 		}
 
-		if (preg_match('/^\s*(no)|(none)|(never)\s*$/i', $release)) {
-			$this->release = false;
+        if (preg_match('/^\s*(no)|(none)|(never)\s*$/i', $release)) {
+            $this->release = false;
+        } else if (preg_match('/^\s*(now)\s*$/i', $release)) {
+			$this->release = time() - 1;
 		} else if (preg_match('/^-([0-9]+)\s+days?/i', $release, $matches)) {
 			$this->release = $this->due - $matches[1] * 86400;
 		} else if (preg_match('/^-([0-9]+)\s+weeks?/i', $release, $matches)) {
             $this->release = $this->due - $matches[1] * 86400 * 7;
         } else {
-			$this->release = strtotime($release);
+			$this->release = $this->relative_time($release);
 		}
 	}
 
+    /**
+     * Get assignment release time
+     * @return int|null Release time for assignment
+     */
+    public function get_release() {
+        return $this->release;
+    }
 
-	/**
+
+
+    /**
 	 * Is this assignment active for submission?
 	 * @param User $user User we are testing, default is current user
 	 * @param int $time PHP time, default is current time

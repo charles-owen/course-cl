@@ -16,6 +16,7 @@ use CL\Users\User;
  *
  * @cond
  * @property int problemSolvingDelay
+ * @property Calendar calendar
  * @endcond
  */
 class Assignments {
@@ -38,6 +39,7 @@ class Assignments {
 	 * <b>Properties</b>
 	 * Property | Type | Description
 	 * -------- | ---- | -----------
+     * calendar | Calendar | The section Calendar object
 	 * categories | array | AssignmentCategory collection
 	 * course | Course | Course object
 	 * gradeDispute | string | Grade dispute link (Usually an a tag)
@@ -65,6 +67,9 @@ class Assignments {
 			case 'site':
 				return $this->course !== null ? $this->course->site : null;
 
+            case 'calendar':
+                return $this->section->__get('calendar');
+
 			case 'problemSolvingDelay':
 				return $this->problemSolvingDelay;
 
@@ -81,9 +86,9 @@ class Assignments {
 
 	/**
 	 * Property set magic method
-	 * @param $key Property name
-	 * @param $value Value to set
-	 */
+     * @param string $key Property name
+     * @param mixed $value Value to set
+     */
 	public function __set($key, $value) {
 		switch($key) {
 			case 'section':
@@ -120,7 +125,7 @@ class Assignments {
 	 * @return AssignmentCategory object.
 	 */
 	public function add_category($tag, $name, $points=null) {
-		$category = new AssignmentCategory($tag, $name);
+		$category = new AssignmentCategory($this, $tag, $name);
 		if($this->site !== null) {
 			$this->site->amend($category);
 		}
@@ -224,8 +229,10 @@ class Assignments {
     public function add_calendar($name, $date, $url=null, $displayTime=false, $color = null) {
         $url = $this->section->substituteLC($url);
 
+        $d = $this->relative_time($date);
+
 		// Must manually call since this may be a recursive call
-        $this->section->__get('calendar')->add($name, $date, $url, $displayTime, $color);
+        $this->section->__get('calendar')->add($name, $d, $url, $displayTime, $color);
     }
 
 	/**
@@ -256,9 +263,82 @@ class Assignments {
 		];
 	}
 
+    /**
+     * Set the start day of the semester.
+     * Time is ignored.
+     * @param string $value Date as a string
+     */
+	public function set_start($value) {
+	    $date = date('Y-m-d', strtotime($value));
+	    $this->start = strtotime($date);
+    }
+
+    /**
+     * Compute a relative time basic on the semester start.
+     * This will accept times in the format:
+     * 'mon1 11:55pm', 'tue3 1:30pm'
+     * The number is the week in the semester. Also accepts
+     * regular time/data values.
+     * @param $value
+     * @return int PHP time value
+     */
+    public function relative_time($value) {
+        $pattern = '/^(monday|mon|mo|tuesday|tue|tu|wednesday|wed|we|thursday|thu|th|tr|friday|fri|fr|saturday|sat|sa|sunday|sun|su)-?\s*(\d+)(?:\s+(.*))?$/i';
+
+        if(preg_match($pattern, $value, $match)) {
+            // Convert start time to Monday of first week
+            $startDay = date('N', $this->start);
+            $firstMonday = $this->start - ($startDay - 1) * 86400;
+
+            switch(substr(strtolower($match[1]), 0, 2)) {
+                default:
+                    $day = 0;
+                    break;
+
+                case 'tu':
+                    $day = 1;
+                    break;
+
+                case 'we':
+                    $day = 2;
+                    break;
+
+                case 'th':
+                case 'tr':
+                    $day = 3;
+                    break;
+
+                case 'fr':
+                    $day = 4;
+                    break;
+
+                case 'sa':
+                    $day = 5;
+                    break;
+
+                case 'su':
+                    $day = 6;
+                    break;
+            }
+
+            $week = $match[2] - 1;
+            $dueDate = $firstMonday + ($week * 7 + $day) * 86400;
+
+            if(count($match) >= 4) {
+                return  strtotime(date('Y-m-d', $dueDate) . $match[3]);
+            } else {
+                return  strtotime(date('Y-m-d', $dueDate) . '00:00');
+            }
+        }
+
+
+        return strtotime($value);
+    }
+
 	private $course = null;		    // Course object
     private $section = null;        // Section we are associated with
 	private $categories = array();	// The assignment categories
 	private $problemSolvingDelay = 86400;   // Delay after due before problem solving released/24 hours
 	private $gradeDispute = null;   // Grade dispute link
+    private $start = null;         // First day of the semester
 }

@@ -17,14 +17,17 @@ namespace CL\Course;
  * @property array assignments
  * @property Section section
  * @property \CL\Grades\CategoryGrading grading
+ * @property Assignments owner
  * @endcond
  */
 class AssignmentCategory {
-	/** Constructor 
+	/** Constructor
+     * @param Assignments $owner The Assignments object that owns this category
 	 * @param string $tag Tag associated with the assignment category
 	 * @param string $name Category name
 	 */
-	public function __construct($tag, $name) {
+	public function __construct(Assignments $owner, $tag, $name) {
+	    $this->owner = $owner;
 		$this->tag = $tag;
 		$this->name = $name;
 	}
@@ -82,6 +85,9 @@ class AssignmentCategory {
 
 			case 'site':
 				return $this->course !== null ? $this->course->site : null;
+
+            case 'owner':
+                return $this->owner;
 
 			default:
 				$trace = debug_backtrace();
@@ -204,12 +210,13 @@ class AssignmentCategory {
 		return $data;
 	}
 
-	private $course = null;		    ///< Course object
-	private $section = null;        ///< Section we are associated with
+	private $course = null;		     // Course object
+	private $section = null;        // Section we are associated with
 	private $tag;
 	private $name;
-	private $grading = null;        ///< Grading attachment
-	private $extensions = [];       ///< Extensions to this object
+	private $grading = null;        // Grading attachment
+	private $extensions = [];       // Extensions to this object
+    private $owner = null;          // The Assignments object that owns this category
 
 	private $assignments = [];
 }

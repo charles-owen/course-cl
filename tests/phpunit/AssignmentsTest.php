@@ -41,6 +41,21 @@ class AssignmentsTest extends CourseTestBase {
 		$open = $assignments->getOpenAssignments($member22, strtotime('9/7/2018 1:00am'));
 		$this->assertCount(2, $open);
 	}
+
+	public function test_relative_time() {
+        $assignments = new Assignments();
+        $assignments->set_start('1/11/2021 8:00am');
+
+        // Works with regular time values
+        $this->assertEquals(strtotime('1/11/2021 3:35pm'), $assignments->relative_time('1/11/2021 3:35pm'));
+
+        $this->assertEquals(strtotime('1/11/2021 11:55pm'), $assignments->relative_time('mon 1 11:55pm'));
+        $this->assertEquals(strtotime('1/21/2021 1:25pm'), $assignments->relative_time('th2 1:25pm'));
+        $this->assertEquals(strtotime('1/21/2021 11:55pm'), $assignments->relative_time('thu 2 11:55pm'));
+        $this->assertEquals(strtotime('1/21/2021 11:55pm'), $assignments->relative_time('thu-2 11:55pm'));
+        $this->assertEquals(strtotime('1/22/2021 12:00am'), $assignments->relative_time('fri-2'));
+
+    }
 }
 
 

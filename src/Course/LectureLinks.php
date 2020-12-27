@@ -185,11 +185,17 @@ HTML;
 
 	/**
 	 * Create HTML for a powerpoint link
-	 * @param int $num Toetipper number
+     * Supports both relative to root and and absolute links.
+     * @param string $file File to link to
+     * @param string $title Title to display for the link
 	 * @return string HTML
 	 */
 	private function video_link($file, $title) {
-		$path = $this->dir . '/' . $file;
+        if (substr($file,0,4) === "http") {
+            $path = $file;
+        } else {
+            $path = $this->dir . '/' . $file;
+        }
 			
 		//
 		// This is a video link
