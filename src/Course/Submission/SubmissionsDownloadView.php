@@ -49,7 +49,25 @@ class SubmissionsDownloadView extends View {
 
 		// Deal with team submissions
 		if($this->submission->teaming !== null) {
-			$server->redirect($site->root . '/cl/team/submissions/' . $this->assignment->tag . '/' . $this->submission->tag);
+		    $url = $site->root . '/cl/team/submissions/' . $this->assignment->tag . '/' . $this->submission->tag;
+
+            $from = null;
+            $to = null;
+            $append = '';
+
+            $get = $this->server->get;
+            if(isset($get['fm'])) {
+                $from = strip_tags(strtolower($get['fm']));
+                $append = '?fm=' . $from;
+            }
+
+            if(isset($get['to'])) {
+                $to = strip_tags(strtolower($get['to']));
+                $append .= strlen($append) > 0 ? '&to=' : '?to=';
+                $append .= $to;
+            }
+
+			$server->redirect($url . $append);
 			return;
 		}
 
