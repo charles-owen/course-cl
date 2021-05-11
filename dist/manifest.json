@@ -1,5 +1,5 @@
 {
-  "Calendar.js": "/cl/dist/calendar.js",
   "Course.js": "/cl/dist/course.js",
+  "Calendar.js": "/cl/dist/calendar.js",
   "CourseConsole.js": "/cl/dist/courseconsole.js"
 }

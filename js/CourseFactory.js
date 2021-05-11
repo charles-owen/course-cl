@@ -32,7 +32,7 @@ CourseFactory.create = function(site) {
     // Modify User to add the ability to instantiate
     // an appropriate Member object
     //
-    Users.User.instantiateMember = function(data) {
+    Site.User.instantiateMember = function(data) {
         if(data.member !== null) {
             return new Member(data.member);
         } else {

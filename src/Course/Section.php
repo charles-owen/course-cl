@@ -18,6 +18,8 @@ namespace CL\Course;
  * @property Course course
  * @property Handbook handbook
  * @property string id
+ * @property string instructor
+ * @property string instructorURL
  * @property string name
  * @property string season
  * @property string semester
@@ -128,6 +130,12 @@ class Section {
 
 		        return $this->handbook;
 
+            case 'instructor':
+                return $this->instructor;
+
+            case 'instructorURL':
+                return $this->instructorURL;
+
 	        default:
                 $trace = debug_backtrace();
                 trigger_error(
@@ -149,6 +157,7 @@ class Section {
      * assignments | Assignments | The section Assignments object
      * course | Course | The Course object
      * grading | SectionGrading | Optional grading support
+     * instructor | string | Instructor name(s)
      *
      * @param string $property Property name
      * @param mixed $value Value to set
@@ -168,6 +177,14 @@ class Section {
 		    	$this->grading = $value;
 		    	$this->grading->section = $this;
 		    	break;
+
+            case 'instructor':
+                $this->instructor = $value;
+                break;
+
+            case 'instructorURL':
+                $this->instructorURL = $value;
+                break;
 
 		    default:
 			    $trace = debug_backtrace();
@@ -322,7 +339,9 @@ class Section {
     private $calendar;              // Course calendar object
 	private $grading = null;        // Section grading extension
 	private $handbook = null;       // Optional course handbook
-	
+    private $instructor = '';       // Instructor(s) name
+    private $instructorURL = '';    // Instructor(s) URL
+
 	private $course;			// Course this is a member of
 	private $id;				// Section code, like "001
     private $semester;          ///< Semester code, like "FS18"

@@ -1,4 +1,5 @@
-@import '~fullcalendar/dist/fullcalendar.css';
+//@import '~fullcalendar/dist/fullcalendar.css';
+//@import '~fullcalendar/main.css';
 @import '~site-cl/sass/modules/colors';
 
 div.cl-calendar {
@@ -40,6 +41,10 @@ div.cl-calendar {
     td, th {
       padding: 0;
       border: 1px solid #ddd;
+    }
+
+    th a {
+      color: white;
     }
 
     tr:first-child th {

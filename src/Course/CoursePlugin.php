@@ -234,8 +234,6 @@ class CoursePlugin extends Course {
 								$redirect = $site->root . '/cl/sectionselector?u=' .
 									urlencode($server->server['REQUEST_URI']);
 							}
-
-//							$redirect = $site->root . '/cl/notauthorized';
 							break;
 
 						case 1:

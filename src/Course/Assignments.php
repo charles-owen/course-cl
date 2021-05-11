@@ -288,7 +288,10 @@ class Assignments {
         if(preg_match($pattern, $value, $match)) {
             // Convert start time to Monday of first week
             $startDay = date('N', $this->start);
-            $firstMonday = $this->start - ($startDay - 1) * 86400;
+
+            // This computes noon on the first Monday of the semester
+            // Not using midnight avoids issues with daylight savings time
+            $firstMonday = $this->start - ($startDay - 1) * 86400 + 86400/2;
 
             switch(substr(strtolower($match[1]), 0, 2)) {
                 default:

@@ -55,7 +55,7 @@ div.cl-course-home {
     @extend %shadow;
     width: 100%;
     max-width: 650px;
-    margin: $main-padding auto 0 auto;
+    margin: $main-padding auto 1em auto;
     background-color: $card-heading-background;
     border: 1px $card-border-color solid;
     padding: 6px 4px 0 4px;

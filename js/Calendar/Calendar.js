@@ -1,7 +1,8 @@
-import 'fullcalendar';
-import './_calendar.scss';
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
-import $ from 'jquery';
+import './_calendar.scss';
 
 /**
  * A calendar with course events in it.
@@ -12,33 +13,32 @@ import $ from 'jquery';
  * {title: 'Step 1', start: '2018-05-17', url: '/step1'},
  * @constructor
 */
-const Calendar = function (site) {
+const SiteCalendar = function (site) {
     let sel = 'div.cl-calendar';
     site.ready(() => {
         let calendars = document.querySelectorAll(sel);
         for(let i=0; i<calendars.length; i++) {
-            let calendar = calendars[i];
+            let calendarElement = calendars[i];
 
-            let events = JSON.parse(calendar.textContent);
-            calendar.textContent = '';
+            let events = JSON.parse(calendarElement.textContent);
+            calendarElement.textContent = '';
 
-            $(calendar).fullCalendar({
-                header: {
+            let calendar = new Calendar(calendarElement, {
+                plugins: [ dayGridPlugin , interactionPlugin],
+                initialView: 'dayGridMonth',
+                headerToolbar: {
                     left: '',
                     center: 'title',
                     right: 'prev,next today'
                 },
-                eventLimit: true, // allow "more" link when too many events
                 events: events
-            })
+            });
 
-            calendar.style.display = 'block';
-            setTimeout(() => {
-	            $(calendar).fullCalendar('render');
-            }, 30);
+            calendarElement.style.display = 'flex'
+            calendar.render();
         }
     });
 }
 
-new Calendar(Site.Site);
+new SiteCalendar(Site.Site);
 

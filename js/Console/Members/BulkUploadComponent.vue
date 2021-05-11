@@ -56,7 +56,7 @@
                                   let dropsForVue = [];
                                   drops.attributes.forEach((drop) => {
                                       console.log(drop);
-                                      let user = new Users.User(drop);
+                                      let user = new Site.User(drop);
                                       user.drop = false;
                                       dropsForVue.push(user);
                                   });

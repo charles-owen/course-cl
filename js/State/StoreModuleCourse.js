@@ -17,7 +17,7 @@ export let StoreModuleCourse = {
         setStaff(state, data) {
             let staff = {};
             for(let d of data) {
-                let user = new Users.User(d);
+                let user = new Site.User(d);
                 staff[user.member.id] = user;
             }
 

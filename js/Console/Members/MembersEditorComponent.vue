@@ -47,7 +47,7 @@
   import Dialog from 'dialog-cl';
   import BulkUploadComponent from './BulkUploadComponent.vue';
 
-  const FetcherVue = Users.FetcherVue;
+  const FetcherVue = Site.FetcherVue;
   const mapState = Site.Vuex.mapState;
   const ConsoleComponentBase = Site.ConsoleComponentBase;
 
