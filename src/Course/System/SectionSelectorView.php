@@ -75,7 +75,10 @@ section of this course. Please select the section you wish to log in to.</p>';
 		$members = new \CL\Course\Members($this->site->db);
 		$memberships = $members->getByUser($user->id);
 
-		if(count($memberships) === 0 || $user->atLeast(User::ADMIN)) {
+        $manualUser = $this->site->users->getUser($user->userId);
+        $admin = ($manualUser !== null && $manualUser['role'] === User::ADMIN) || $user->atLeast(User::ADMIN);
+
+		if(count($memberships) === 0 || $admin) {
 			$sections = $this->site->course->sections;
 			$memberships = [];
 			foreach($sections as $section) {

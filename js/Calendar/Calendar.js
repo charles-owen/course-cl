@@ -31,6 +31,7 @@ const SiteCalendar = function (site) {
                     center: 'title',
                     right: 'prev,next today'
                 },
+                eventColor: '#005500',
                 events: events
             });
 

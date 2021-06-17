@@ -212,7 +212,9 @@ class CoursePlugin extends Course {
 				// We do not know the membership. But, if there
 				// is only one option, use it.
 				$memberships = $members->getByUser($user->id);
-				if($user->atLeast(User::ADMIN) && count($course->sections) > 1) {
+				$manualUser = $site->users->getUser($user->userId);
+				$admin = ($manualUser !== null && $manualUser['role'] === User::ADMIN) || $user->atLeast(User::ADMIN);
+				if($admin && count($course->sections) > 1) {
 					// Admins are allowed to log into any section on
 					// the system, even if they are not a member.
 					$redirect = $site->root . '/cl/sectionselector?u=' .

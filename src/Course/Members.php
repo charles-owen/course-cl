@@ -282,7 +282,7 @@ SQL;
 				'user'=>$params['user'],
 				'name'=>$params['name'],
 				'email'=>$params['email'],
-				'role'=>User::USER
+				'role'=>$params['role'] === User::ADMIN ? User::ADMIN : User::USER
 			];
 
 			$memberUser = new User($userData);

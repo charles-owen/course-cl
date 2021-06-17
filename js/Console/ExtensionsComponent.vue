@@ -16,7 +16,7 @@
               <td>{{user.name}}</td>
               <td>{{user.roleName()}}</td>
               <td>
-                <div class="flatpickr">
+                <div>
                 <flat-pickr v-model="extensions[+user.member.id]" :config="fpConfig"
                 @on-change="change($event, user)" data-input></flat-pickr>
                   <a data-toggle title="Toggle Calendar"><span class="icons-cl icons-cl-calendar"></span></a> <a data-clear><img :src="root + '/vendor/cl/site/img/x.png'" alt="delete" title="Delete"></a>
@@ -46,6 +46,7 @@
                 assignment: null,
                 date: null,
                 extensions: null,
+                test: null,
                 fpConfig: {
                     enableTime: true,
                     dateFormat: "m-d-Y h:iK",
@@ -129,15 +130,15 @@
   div.cl-extensions {
     table {
       td {
-        text-align: center;
+        text-align: left;
 
         >div>input {
           text-align: center;
         }
       }
 
-      td:nth-child(1),  td:nth-child(2),  td:nth-child(3) {
-        text-align: left;
+      td:nth-child(4) > div {
+        white-space: nowrap;
       }
     }
   }

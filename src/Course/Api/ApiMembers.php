@@ -535,12 +535,15 @@ class ApiMembers extends \CL\Users\Api\Resource
 		// Load the membership for this user
 		$member = $members->getBySection($user->id, $semester, $section);
 		if ($member === null) {
-			if ($user->atLeast(User::ADMIN)) {
+            $manualUser = $site->users->getUser($user->userId);
+            $admin = ($manualUser !== null && $manualUser['role'] === User::ADMIN) || $user->atLeast(User::ADMIN);
+
+            if ($admin) {
 				$member = new Member(['id' => 0,
 					'userid' => $user->id,
 					'semester' => $semester,
 					'section' => $section,
-					'role' => $user->role,
+					'role' => $admin ? User::ADMIN : $user->role,
 					'created' => $time]);
 			} else if($user->role === User::GUEST) {
 				$member = new Member(['id' => 0,
