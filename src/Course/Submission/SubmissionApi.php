@@ -279,6 +279,7 @@ class SubmissionApi extends \CL\Course\Api\Resource
 				$submission->set_analysis($site, $id, $analysis);
 			}
 
+			unlink($path);
 		} else {
 			// Post-based submission
 			$this->ensure($post, ['text', 'type']);
