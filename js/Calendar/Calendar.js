@@ -20,10 +20,12 @@ const SiteCalendar = function (site) {
         for(let i=0; i<calendars.length; i++) {
             let calendarElement = calendars[i];
 
-            let events = JSON.parse(calendarElement.textContent);
+            let config = JSON.parse(calendarElement.textContent);
             calendarElement.textContent = '';
 
-            let calendar = new Calendar(calendarElement, {
+            let events = config.events;
+
+            let options = {
                 plugins: [ dayGridPlugin , interactionPlugin],
                 initialView: 'dayGridMonth',
                 headerToolbar: {
@@ -33,7 +35,27 @@ const SiteCalendar = function (site) {
                 },
                 eventColor: '#005500',
                 events: events
-            });
+            }
+
+            if(config.weeks) {
+                options.initialView = 'dayGridWeek';
+
+                options.views = {
+                    dayGridWeek: {
+                      duration: {
+                          weeks: config.weeks
+                      }
+                    }
+                }
+
+                options.aspectRatio = 0.27 / config.weeks;
+            }
+
+            if(config.start) {
+                options.initialDate = config.start * 1000;
+            }
+
+            let calendar = new Calendar(calendarElement, options);
 
             calendarElement.style.display = 'flex'
             calendar.render();

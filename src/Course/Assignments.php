@@ -17,6 +17,7 @@ use CL\Users\User;
  * @cond
  * @property int problemSolvingDelay
  * @property Calendar calendar
+ * @property long start Semester start date
  * @endcond
  */
 class Assignments {
@@ -66,6 +67,9 @@ class Assignments {
 
 			case 'site':
 				return $this->course !== null ? $this->course->site : null;
+
+            case 'start':
+                return $this->start;
 
             case 'calendar':
                 return $this->section->__get('calendar');

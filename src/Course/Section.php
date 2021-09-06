@@ -250,18 +250,50 @@ class Section {
 	public function get_textbook($num) {
 		if($this->textbooks === null) {
 			$this->textbooks = [];
-			
-			$rootdir = $this->course->rootDir;
-			$file = $rootdir . '/course/textbooks.' .
-				$this->getSemesterLC() . '.' . $this->id . '.php';
-			$function = require($file);
-            if(is_callable($function)) {
-                $function($this);
+
+            $site = $this->course->site;
+			$rootdir = $site->rootDir;
+            $file1 = $site->rootDir . '/' .
+                $site->config .
+                '/textbooks.' . $this->getSemesterLC() . '.' . $this->id . '.php';
+
+            // Fallback file
+            $file2 = $site->rootDir . '/' .
+                $site->config .
+                '/textbooks.inc.php';
+
+            if(file_exists($file1)) {
+                $function = require($file1);
+                if(is_callable($function)) {
+                    $function($this);
+                }
+            } else if(file_exists($file2)) {
+                $function = require($file2);
+                if(is_callable($function)) {
+                    $function($this);
+                }
+            } else {
+                return null;
             }
 		}
 		
 		return $this->textbooks[$num - 1];
 	}
+
+    /**
+     * Indicate a textbook reading
+     * @param $textbookNumber The textbook number we are reading from
+     * @param $reading The reading in the textbook.
+     * @return string HTML
+     */
+    public function reading($textbookNumber, $reading) {
+        $textbook = $this->get_textbook($textbookNumber);
+        if($textbook === null) {
+            return '<p class="center red"><em>textbook does not exist</em></p>';
+        } else {
+            return $textbook->reading($reading);
+        }
+    }
 
 
 	/**

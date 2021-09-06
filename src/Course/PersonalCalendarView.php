@@ -10,6 +10,8 @@ use CL\Site\Site;
 
 /**
  * The personal calendar view for the site.
+ *
+ * /cl/calenadr
  */
 class PersonalCalendarView extends View {
 	/**
@@ -19,7 +21,9 @@ class PersonalCalendarView extends View {
 	public function __construct(Site $site) {
 		parent::__construct($site);
 
-		$this->calendar = $this->add_aux(new CalendarView(time()));
+        $calendar = new CalendarView(time());
+        $calendar->semester = true;
+		$this->calendar = $this->add_aux($calendar);
 		$this->setTitle('Personal Calendar');
 	}
 
@@ -28,7 +32,7 @@ class PersonalCalendarView extends View {
 	 * @return string HTML
 	 */
 	public function present() {
-		$html = $this->calendar->present();;
+		$html = $this->calendar->present();
 
 		$html .= <<<HTML
 <p class="full center"><em>The calendar on the home page presents the same information as this calendar.</em></p>

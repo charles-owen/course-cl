@@ -11,14 +11,32 @@ use CL\Site\View;
 
 /**
  * View class for the course calendar
+ * @property boolean semester If true display entire semester
  */
 class CalendarView extends \CL\Site\ViewAux {
     /**
      * Constructor
-     * @param int $time The time we are viewing
+     * @param int $time The time (date) we are viewing
      */
     public function __construct($time) {
         $this->time = $time;
+    }
+
+    /**
+     * Property set magic method
+     * @param string $property Property name
+     * @param mixed $value Value to set
+     */
+    public function __set($property, $value) {
+        switch($property) {
+            case 'semester':
+                $this->semester = $value;
+                break;
+
+            default:
+                parent::__set($property, $value);
+                break;
+        }
     }
 
 	/**
@@ -33,6 +51,8 @@ class CalendarView extends \CL\Site\ViewAux {
 		$this->site = $view->site;
 		$this->user = $this->site->users->user;
 		$section = $this->site->course->get_section_for($this->user);
+        $this->section = $section;
+
 		if($section !== null) {
 			$this->calendar = $section->calendar;
 		} else {
@@ -70,13 +90,29 @@ class CalendarView extends \CL\Site\ViewAux {
 		    $items[] = $evt;
 	    }
 
-	    $json = htmlspecialchars(json_encode($items), ENT_NOQUOTES);
+        $config = [
+            'events'=>$items
+        ];
+
+        if($this->semester && $this->section !== null) {
+            $config['weeks'] = 16;
+
+            $assignments = $this->section->assignments;
+            $start = $assignments->start;
+            if($start !== null) {
+                $config['start'] = $start;
+            }
+        }
+
+	    $json = htmlspecialchars(json_encode($config), ENT_NOQUOTES);
 
 	    return "<div class=\"full\"><div class=\"cl-calendar\">$json</div></div>";
     }
 
     private $site;
     private $user;
+    private $section;
     private $calendar;
     private $time;
+    private $semester = false;
 }
