@@ -132,7 +132,7 @@ class AssignmentCategory {
 
 	/**
 	 * Get an assignment based on its tag
-	 * \param $tag Tag that identifies the assignment
+	 * @param $tag Tag that identifies the assignment
 	 */
 	public function get_assignment($tag) {
 		foreach($this->assignments as $assignment) {
