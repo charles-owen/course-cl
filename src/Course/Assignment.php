@@ -20,6 +20,7 @@ use CL\Course\Submission\AssignmentSubmissions;
  *
  * @cond
  * @property \CL\Grades\AssignmentGrading grading
+ * @property boolean hide
  * @property Section section
  * @property \CL\Course\Submission\AssignmentSubmissions submissions
  * @property \CL\Site\Site site
@@ -57,6 +58,7 @@ class Assignment extends Extendible {
 	 * course | Course | The Course object
 	 * dir | string | Directory (path) containing the assignment
 	 * grading | AssignmentGrading | Optional grading object if grading subsystem present
+     * hide | boolean | Set true to high this assignment in assignment lists
 	 * name | string | Assignment name (full)
 	 * release | int | Time/date for assignment release
 	 * reviewing | Reviewing | Optional reviewing object if reviewing installed
@@ -86,6 +88,9 @@ class Assignment extends Extendible {
 
 			case 'dir':
 				return $this->get_dir();
+
+            case 'hide':
+                return $this->hide;
 
 			case 'grading':
 				return $this->grading;
@@ -189,6 +194,10 @@ class Assignment extends Extendible {
 			case 'solving':
 				$this->solving = $this->section->substituteLC($value);
 				break;
+
+            case 'hide':
+                $this->hide = $value;
+                break;
 
 			default:
 				if (isset($this->properties[$property])) {
@@ -779,6 +788,9 @@ class Assignment extends Extendible {
 	// AssignmentSubmissions object
 	// Any submissions for this assignment
 	private $submissions_ = null;
+
+    // Hide on the course home page
+    private $hide = false;
 
 	//
 	// Optional components. These are for standard subsystems.

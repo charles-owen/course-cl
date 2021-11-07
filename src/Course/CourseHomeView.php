@@ -100,56 +100,9 @@ HTML;
 LINK;
 		}
 
-//        /*
-//         * Determine the actual underlying user
-//         */
-//        $user = $this->user;
-//        $userActual = $user->get_actual($this->session);
-//		$course = $this->course;
-//
-//        /*
-//         * Role selection
-//         */
-//
-//
-//		if($userActual->is_staff()) {
-//            $userRole = $user->get_role();
-//            $roles = User::get_roles();
-//            $userActualPriority = $roles[$userActual->get_role()]['priority'];
-//
-//
-//			$html .= <<<HTML
-//<form id="roles-form" action="lib/manage/role-changer.php" method="post">
-//<p class="control">
-//<select name="role" onChange="submit_roles();">
-//HTML;
-//
-//            foreach($roles as $id => $role) {
-//                $name = $role['name'];
-//                $priority = $role['priority'];
-//                if($userActualPriority >= $priority) {
-//                    $selected = $userRole === $id ? " selected" : '';
-//                    $html .= <<<HTML
-//<option value="$id"$selected>$name</option>
-//HTML;
-//                }
-//            }
-
-
 		if(isset($this->user->dataJWT[Member::JWT_MEMBER_ACTUAL])) {
 			$html .= '<div class="cl-spoofing-restore"></div>';
 		}
-
-//
-//            $html .= <<<HTML
-//</form>
-//<script>
-//function submit_roles() {
-//	$("#roles-form").submit();
-//}
-//HTML;
-//			$html .= "</script>";
-//		}
 
 		return $html;
 	}
@@ -169,6 +122,10 @@ LINK;
 		$html = '<ul>';
 		$any = false;
 		foreach($category->assignments as $assignment) {
+            if($assignment->hide) {
+                continue;
+            }
+
 			$link = $this->assignmentLink($assignment);
 			if($link !== '') {
 				$any = true;
