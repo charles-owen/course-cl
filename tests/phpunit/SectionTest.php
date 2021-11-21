@@ -23,12 +23,13 @@ class SectionTest extends \PHPUnit\Framework\TestCase
 
 	public function test_get_textbook() {
 		$site = new \CL\Site\Site(__DIR__);
+        $site->config = 'course';
 		$course = new Course();
 		$course->install($site);
 
 		$section = $course->add_section("FS18", "799", Section::Normal);
-		// This will read the file course/textbooks.799.fs18.php to get the textbook information
 
+		// The following will read the file course/textbooks.799.fs18.php to get the textbook information
 		$textbook1 = $section->get_textbook(1);
 		$this->assertInstanceOf("\\CL\\Course\\Textbook", $textbook1);
 		$this->assertEquals('Object-Oriented Modeling and Design with UML', $textbook1->title);
@@ -38,10 +39,6 @@ class SectionTest extends \PHPUnit\Framework\TestCase
 		$this->assertEquals('Design Patterns: Elements of Reusable Object-oriented Software', $textbook2->title);
 	}
 
-//    public function test_get_calendar() {
-//        $course = Course::get();
-//        $section = $course->get_section('FS14', '001');
-//   }
 }
 
 /// @endcond

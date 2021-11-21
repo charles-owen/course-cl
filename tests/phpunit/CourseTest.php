@@ -10,9 +10,6 @@ use CL\Course\Course;
 
 class CourseTest extends \PHPUnit\Framework\TestCase
 {
-
-
-	
 	public function test_define() {
 		$site = new \CL\Site\Site(__DIR__);
 		$course = new Course($site);
@@ -22,8 +19,6 @@ class CourseTest extends \PHPUnit\Framework\TestCase
 		$this->assertEquals("Test Course", $course->name);
 		$this->assertEquals("An example course", $course->desc);
 	}
-
-	
 }
 
 /// \endcond
