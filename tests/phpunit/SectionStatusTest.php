@@ -13,21 +13,15 @@ use CL\Course\SectionStatus;
 
 class SectionStatusTest extends CourseDatabaseTestBase {
 
-	/**
-	 * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-	 */
-	public function getDataSet() {
-		return $this->dataSets(['user-many.xml', 'member.xml', 'sectionstatus.xml']);
-	}
-
-	public function ensureTables() {
+	public function setUp() : void {
 		$this->ensureTable(new Users($this->site->db));
+        $this->ensureTable(new Members($this->site->db));
 		$this->ensureTable(new SectionStatus($this->site->db));
 	}
 
-
-
     public function test_flag() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 	    $members = new Members($this->site->db);
 	    $member = $members->getAsUser(22);
 
@@ -54,6 +48,8 @@ class SectionStatusTest extends CourseDatabaseTestBase {
     }
 
     public function test_get_statuses() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 	    $members = new Members($this->site->db);
 	    $member = $members->getAsUser(22);
 
@@ -83,6 +79,8 @@ class SectionStatusTest extends CourseDatabaseTestBase {
    }
 
     public function test_get_statuses_assignment() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 	    $members = new Members($this->site->db);
 	    $member22 = $members->getAsUser(22);
 	    $member35 = $members->getAsUser(35);

@@ -1,15 +1,16 @@
-import {Member} from '../Members/Member';
-import MembersEditorComponent from './Members/MembersEditorComponent.vue';
-import MemberEditorComponent from './Members/MemberEditorComponent.vue';
-import SectionComponent from './SectionComponent.vue';
-import AssignmentsComponent from './AssignmentsComponent.vue';
-import ExtensionsComponent from './ExtensionsComponent.vue';
-import SubmissionsComponent from './SubmissionsComponent.vue';
-import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue';
-import CourseEmailVue from './CourseEmail.vue';
-import SpoofingVue from './Spoofing.vue';
+import {Member} from '../Members/Member'
+import MembersEditorComponent from './Members/MembersEditorComponent.vue'
+import MemberEditorComponent from './Members/MemberEditorComponent.vue'
+import SectionComponent from './SectionComponent.vue'
+import AssignmentsComponent from './AssignmentsComponent.vue'
+import ExtensionsComponent from './ExtensionsComponent.vue'
+import DatesComponent from './DatesComponent.vue'
+import SubmissionsComponent from './SubmissionsComponent.vue'
+import SubmissionsAssignmentMember from './SubmissionsAssignmentMember.vue'
+import CourseEmailVue from './CourseEmail.vue'
+import SpoofingVue from './Spoofing.vue'
 
-import SubmissionsLinksVue from './SubmissionsLinks.vue';
+import SubmissionsLinksVue from './SubmissionsLinks.vue'
 
 /**
  * Course console components
@@ -105,6 +106,7 @@ export let CourseConsole = function(site) {
 
     Console.components.addRoutes([
         {route: '/course/extensions/:assigntag', component: ExtensionsComponent, props: true},
+        {route: '/course/dates/:assigntag', component: DatesComponent, props: true},
         {route: '/course/submissions/:assigntag', component: SubmissionsComponent, props: true},
         {route: '/course/submissions/:assigntag/:memberid', name: 'submissions', component: SubmissionsAssignmentMember, props: true}
     ]);

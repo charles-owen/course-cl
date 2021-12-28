@@ -8,3 +8,15 @@ TODO: About Me editor settings
 
 FUTURE: Persistent checklists
 FUTURE: Way to export and import rubrics
+
+TODO: Test/Repair AnalyzerTest
+TODO: Test/Repair ApiMembersBulkTest
+TODO: Test/Repair AssignmentCategoriesTest
+TODO: Test/Repair AssignmentsTest
+TODO: Test/Repair AssignmentTest
+TODO: Test/Repair AssignmentViewTest
+TODO: Test/Repair DoxygenAnalysisTest
+TODO: Test/Repair SubmissionApiTest
+TODO: Test/Repair SubmissionsTest
+TODO: Test/Repair VSSubmissionAnalysisTest
+
