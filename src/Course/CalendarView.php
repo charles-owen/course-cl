@@ -95,10 +95,9 @@ class CalendarView extends \CL\Site\ViewAux {
         ];
 
         if($this->semester && $this->section !== null) {
-            $config['weeks'] = 16;
-
             $assignments = $this->section->assignments;
             $start = $assignments->start;
+            $config['weeks'] = $assignments->weeks;
             if($start !== null) {
                 $config['start'] = $start;
             }

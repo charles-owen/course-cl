@@ -18,6 +18,7 @@ use CL\Users\User;
  * @property int problemSolvingDelay
  * @property Calendar calendar
  * @property long start Semester start date
+ * @property int weeks Number of weeks in the semester
  * @endcond
  */
 class Assignments {
@@ -77,14 +78,11 @@ class Assignments {
 			case 'problemSolvingDelay':
 				return $this->problemSolvingDelay;
 
+            case 'weeks':
+                return $this->weeks;
+
 			default:
-				$trace = debug_backtrace();
-				trigger_error(
-					'Undefined property ' . $key .
-					' in ' . $trace[0]['file'] .
-					' on line ' . $trace[0]['line'],
-					E_USER_NOTICE);
-				return null;
+                return \CL\Site\PropertyHelper::Error($key);
 		}
 	}
 
@@ -108,13 +106,12 @@ class Assignments {
 				$this->gradeDispute = $value;
 				break;
 
+            case 'weeks':
+                $this->weeks = $value;
+                break;
+
 			default:
-				$trace = debug_backtrace();
-				trigger_error(
-					'Undefined property ' . $key .
-					' in ' . $trace[0]['file'] .
-					' on line ' . $trace[0]['line'],
-					E_USER_NOTICE);
+                \CL\Site\PropertyHelper::Error($key);
 				break;
 		}
 
@@ -271,10 +268,14 @@ class Assignments {
      * Set the start day of the semester.
      * Time is ignored.
      * @param string $value Date as a string
+     * @param int $duration Duration of the semester in weeks
      */
-	public function set_start($value) {
+	public function set_start($value, $duration=0) {
 	    $date = date('Y-m-d', strtotime($value));
 	    $this->start = strtotime($date);
+        if($duration > 0) {
+            $this->weeks = $duration;
+        }
     }
 
     /**
@@ -347,5 +348,6 @@ class Assignments {
 	private $categories = array();	// The assignment categories
 	private $problemSolvingDelay = 86400;   // Delay after due before problem solving released/24 hours
 	private $gradeDispute = null;   // Grade dispute link
-    private $start = null;         // First day of the semester
+    private $start = null;          // First day of the semester
+    private $weeks = 16;            // Semester duration in weeks
 }
