@@ -22,13 +22,15 @@ class SettingTest extends \PHPUnit\Framework\TestCase
 }
 JSON;
 
-		$setting = new Setting('course', 'FS18', '801A', 'extensions', '', $json);
+        $category = 'assignments';
+        $tag = 'due-dates';
+		$setting = new Setting('course', 'FS18', '801A', $category, $tag, $json);
 
         $this->assertEquals('course', $setting->system);
         $this->assertEquals('FS18', $setting->semester);
         $this->assertEquals('801A', $setting->sectionId);
-        $this->assertEquals('extensions', $setting->category);
-        $this->assertEquals('', $setting->tag);
+        $this->assertEquals($category, $setting->category);
+        $this->assertEquals($tag, $setting->tag);
 
         $step1 = $setting->get('step1');
         $this->assertEquals($time1, $step1['release']);
@@ -47,14 +49,14 @@ JSON;
         $time2 = $time1 + 86400;
         $json = "{}";
 
-        $setting = new Setting('course', 'FS18', '801A', 'extensions', '', $json);
+        $category = 'assignment-dates';
+
+        $setting = new Setting('course', 'FS18', '801A', $category, '', $json);
 
         $step1 = $setting->get('step1', []);
         $this->assertEquals([], $step1);
 
-        $step1['release'] = $time1;
-        $step1['due'] = $time2;
-
+        $step1 = ['release'=>$time1, 'due'=>$time2];
         $setting->set('step1', $step1);
 
         $step1a = $setting->get('step1', []);

@@ -12,19 +12,29 @@ use CL\Course\Member;
 use CL\Course\Members;
 
 class MembersTest extends CourseDatabaseTestBase {
-	/**
-	 * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-	 */
-	public function getDataSet() {
-		return $this->dataSets(['user-many.xml', 'member.xml']);
-	}
 
-	public function ensureTables() {
+    protected function setUp() : void {
 		$this->ensureTable(new Users($this->site->db));
 		$this->ensureTable(new Members($this->site->db));
 	}
 
+
+	public function test_get() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
+		$members = new Members($this->site->db);
+		$member = $members->get(22);
+		$this->assertEquals(22, $member->id);
+		$this->assertEquals(5, $member->userId);
+		$this->assertEquals('FS18', $member->semester);
+		$this->assertEquals('799', $member->sectionId);
+		$this->assertEquals(Member::STUDENT, $member->role);
+	}
+
+
 	public function test_query() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 		$members = new Members($this->site->db);
 
 		$result = $members->query(['semester'=>'FS18', 'section'=>'799']);
@@ -37,17 +47,9 @@ class MembersTest extends CourseDatabaseTestBase {
 		$this->assertCount(1, $result);
 	}
 
-	public function test_get() {
-		$members = new Members($this->site->db);
-		$member = $members->get(22);
-		$this->assertEquals(22, $member->id);
-		$this->assertEquals(5, $member->userId);
-		$this->assertEquals('FS18', $member->semester);
-		$this->assertEquals('799', $member->sectionId);
-		$this->assertEquals(Member::STUDENT, $member->role);
-	}
-
 	public function test_delete() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 		$members = new Members($this->site->db);
 		$members->delete(22);
 		$member = $members->get(22);
@@ -55,7 +57,9 @@ class MembersTest extends CourseDatabaseTestBase {
 	}
 
 	public function test_getAsUser() {
-		$members = new Members($this->site->db);
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
+        $members = new Members($this->site->db);
 		$user = $members->getAsUser(22);
 		$this->assertNotNull($user);
 		$member = $user->member;
@@ -68,7 +72,9 @@ class MembersTest extends CourseDatabaseTestBase {
 	}
 
 	public function test_add() {
-		$members = new Members($this->site->db);
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
+        $members = new Members($this->site->db);
 
 		$time = time() + 101;
 
@@ -91,7 +97,9 @@ class MembersTest extends CourseDatabaseTestBase {
 
 
 	public function test_update() {
-		$members = new Members($this->site->db);
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
+        $members = new Members($this->site->db);
 
 		$result = $members->query(['semester'=>'FS18', 'sectionId'=>'799']);
 
@@ -110,6 +118,8 @@ class MembersTest extends CourseDatabaseTestBase {
 	}
 
 	public function test_metaData() {
+        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
+
 		$members = new Members($this->site->db);
 		$user1 = $members->getAsUser(22);
 
