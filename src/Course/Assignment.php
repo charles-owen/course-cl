@@ -246,11 +246,6 @@ class Assignment extends Extendible {
 		$this->revised = $revised;
 	}
 
-    public function set_due_timestamp($due, $revised = FALSE) {
-        $this->due = $due;
-        $this->revised = $revised;
-    }
-
     /**
      * Extend an assignment due date.
      *
@@ -383,15 +378,6 @@ class Assignment extends Extendible {
 			$this->release = $this->relative_time($release);
 		}
 	}
-
-    /**
-     * Set the release date/time for the assignment using a Unix timestamp
-     * @param $release
-     * @return void
-     */
-    public function set_release_timestamp($release) {
-        $this->release = $release;
-    }
 
     /**
      * Get assignment release time
@@ -587,25 +573,6 @@ class Assignment extends Extendible {
 		}
 
 		$this->loaded = true;
-
-        /*
-         * Load the settings, which can override the assignment specification
-         */
-        $settings = new \CL\Course\Settings($this->section->course->site->db);
-        $setting = $settings->read('course', $this->section->semester,
-            $this->section->id, 'assignments', $this->tag);
-
-        if($setting->exists('release')) {
-            $this->set_release_timestamp($setting->get('release'));
-        }
-
-        if($setting->exists('due') && $setting->exists('due-revised')) {
-            $this->set_due_timestamp($setting->get('due'), $setting->get('due-revised'));
-        }
-
-        if($setting->exists('review')) {
-            $this->set_reviews_due($setting->get('review'));
-        }
 	}
 
 
@@ -793,11 +760,11 @@ class Assignment extends Extendible {
 
 	// Basic description of an assignment
 	private $tag;                // Assignment tag
-	private $name;               // Name of the assignment
-	private $shortname;          // Short name for the assignment
-	private $url;                // URL for the assignment (optional)
+	private $name;                // Name of the assignment
+	private $shortname;            // Short name for the assignment
+	private $url;               // URL for the assignment (optional)
 
-	// When the assignment is released (date-time)
+	// When the assignment is released.
 	// null (default) means open immediately
 	// false means not released at all
 	private $release = null;

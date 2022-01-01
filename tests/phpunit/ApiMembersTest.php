@@ -15,15 +15,20 @@ use CL\Course\Api\ApiMembers;
 
 
 class ApiMembersTest extends CourseDatabaseTestBase {
+	/**
+	 * @return PHPUnit_Extensions_Database_DataSet_IDataSet
+	 */
+	public function getDataSet() {
+		return $this->dataSets(['user-many.xml', 'member.xml']);
+	}
 
-    protected function setUp() : void {
-        $this->ensureTable(new Users($this->site->db));
-        $this->ensureTable(new Members($this->site->db));
-    }
+	public function ensureTables() {
+		$this->ensureTable(new Members($this->site->db));
+		$this->ensureTable(new Users($this->site->db));
+	}
+
 
 	public function test_meta() {
-        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
-
 		$members = new Members($this->site->db);
 		$admin = $members->getAsUser(10);
 		$admin->member->role = Member::TA;
@@ -42,7 +47,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 		$server->setServer('REQUEST_URI', '/api/course/members/meta/set/22/extensions/design1');
 		$server->setPost('value', $time1);
 		$ret = $api->apiDispatch($this->site, $server, ['meta', 'set', '22', 'extensions', 'design1'], [], $time1);
-		$this->assertStringNotContainsString('error', $ret);
+		$this->assertNotContains('error', $ret);
 		$json = json_decode($ret, true);
 
 		$json = $this->getMeta($admin);
@@ -65,9 +70,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 	}
 
 	public function test_delete() {
-        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
-
-        $users = new Users($this->site->db);
+		$users = new Users($this->site->db);
 		$admin = $users->get(2);
 		$this->site->users->user = $admin;
 
@@ -88,9 +91,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 	}
 
 	public function test_update() {
-        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
-
-        $users = new Users($this->site->db);
+		$users = new Users($this->site->db);
 		$admin = $users->get(2);
 		$this->site->users->user = $admin;
 
@@ -124,14 +125,12 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 		$server->setPost('role', Member::STUDENT);
 		$json = $api->apiDispatch($this->site, $server, ['update'], [], $time);
 
-		$this->assertStringContainsString('errors', $json);
-		$this->assertStringContainsString('Section is invalid', $json);
+		$this->assertContains('errors', $json);
+		$this->assertContains('Section is invalid', $json);
 	}
 
 	public function test_newMember() {
-        $this->dataSets(['db/user-many.xml', 'db/member.xml']);
-
-        $users = new Users($this->site->db);
+		$users = new Users($this->site->db);
 		$admin = $users->get(2);
 		$this->site->users->user = $admin;
 
@@ -151,7 +150,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 		$time = time() + 1001;
 		$json = $api->apiDispatch($this->site, $server, ['new'], [], $time);
 
-		$this->assertStringNotContainsString("errors", $json);
+		$this->assertNotContains("errors", $json);
 		$data = json_decode($json, true);
 		$user = $data['data'][0]['attributes'];
 		$this->assertEquals(24, $user['id']);
@@ -170,7 +169,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 		$time = $time + 1001;
 		$json = $api->apiDispatch($this->site, $server, ['new'], [], $time);
 
-		$this->assertStringNotContainsString("errors", $json);
+		$this->assertNotContains("errors", $json);
 		$data = json_decode($json, true);
 		$user = $data['data'][0]['attributes'];
 
@@ -181,7 +180,7 @@ class ApiMembersTest extends CourseDatabaseTestBase {
 		// Try to add again, should fail as duplicate user
 		//
 		$json = $api->apiDispatch($this->site, $server, ['new'], [], $time);
-		$this->assertStringContainsString('User is already a member of this course', $json);
+		$this->assertContains('User is already a member of this course', $json);
 	}
 
 }

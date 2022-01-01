@@ -23,6 +23,5 @@ class CourseTables extends \CL\Tables\TableMaker {
 		$this->add(new \CL\Course\Members($config));
 		$this->add(new \CL\Course\SectionStatus($config));
 		$this->add(new \CL\Course\Submission\Submissions($config));
-        $this->add(new \CL\Course\Settings($config));
 	}
 }

@@ -18,7 +18,7 @@ class Setting {
      * @param string $sectionId Section ID (like 001)
      * @param string $category Settings category for the
      * @param string $tag Tag that identifies the settings in the subsystem
-     * @param string $json The database $json data
+     * @param array $json The database $json data
      */
     public function __construct($system, $semester, $sectionId,
                                 $category, $tag,
@@ -51,21 +51,6 @@ class Setting {
     }
 
     /**
-     * Remove a key
-     * @param $key
-     * @return void
-     */
-    public function remove($key) {
-        if(key_exists($key, $this->data)) {
-            unset($this->data[$key]);
-        }
-    }
-
-    public function exists($key) {
-        return key_exists($key, $this->data);
-    }
-
-    /**
      * Set a key value
      * @param string $key Key  to set
      * @param mixed $value Value to set it to
@@ -91,11 +76,14 @@ class Setting {
             case 'tag':
                 return $this->tag;
 
-            case 'json':
-                return json_encode($this->data);
-
             default:
-                return \CL\Site\PropertyHelper::Error($property);
+                $trace = debug_backtrace();
+                trigger_error(
+                    'Undefined property ' . $property .
+                    ' in ' . $trace[0]['file'] .
+                    ' on line ' . $trace[0]['line'],
+                    E_USER_NOTICE);
+                return null;
         }
     }
 

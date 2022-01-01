@@ -83,8 +83,6 @@ class Calendar {
 		    $categories = $this->section->assignments->categories;
 		    foreach($categories as $category) {
 			    foreach($category->assignments as $assignment) {
-                    $assignment->load();
-
 			        if($this->showUnreleased) {
                         $release = $assignment->get_release();
                         $due = $assignment->get_due($user);

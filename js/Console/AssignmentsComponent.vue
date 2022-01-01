@@ -8,9 +8,6 @@
         <li v-for="assignment in category.assignments" :key="assignment.tag">{{assignment.name}}
           <span class="small">
             <span>
-              <router-link :to="root + '/cl/console/course/dates/' + assignment.tag">dates</router-link>&nbsp;
-            </span>
-            <span>
               <router-link :to="root + '/cl/console/course/extensions/' + assignment.tag">extensions</router-link>&nbsp;
             </span>
             <span v-if='assignment.submissions !== undefined'>

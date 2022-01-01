@@ -46,54 +46,7 @@ SQL;
         return $query;
     }
 
-    /**
-     * Set a settings item for a given system, semester, section, category, and tag.
-     * @param $system
-     * @param $semester
-     * @param $sectionId
-     * @param $category
-     * @param $tag
-     * @return null | Setting
-     * @throws TableException
-     */
-    public function read($system, $semester, $sectionId, $category, $tag) {
-        $semester = strtoupper($semester);
-        $pdo = $this->pdo();
+    public function get($system, $category, $tag) {
 
-        $sql = <<<SQL
-SELECT json from $this->tablename
-where system=? and semester=? and section=? and category=? and tag=?
-SQL;
-
-        $stmt = $pdo->prepare($sql);
-        $ret = $stmt->execute([$system, $semester, $sectionId, $category, $tag]);
-        if(!$ret || $stmt->rowCount() == 0) {
-            return new Setting($system, $semester, $sectionId, $category, $tag, "{}");
-        }
-
-        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-        return new Setting($system, $semester, $sectionId, $category, $tag, $row['json']);
-    }
-
-    /**
-     * Write settings back to the database
-     * @param $setting Settings object
-     * @return bool true if successful
-     */
-    public function write($setting) {
-        $sql = <<<SQL
-replace into $this->tablename(system, semester, section, category, tag, json) 
-values(?, ?, ?, ?, ?, ?)
-SQL;
-
-        $pdo = $this->pdo;
-        try {
-            $stmt = $pdo->prepare($sql);
-            return $stmt->execute([$setting->system,
-                $setting->semester, $setting->sectionId, $setting->category,
-                $setting->tag, $setting->json]);
-        } catch(\PDOException $e) {
-            return false;
-        }
     }
 }
