@@ -13,6 +13,7 @@ use CL\Site\Site;
  * Class for analysis of CLion submissions to ensure validity.
  *
  * This looks to ensure there are no directories named .idea, zip, cmake-*
+ * and that the zip is valid and has CMakeLists.txt in the root directory.
  */
 class CLSubmissionAnalysis extends Analysis {
 	/// Tag for this analysis component
@@ -75,7 +76,7 @@ class CLSubmissionAnalysis extends Analysis {
 
 	/**
 	 * Present analysis for the user
-	 * @param $analysis The analysis array as stored with the submission
+	 * @param array $analysis The analysis array as stored with the submission
 	 * @return string HTML nothing for this analysis...
 	 */
 	public function present(array $analysis) {
