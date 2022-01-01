@@ -36,6 +36,7 @@
               try {
 	              response = new this.$site.APIResponse(JSON.parse(json));
               } catch(exception) {
+                console.log(json);
               	console.log(exception);
 	              this.$site.toast(this, "Error during submission");
               	return;
