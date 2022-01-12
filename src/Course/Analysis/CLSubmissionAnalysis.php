@@ -35,14 +35,19 @@ class CLSubmissionAnalysis extends Analysis {
 		}
 
         $hasCMakeLists = false;
+$d = -1;
 
 		$dirIterator = new \RecursiveDirectoryIterator($dir);
 		$iterator = new \RecursiveIteratorIterator($dirIterator,
 			\RecursiveIteratorIterator::SELF_FIRST);
 		foreach($iterator as $file) {
             $fileName = $file->getFilename();
-            if($iterator->getDepth() == 1 && $fileName == "CMakeLists.txt") {
+            if($iterator->getDepth() < 1 && $fileName == "CMakeLists.txt") {
                 $hasCMakeLists = true;
+            }
+
+            if($fileName == "CMakeLists.txt") {
+                $d = $iterator->getDepth();
             }
 
 			if(!$this->testPath($file->getRealPath())) {
@@ -51,7 +56,7 @@ class CLSubmissionAnalysis extends Analysis {
 		}
 
         if(!$hasCMakeLists) {
-            throw new AnalysisException("Submission is not a properly formatted CMake project.");
+            throw new AnalysisException("Submission is not a properly formatted CMake project. ". $d);
         }
 	}
 
