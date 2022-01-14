@@ -33,12 +33,13 @@ class AssignmentView extends \CL\Course\View {
 			return;
         }
 
+        $this->assignment->load();
+
 		if(!$this->assignment->available_release($this->user, $this->time)) {
 			$server->redirect($site->root . '/');
 			return;
 		}
 
-		$this->assignment->load();
 		$this->setTitle($this->assignment->name);
 
 		// Call amend if this object is not subclassed.
