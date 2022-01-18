@@ -118,9 +118,11 @@ class Assignment extends Extendible {
 
 			// 	The assignment release date/time
 			case 'release':
+                $this->load();
 				return $this->release;
 
 			case 'revised':
+                $this->load();
 				return $this->revised;
 
             case 'semester':
@@ -142,6 +144,7 @@ class Assignment extends Extendible {
 				return $this->submissions_;
 
 			case 'reviewing':
+                $this->load();
 				return $this->reviewing;
 
 			default:
@@ -267,6 +270,7 @@ class Assignment extends Extendible {
 	 */
 	public function get_due(User $user = null)
 	{
+        $this->load();
 		$due = $this->due;
 
 		if ($user === null) {
@@ -305,6 +309,8 @@ class Assignment extends Extendible {
 	 */
 	public function is_extension(User $user)
 	{
+        $this->load();
+
 		// Handle a user extension of the due date
 		$extension = $user->member->meta->get(Member::METADATA_EXTENSIONS, $this->tag);
 		if ($extension !== null && $extension > $this->due) {
@@ -328,6 +334,9 @@ class Assignment extends Extendible {
 	 * @return true if after a specified due date
 	 */
 	public function after_due(User $user, $time = null, $delay = 0) {
+        // Ensure it is loaded
+        $this->load();
+
 		if ($time === null) {
 			$time = time();
 		}
@@ -398,6 +407,9 @@ class Assignment extends Extendible {
      * @return int|null Release time for assignment
      */
     public function get_release() {
+        // Ensure it is loaded
+        $this->load();
+
         return $this->release;
     }
 
@@ -411,6 +423,9 @@ class Assignment extends Extendible {
 	 */
 	public function is_open(User $user, $time = null)
 	{
+        // Ensure it is loaded
+        $this->load();
+
 		if ($time === null) {
 			$time = time();
 		}
@@ -446,6 +461,8 @@ class Assignment extends Extendible {
 	 */
 	public function after_release($time)
 	{
+        $this->load();
+
 		if ($this->release === null) {
 			return true;
 		}
@@ -474,7 +491,9 @@ class Assignment extends Extendible {
 			return false;
 		}
 
-		$time -= $delay;
+        $this->load();
+
+        $time -= $delay;
 
 		//
 		// If there is reviewing, we don't open solutions
