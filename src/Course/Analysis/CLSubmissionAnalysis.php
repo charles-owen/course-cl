@@ -35,7 +35,7 @@ class CLSubmissionAnalysis extends Analysis {
 		}
 
         $hasCMakeLists = false;
-$d = -1;
+        $d = -1;
 
 		$dirIterator = new \RecursiveDirectoryIterator($dir);
 		$iterator = new \RecursiveIteratorIterator($dirIterator,
@@ -47,7 +47,11 @@ $d = -1;
             }
 
             if($fileName == "CMakeLists.txt") {
-                $d = $iterator->getDepth();
+                // Find the CMakeLists.txt file that is closest to the root.
+                $depth = $iterator->getDepth();
+                if($d < 0 || $depth < $d) {
+                    $d = $depth;
+                }
             }
 
 			if(!$this->testPath($file->getRealPath())) {
