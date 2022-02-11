@@ -69,12 +69,55 @@ class ApiCourse extends \CL\Users\Api\Resource {
             case 'dates':
                 return $this->dates($site, $server, $params, $properties, $time);
 
+            case 'home':
+                return $this->home($site, $server, $params, $properties, $time);
+
 			case 'tables':
 				return $this->tables($site, $server, new CourseTables($site->db));
 		}
 
 		throw new APIException("Invalid API Path", APIException::INVALID_API_PATH);
 	}
+
+    /**
+     * /api/course/home
+     * Get/set home page content editing
+     * @param Site $site The Site object
+     * @param Server $server
+     * @param array $params
+     * @param array $properties
+     * @param $time
+     * @return JsonAPI
+     */
+    private function home(Site $site, Server $server, array $params, array $properties, $time) {
+        $user = $this->isUser($site, Member::INSTRUCTOR);
+        $member = $user->member;
+
+        $settings = new \CL\Course\Settings($site->db);
+        $member = $user->member;
+        $setting = $settings->read('course', $member->semester, $member->sectionId,
+            'course-home', '');
+
+        if(count($params) > 1) {
+            $tag = $params[1];
+
+            $post = $server->post;
+            $this->ensure($post, ['value']);
+
+            $value = $post['value'];
+            $setting->set('hot', $value);
+            $settings->write($setting);
+        }
+
+        $ret = [
+            'hot' => $setting->get('hot', ''),
+            'tagged' => $setting->get('tagged', [])
+        ];
+
+        $json = new JsonAPI();
+        $json->addData('course-home', 0, $ret);
+        return $json;
+    }
 
     /**
      * /api/course/dates/:assignment

@@ -1,6 +1,7 @@
 import {Member} from '../Members/Member'
 import MembersEditorComponent from './Members/MembersEditorComponent.vue'
 import MemberEditorComponent from './Members/MemberEditorComponent.vue'
+import CourseHomeComponent from './CourseHomeComponent.vue'
 import SectionComponent from './SectionComponent.vue'
 import AssignmentsComponent from './AssignmentsComponent.vue'
 import ExtensionsComponent from './ExtensionsComponent.vue'
@@ -51,6 +52,18 @@ export let CourseConsole = function(site) {
         route: '/course/members',
         routes: [
             {route: '/course/members', component: MembersEditorComponent, props: {management: false}}
+        ]
+    });
+
+    Console.components.addOption({
+        atLeast: Member.INSTRUCTOR,
+        page: page,
+        section: {title: 'Course', order: 5},
+        title: 'Course Home',
+        order: 2,
+        route: '/course/home',
+        routes: [
+            {route: '/course/home', component: CourseHomeComponent}
         ]
     });
 

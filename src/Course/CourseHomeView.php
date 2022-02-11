@@ -23,11 +23,15 @@ class CourseHomeView extends \CL\Course\View {
         parent::__construct($site, $options);
 
         $this->time = $time !== null ? $time : time();
-       // $this->addCSS("vendor/cl/course/coursehome.css");
         $this->title = $this->course->desc;
 		$this->addBody('wider');
 
 		$this->calendar = $this->add_aux(new CalendarView(time()));
+
+        $settings = new \CL\Course\Settings($site->db);
+        $member = $this->user->member;
+        $this->setting = $settings->read('course', $member->semester, $member->sectionId,
+            'course-home', '');
 
 		$site->amend($this);
 	}
@@ -282,8 +286,20 @@ HTML;
 		]);
 	}
 
+    /**
+     * Create the course home page "hot" section
+     * @return string HTML
+     */
+    public function hot() {
+        $hot = $this->setting->get('hot', '');
+        return <<<HTML
+<div class="cl-hot">$hot</div>
+HTML;
+    }
+
 	/* @var int $time */
 	private $time;          ///< Current time
 	private $calendar;      ///< The course calendar
+    private $setting;       // Course home page settings
 }
 
