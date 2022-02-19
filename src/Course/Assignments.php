@@ -228,7 +228,9 @@ class Assignments {
      * @param string $color Optional color to apply to the event
      */
     public function add_calendar($name, $date, $url=null, $displayTime=false, $color = null) {
-        $url = $this->section->substituteLC($url);
+        if($url !== null) {
+            $url = $this->section->substituteLC($url);
+        }
 
         $d = $this->relative_time($date);
 
