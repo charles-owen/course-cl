@@ -139,7 +139,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 		$submissions = new Submissions($this->site->db);
 
 		$sql = $submissions->createSQL();
-		$this->assertContains('test_cl_site_submission', $sql);
+		$this->assertContains('test_cl_submission', $sql);
 	}
 
 	public function test_drop_sql() {
@@ -149,7 +149,7 @@ class SubmissionsTest extends CourseDatabaseTestBase {
 
 		$sql = $submissions->dropSQL();
 		$sqlshouldbe = <<<SQL
-drop table if exists test_cl_site_submission;
+drop table if exists test_cl_submission;
 SQL;
 
 		$this->assertEquals($sqlshouldbe, $sql);
