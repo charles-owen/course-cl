@@ -51,7 +51,6 @@
 		methods: {
       set(data) {
         this.active = true
-        console.log(data)
         this.hot.value = data.attributes.hot
       }
 		}
