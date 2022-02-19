@@ -349,8 +349,10 @@ class Section {
      * @return mixed
      */
     public function substituteLC($value) {
-        $value = str_replace('{semester}', strtolower($this->semester), $value);
-        $value = str_replace('{section}', $this->id, $value);
+        if($value !== null) {
+            $value = str_replace('{semester}', strtolower($this->semester), $value);
+            $value = str_replace('{section}', $this->id, $value);
+        }
         return $value;
     }
 
