@@ -299,6 +299,12 @@ class Assignment extends Extendible {
      * @return int PHP Time value
      */
 	public function relative_time($time) {
+        if($this->category === null) {
+            // If the assignment is not attached to a category
+            // we don't support relative time
+            return strtotime($time);
+        }
+
         return $this->category->owner->relative_time($time);
     }
 
@@ -593,11 +599,19 @@ class Assignment extends Extendible {
 			return;
 		}
 
+        // Get the directory for the assignment definition file
+        $dir = $this->get_dir();
+        if($dir === null) {
+            // This assignment does not have a directory
+            $this->loaded = true;
+            return;
+        }
+
 		/*
 		 * Include the file that defines the actual assignment
 		 * and run the function from define.inc.php if the file exists
 		 */
-		$file = $this->get_dir() . "/define.inc.php";
+		$file = $dir . "/define.inc.php";
 		if (file_exists($file)) {
 			$define = require $file;
 			if (is_callable($define)) {
@@ -688,9 +702,13 @@ class Assignment extends Extendible {
 	 * not contain a period, it is assumed that is the directory for the
 	 * assignment instead.
 	 *
-	 * @return string File system path
+	 * @return null|string File system path
 	 */
 	public function get_dir() {
+        if($this->section === null) {
+            return null;
+        }
+
 		$rootDir = $this->section->course->rootDir;
 
 		if ($this->url !== null && strpos($this->url, ".") !== false) {

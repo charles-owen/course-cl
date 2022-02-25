@@ -185,7 +185,7 @@ class Assignments {
 	
 	/**
 	 * Determine if there are any assignments using the peer review system.
-	 * @return true if there are.
+	 * @return boolean true if there are.
 	 */
 	public function areReviews() {
 		foreach($this->categories as $category) {
