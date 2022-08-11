@@ -144,13 +144,16 @@ SQL;
 		$stmt->bindColumn(7, $date, \PDO::PARAM_STR);
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
-		return array('type' => $type,
-			'binary' => $bin,
+        $data = fread($bin, 100000000);
+        fclose($bin);
+
+		return ['type' => $type,
+			'binary' => $data,
 			'memberid' => $submissionMember,
 			'assigntag' => $assigntag,
 			'submissiontag' => $submissiontag,
 			'name' => $name,
-			'date'=>strtotime($date));
+			'date'=>strtotime($date)];
 	}
 	
 	/** Get a submission text
