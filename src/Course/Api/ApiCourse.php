@@ -164,7 +164,10 @@ class ApiCourse extends \CL\Users\Api\Resource {
             $setting = $settings->read('course', $member->semester, $member->sectionId, 'assignments', $assignTag);
 
             $releaseCmd = $post['release'];
-            $release = $releaseCmd === 'none' ? false : ($releaseCmd === 'open' ? null : strtotime($releaseCmd));
+            $release = false;
+            if($releaseCmd !== null) {
+                $release = $releaseCmd === 'none' ? false : ($releaseCmd === 'open' ? null : strtotime($releaseCmd));
+            }
 
             $dueCmd = $post['due'];
             $due = $dueCmd === 'none' ? null : strtotime($dueCmd);
