@@ -15,7 +15,7 @@ namespace CL\Course;
  * @cond
  * @property Assignments assignments
  * @property Calendar calendar
- * @property Course course
+ * @property Course coursex
  * @property Handbook handbook
  * @property string id
  * @property string instructor
@@ -273,11 +273,16 @@ class Section {
                     $function($this);
                 }
             } else {
-                return null;
+                return new Textbook();
             }
 		}
-		
-		return $this->textbooks[$num - 1];
+
+        if($num >= 0 && $num <= count($this->textbooks)) {
+            return $this->textbooks[$num - 1];
+        } else {
+            return new Textbook();
+        }
+
 	}
 
     /**

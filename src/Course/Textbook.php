@@ -17,7 +17,7 @@ class Textbook {
 	 * @param string $year Year
 	 * @param string $image Path to a 75 by 100 image of the book
 	 * @param string $alt Alt text to use with the book image */
-	public function __construct($title, $authors, $publisher, $year, $image=null, $alt=null) {
+	public function __construct($title='', $authors='', $publisher='', $year='', $image=null, $alt=null) {
 		$this->title = $title;
 		$this->authors = $authors;
 		$this->publisher = $publisher;
@@ -80,6 +80,10 @@ class Textbook {
 	 * @return HTML for the reading indication
 	 */
 	public function reading($text, $extraClass=null) {
+        if($this->title === '') {
+            return '';
+        }
+
 		$root = $this->section->site->root;
 		$image = $this->image;
 		$extra = $extraClass === null ? '' : ' ' . $extraClass;
