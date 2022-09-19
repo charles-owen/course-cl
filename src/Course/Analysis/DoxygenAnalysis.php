@@ -89,15 +89,16 @@ class DoxygenAnalysis extends Analysis {
 		}
 
 		$quote = '"';
-		$exec = "doxygen";
+		$exec = "/usr/local/bin/doxygen";
 
         chdir($dir);
 		//echo "<p>" . "doxygen $quote" . $doxyfile . "$quote 2>&1" . "</p>";
         exec("$exec $quote" . $doxyfile . "$quote 2>&1", $result, $ret);
 
         if($ret > 0) {
+            //print_r($result);
 			throw new AnalysisException("Unable to execute doxygen");
-        }
+         }
 
         /*
          * warning: ignoring unsupported tag `TOC_INCLUDE_HEADINGS   =' at line 313, file /var/www/cbowen/cse335/doxygen/Doxyfile.doxy
