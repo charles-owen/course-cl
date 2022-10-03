@@ -147,9 +147,19 @@ class SubmissionsDownloadView extends View {
 		}
 
 		error_reporting(E_ERROR | E_PARSE);
-		exec("cd $temp_dir; zip -r submissions submissions");
+        $output = [];
+        $resultCode = 0;
+        $result = exec("cd $temp_dir; zip -r submissions submissions", $output, $resultCode);
+        if($resultCode == 127) {
+            echo "zip is not available on the server.";
+            return "";
+        }
 
-		$fp = fopen($temp_dir . "/submissions.zip", 'rb');
+        $fp = fopen($temp_dir . "/submissions.zip", 'rb');
+        if($fp === false) {
+            echo "Unable to open submissions.zip";
+            return '';
+        }
 
 		header( "Content-Type: application/zip" );
 		header( "Content-Disposition: attachment;filename=submissions.zip");
