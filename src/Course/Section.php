@@ -15,7 +15,7 @@ namespace CL\Course;
  * @cond
  * @property Assignments assignments
  * @property Calendar calendar
- * @property Course coursex
+ * @property Course course
  * @property Handbook handbook
  * @property string id
  * @property string instructor
