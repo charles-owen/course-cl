@@ -52,7 +52,6 @@
       submittedItem: SubmittedItemVue
     },
     mounted() {
-      console.log(this.submission);
       const service = this.submission.teaming !== null ? 'team' : 'course';
       if (this.submissions.length > 0 && this.submissions[0].type.substr(0, 6) === 'image/') {
         this.previewImg = `${this.$site.root}/cl/${service}/submission/view/${this.submissions[0].id}`;
