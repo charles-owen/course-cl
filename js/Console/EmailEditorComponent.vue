@@ -1,5 +1,5 @@
 <template>
-  <form v-else @submit.prevent="submit">
+  <form @submit.prevent="submit">
     <mask-vue :mask="mask">Sending Email...</mask-vue>
     <div class="to">To
       <div v-for="user in displayTo" :key="user.id">

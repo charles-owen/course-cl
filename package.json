@@ -13,19 +13,20 @@
   "author": "Charles B. Owen",
   "license": "MIT",
   "dependencies": {
-    "@fullcalendar/core": "^5.11.2",
-    "@fullcalendar/daygrid": "^5.11.2",
-    "@fullcalendar/interaction": "^5.11.2",
-    "axios": "^0.27.2",
+    "@fullcalendar/core": "^5.11.3",
+    "@fullcalendar/daygrid": "^5.11.3",
+    "@fullcalendar/interaction": "^5.11.3",
+    "@vue/compat": "^3.2.45",
+    "axios": "^1.2.1",
     "console-cl": ">=0.0.1",
     "dialog-cl": "^1.0.7",
     "flatpickr": "^4.6.13",
     "site-cl": ">=0.0.1",
     "users-cl": ">=0.0.1",
-    "vue": "^2.7.9",
+    "vue": "^3.2.45",
     "vue-flatpickr-component": "8.1.7",
-    "vuex": "^3.6.2",
-    "webpack": "^5.74.0"
+    "vuex": "^4.1.0",
+    "webpack": "^5.75.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "11.0.0"
