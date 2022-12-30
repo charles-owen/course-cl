@@ -2,7 +2,7 @@
   <div class="content">
     <div class="full">
       <membersfetcher>
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <p class="center">Click on a user to view submissions for that user.</p>
           <submissions-links :assignment="assignment"></submissions-links>
           <table class="small">
@@ -59,7 +59,7 @@
 			this.section = this.$store.getters['course/section'](member.semester, member.section);
 			this.assignment = this.section.getAssignment(this.assigntag);
 
-			this.$parent.setTitle(': ' + this.assignment.shortname + ' Submissions');
+			this.$root.setTitle(': ' + this.assignment.shortname + ' Submissions');
 
 		}
 	}

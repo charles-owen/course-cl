@@ -65,7 +65,7 @@ export default {
       this.link = match[1] + '/';
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.$set(this.$site.console.components, 'nav2left', null);
     this.$set(this.$site.console.components, 'nav2right', null);
   }

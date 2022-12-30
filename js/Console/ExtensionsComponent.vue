@@ -3,7 +3,7 @@
     <div class="full">
 
       <membersfetcher :fetching="extensions === null">
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <table v-if="extensions!==null" class="small">
             <tr>
               <th>User</th>

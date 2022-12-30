@@ -3,9 +3,18 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
-		Course: path.resolve(__dirname, './index.js'),
-		Calendar: path.resolve(__dirname, './js/Calendar/Calendar.js'),
-		CourseConsole: path.resolve(__dirname, './js/Console/index.js')
+		Course: {
+			import: path.resolve(__dirname, './index.js'),
+			dependOn: 'Site'
+		},
+		Calendar: {
+			import: path.resolve(__dirname, './js/Calendar/Calendar.js'),
+			dependOn: ['Course', 'Site']
+		},
+		CourseConsole: {
+			import: path.resolve(__dirname, './js/Console/index.js'),
+			dependOn: ['Course', 'Console', 'Site']
+		}
 	},
 	plugins: [
 		new CopyWebpackPlugin({

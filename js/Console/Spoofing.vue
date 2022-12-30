@@ -3,14 +3,14 @@
     <div class="full">
 
       <membersfetcher>
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <table class="small">
             <tr>
               <th>User</th>
               <th>Name</th>
               <th>Role</th>
             </tr>
-            <tr v-for="user1 in fetcher.users" v-if="user.atLeast(user1.role())">
+            <tr v-for="user1 in fetcher.users" >
               <td><a @click.prevent="select(user1)">{{user1.userId}}</a></td>
               <td><a @click.prevent="select(user1)">{{user1.name}}</a></td>
               <td>{{user1.roleName()}}</td>
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+  import {toRaw} from 'vue'
 	import MembersFetcherComponent from './Members/MembersFetcherComponent.vue';
 
   const ConsoleComponentBase = Site.ConsoleComponentBase;
@@ -36,6 +37,12 @@
 		mounted() {
 			this.setTitle(': Member Spoofing');
 		},
+    computed: {
+      availableUsers(users) {
+        console.log(users)
+        return toRaw(users).filter(user => this.user.atLeast(user.role()))
+      }
+    },
 		methods: {
 			select(user) {
 				let params = {

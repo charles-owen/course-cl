@@ -106,13 +106,13 @@
     methods: {
       take() {
         if (this.id === 'new') {
-          this.$parent.setTitle(': Add Course Member');
+          this.$root.setTitle(': Add Course Member');
           this.$nextTick(() => {
             this.$refs.userid.select();
           });
           this.edituser = null;
         } else {
-          this.$parent.setTitle(': Course Member');
+          this.$root.setTitle(': Course Member');
 
           const member = this.$store.state.user.user.member;
           let query = {

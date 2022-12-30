@@ -47,7 +47,7 @@
 			}
 		},
 		created() {
-			this.$parent.setTitle(': Assignments');
+			this.$root.setTitle(': Assignments');
 			let member = this.user.member;
 
 			this.section = this.$store.getters['course/section'](member.semester, member.section);

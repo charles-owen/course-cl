@@ -1,3 +1,5 @@
+import {createRouter, createWebHistory} from 'vue-router'
+
 /**
  * The section selector page /cl/sectionselector
  * @param element Page element (#cl-section-selector)
@@ -5,7 +7,7 @@
  * @constructor
  */
 export let SectionSelector = function(element, site) {
-    let Vue = site.Vue;
+    const VueHelper = site.VueHelper
 
     const info = JSON.parse(element.textContent);
     const sections = info.sections;
@@ -28,19 +30,33 @@ export let SectionSelector = function(element, site) {
     const Header = site.info.header.component();
     const Footer = site.info.footer.component();
 
-    let router = new Site.VueRouter({
-        mode: 'history',
-        routes: []
-    });
+    const Empty = { template: '<div></div>' }
+    const router = createRouter({
+        history: createWebHistory(),  // '/:pathMatch(.*)'
+        routes: [{ path: '/:pathMatch(.*)', name: 'any', component: Empty }],
+    })
 
-    new Vue({
-        router,
-        el: element,
-        data: {
-            title: 'Section Selector',
-            before: before,
-            after: after,
-            sections: sections,
+    const app = VueHelper.createApp({
+        data() {
+            return {
+                title: 'Section Selector',
+                before: before,
+                after: after,
+                sections: sections,
+            }
+        },
+        mounted: function() {
+            this.redirect = this.$route.query.u;
+            if(this.redirect === undefined || this.redirect === null) {
+                this.redirect = Site.root;
+            }
+        },
+        template: template,
+        components: {
+            'site-header': Header,
+            'site-footer': Footer
+        },
+        methods: {
             select: function(section) {
                 let params = {
                     semester: section.semester,
@@ -59,18 +75,14 @@ export let SectionSelector = function(element, site) {
                         Site.toast(this, error);
                     });
             }
-        },
-        mounted: function() {
-            this.redirect = this.$route.query.u;
-            if(this.redirect === undefined || this.redirect === null) {
-                this.redirect = Site.root;
-            }
-        },
-        template: template,
-        components: {
-            'site-header': Header,
-            'site-footer': Footer
         }
+    })
+
+    app.config.globalProperties.$site = site
+    app.use(router)
+
+    router.isReady().then(() => {
+        VueHelper.mount(app, element)
     })
 }
 

@@ -28,7 +28,7 @@
       courseHomeItemEditor: CourseHomeItemEditorVue
     },
 		created() {
-			this.$parent.setTitle(': Course Home Content');
+			this.$root.setTitle(': Course Home Content');
 			let member = this.user.member;
 
 			this.section = this.$store.getters['course/section'](member.semester, member.section);

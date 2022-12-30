@@ -2,7 +2,7 @@
   <div class="content">
     <div class="full">
       <memberfetcher v-on:fetched="fetched" :id="memberid" :faillink="submissionsLink">
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <prev-next :user="fetcher.user"></prev-next>
           <div  v-if="fetcher.user !== null">
             <submissions :user="fetcher.user" :assigntag="assigntag"></submissions>
@@ -36,13 +36,13 @@
 			submissions: SubmissionsAssignmentMemberComponent
 		},
 		mounted() {
-			this.$parent.setTitle(': Submissions');
+			this.$root.setTitle(': Submissions');
 			this.addNav2Link('Exit', 4, '/cl/console/course/submissions/' + this.assigntag);
 		},
 		methods: {
 			fetched(user) {
 				let assignment = user.member.getAssignment(this.$store, this.assigntag);
-				this.$parent.setTitle(': ' + user.name + ' ' + assignment.shortname + ' Submissions');
+				this.$root.setTitle(': ' + user.name + ' ' + assignment.shortname + ' Submissions');
 			}
 		}
 	}

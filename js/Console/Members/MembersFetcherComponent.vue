@@ -92,7 +92,7 @@
             }, 100);
 
         },
-        beforeDestroy() {
+        beforeUnmount() {
             this.studentsElement.parentNode.removeChild(this.studentsElement);
             let extras = document.querySelectorAll('div.cl-section-component span.extra');
         }

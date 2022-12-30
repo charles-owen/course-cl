@@ -13,5 +13,9 @@ Site.SubmissionsAssignmentMemberComponentVue = SubmissionsAssignmentMemberCompon
 Site.MembersFetcherComponentVue = MembersFetcherComponentVue;
 Site.SubmissionsLinksVue = SubmissionsLinksVue;
 
-let courseConsole = new CourseConsole(Site.site);
-Site.site.console.course = courseConsole;
+if(!Site.CourseConsole) {
+    Site.CourseConsole = new CourseConsole(Site);
+    Site.Console.CourseConsole = Site.CourseConsole
+    Site.Console.course = Site.CourseConsole
+}
+

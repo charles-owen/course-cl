@@ -143,7 +143,7 @@
       };
       this.$store.commit('members/query', query);
 
-      this.$parent.setTitle(`: ${member.semester}/${member.section} Members`);
+      this.$root.setTitle(`: ${member.semester}/${member.section} Members`);
 
       // We reset the users state since we may add users
       if (this.management) {
@@ -153,7 +153,7 @@
       this.$store.dispatch('members/fetch');
       this.computeStats();
     },
-    beforeDestroy() {
+    beforeUnmount() {
       this.$site.console.components.removeNav2(this, this.addComponent);
     }
   }

@@ -3,7 +3,7 @@
     <div class="full">
 
       <membersfetcher v-if="!composing">
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <table class="small" :ensure="ensure(fetcher.users)">
             <tr>
               <th class="center"><input v-model="all" type="checkbox" @change="allChange"></th>
@@ -34,7 +34,6 @@
 
     const ConsoleComponentBase = Site.ConsoleComponentBase;
 
-
     export default {
         'extends': ConsoleComponentBase,
         data: function() {
@@ -56,8 +55,6 @@
             this.setTitle(': Course Email');
 
             this.addSendEmail();
-
-
         },
         methods: {
             allChange() {
@@ -68,7 +65,7 @@
             ensure(users) {
                 for(let user of users) {
                     if(this.flags[user.id] === undefined) {
-                        this.$set(this.flags, user.id, false);
+                      this.flags[user.id] = false
                         this.users[user.id] = user;
                     }
                 }
@@ -82,7 +79,6 @@
                         }
                     }
 
-                    console.log(this.toUsers);
                     if(this.toUsers.length === 0) {
                         new Dialog.MessageBox('No indicated members!', 'Must specify members to send email to.',
                             Dialog.MessageBox.OK, () => {
@@ -90,8 +86,6 @@
 
                         return;
                     }
-
-
 
                     this.removeNav2(this.sendEmail);
                     this.composing = true;

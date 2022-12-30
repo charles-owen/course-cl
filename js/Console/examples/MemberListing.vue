@@ -3,7 +3,7 @@
     <div class="full">
 
       <membersfetcher>
-        <template slot-scope="fetcher">
+        <template v-slot="fetcher">
           <table class="small">
             <tr>
               <th>User</th>

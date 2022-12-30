@@ -9,6 +9,11 @@ Site.Member = Member;
 
 import {CourseFactory} from './js/CourseFactory';
 
-// Use the factory to create the Users object
-let Course = CourseFactory.create(Site.site);
-export {Course};
+if(!Site.Course) {
+    // Use the factory to create the Course object
+    let Course = CourseFactory.create(Site);
+
+    Site.Course = Course
+}
+
+
