@@ -16,7 +16,7 @@
             <span v-if='assignment.submissions !== undefined'>
               <router-link :to="root + '/cl/console/course/submissions/' + assignment.tag">submissions</router-link>&nbsp;
             </span>
-            <span v-for="link in assignmentLinks"  v-if="assignment[link.property] !== undefined && assignment[link.property] !== false">
+            <span v-for="link in links(assignment)"  >
               <router-link :to="assignmentLink(assignment, link.route)">{{link.name}}</router-link>&nbsp;
             </span>
           </span>
@@ -43,9 +43,12 @@
 		data: function () {
 			return {
 				section: null,
-				assignmentLinks: this.$site.console.course.assignmentLinks
+				assignmentLinks: this.$root.console.course.assignmentLinks
 			}
 		},
+    computed: {
+
+    },
 		created() {
 			this.$root.setTitle(': Assignments');
 			let member = this.user.member;
@@ -55,7 +58,12 @@
 		methods: {
 			assignmentLink: function (assignment, route) {
 				return this.$site.root + '/cl/console' + route.replace(':assigntag', assignment.tag);
-			}
+			},
+      links(assignment) {
+        return this.assignmentLinks.filter((link) => {
+          return assignment[link.property] !== undefined && assignment[link.property] !== false
+        })
+      }
 		}
 	}
 

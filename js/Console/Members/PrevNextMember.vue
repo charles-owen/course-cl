@@ -17,7 +17,7 @@ export default {
       let link = this.link;
 
       if (user !== null && user.prev !== undefined) {
-        this.$set(this.$site.console.components, 'nav2left', {
+        this.$root.console.components.nav2left = {
           template: `
             <router-link title="Previous Member" :to="link + user.prev.member.id"><img :src="icon"
                                                                                        alt="Previous Member">
@@ -29,13 +29,13 @@ export default {
               link: link
             }
           }
-        });
+        }
       } else {
-        this.$set(this.$site.console.components, 'nav2left', null);
+        this.$root.console.components.nav2left = null
       }
 
       if (user !== null && user.next !== undefined) {
-        this.$set(this.$site.console.components, 'nav2right', {
+        this.$root.console.components.nav2right = {
           template: `
             <router-link title="Next Member" :to="link + user.next.member.id"><img :src="icon" alt="Next Member">
             </router-link>`,
@@ -46,9 +46,10 @@ export default {
               link: link
             }
           }
-        });
+        }
+
       } else {
-        this.$set(this.$site.console.components, 'nav2right', null);
+        this.$root.console.components.nav2right = null
       }
 
 
@@ -66,8 +67,8 @@ export default {
     }
   },
   beforeUnmount() {
-    this.$set(this.$site.console.components, 'nav2left', null);
-    this.$set(this.$site.console.components, 'nav2right', null);
+    this.$root.console.components.nav2left = null
+    this.$root.console.components.nav2right = null
   }
 }
 </script>

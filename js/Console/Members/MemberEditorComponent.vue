@@ -30,8 +30,8 @@
               </div>
             </div>
             <p class="center">
-              <button>Submit</button>
-              <router-link :to="root + '/cl/console/management/course/members'" tag="button">Cancel</router-link>
+              <button>Submit</button>&nbsp;
+              <button @click.prevent="cancel">Cancel</button>
             </p>
           </fieldset>
         </form>
@@ -56,7 +56,6 @@
       return {
         legend: this.id === 'new' ? 'New Member' : 'Edit Member',
         roles: this.visibleRoles,
-
         edituser: null,
         userId: '',
         name: '',
@@ -215,6 +214,9 @@
                   console.log(response);
                   this.$site.toast(this, response);
                 })
+      },
+      cancel() {
+        this.$router.push({name: 'members'});
       }
     }
   }

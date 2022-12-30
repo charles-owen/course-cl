@@ -1,12 +1,14 @@
 <template>
   <div class="cl-submissions-bulk">
-    <p v-for="link in links" v-if="user.atLeast(link.atLeast)" class="center"><a @click.prevent="click(link)">{{link.text}}</a>
-      <a v-if="link.from !== undefined && !link.range" title="Enable Range" @click.prevent="link.range = true">
-        <img :src="root + '/cl/img/range.png'" alt="Enable Range" width="26" height="10">
-      </a>
-      <span v-if="link.range"><input type="text" v-model="link.from"> to <input type="text" v-model="link.to"></span>
-    <span v-if="link.range"><br>Enter from/to range for user id.</span>
-    </p>
+    <template v-for="link in links">
+      <p v-if="user.atLeast(link.atLeast)" class="center"><a @click.prevent="click(link)">{{link.text}}</a>
+        <a v-if="link.from !== undefined && !link.range" title="Enable Range" @click.prevent="link.range = true">
+          <img :src="root + '/cl/img/range.png'" alt="Enable Range" width="26" height="10">
+        </a>
+        <span v-if="link.range"><input type="text" v-model="link.from"> to <input type="text" v-model="link.to"></span>
+      <span v-if="link.range"><br>Enter from/to range for user id.</span>
+      </p>
+    </template>
   </div>
 </template>
 
@@ -33,6 +35,9 @@
       assignment: function () {
         this.take();
       }
+    },
+    computed: {
+
     },
     mounted() {
       this.take();
@@ -67,7 +72,6 @@
         }
       },
       click(link) {
-        console.log(link);
         let url = this.root + link.url;
         if (link.from !== undefined && link.to !== undefined &&
                 (link.from.trim() !== '' || link.to.trim() !== '')) {
