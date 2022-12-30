@@ -12,7 +12,8 @@
 <script>
   export default {
       props: ['submission'],
-      data: function() {
+    emits: ['new_submissions'],
+    data: function() {
           return {
               files: null,
               action: null,

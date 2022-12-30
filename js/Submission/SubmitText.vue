@@ -11,7 +11,8 @@
 
   export default {
       props: ['submission'],
-      mounted() {
+    emits: ['new_submissions'],
+    mounted() {
           const element = this.$refs['editor'];
           this.editor = new this.$site.Editor(element, {
               height: this.submission.height,

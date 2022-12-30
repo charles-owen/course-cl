@@ -33,6 +33,7 @@
 
   export default {
       props: ['assigntag', 'tag', 'submission', 'analysis', 'teaming', 'type'],
+    emits: ['preview', 'preview_img', 'result'],
       data: function() {
           return {
           	root: Site.root,

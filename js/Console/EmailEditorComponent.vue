@@ -23,6 +23,7 @@
 
 	export default {
 		props: ['to'],
+    emits: ['cancel', 'done'],
 		data: function () {
 			return {
 				displayTo: [],

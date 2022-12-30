@@ -20,6 +20,7 @@
               default: null
           }
       },
+      emits: ['fetched'],
       data: function() {
           return {
               user: null
