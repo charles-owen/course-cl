@@ -119,7 +119,6 @@ class Course extends \CL\Site\Plugin {
      * @param string $desc Course description (like "Object-Oriented Programming")
      */
     public function __construct($account=null, $name=null, $desc = '') {
-        echo "\nconstruct\n";
         $this->define($account, $name, $desc);
     }
 
