@@ -37,7 +37,6 @@ class Handbook {
 
 		$file1 = "$dir/handbook.$semester.$sectionId.php";
 		if(file_exists($file1)) {
-			echo 'loading specific';
 			$function = require($file1);
 			$function($handbook);
 		} else {
