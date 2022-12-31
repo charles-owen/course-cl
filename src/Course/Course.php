@@ -134,6 +134,8 @@ class Course extends \CL\Site\Plugin {
 		$this->account = $account;
 		$this->name = $name;
 		$this->desc = $desc;
+
+        $this->siteSettings();
 	}
 
 
@@ -217,8 +219,19 @@ class Course extends \CL\Site\Plugin {
 	 */
 	public function install(Site $site) {
 		$this->site = $site;
+        $this->siteSettings();
 		$site->install("course", $this);
 	}
+
+    /**
+     * Perform any settings in the Site object when it is installed
+     * or the settings are changed.
+     */
+    private function siteSettings() {
+        if($this->site !== null) {
+            $this->site->siteName = $this->name;
+        }
+    }
 
 	/**
 	 * Magic function to disable displaying recursive content (Site)
@@ -231,7 +244,7 @@ class Course extends \CL\Site\Plugin {
 		return $properties;
 	}
 
-	protected $site = null;         ///< The Site object for this course
+	protected $site = null;         // The Site object for this course
 	private $account;	            // Account associated with the course (like "cse335")
 	private $name;	                // Course name (like "CSE 335")
 	private $desc;		            // Course description (like "Object-oriented Programming")

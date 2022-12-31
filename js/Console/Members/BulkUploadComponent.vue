@@ -19,144 +19,149 @@
 </template>
 
 <script>
-    import Dialog from 'dialog-cl';
-    import MemberDropsComponent from './MemberDropsComponent.vue';
-    import {Member} from '../../Members/Member.js';
-    let Vue = Site.Vue;
+import Dialog from 'dialog-cl';
+import MemberDropsComponent from './MemberDropsComponent.vue';
+import {Member} from '../../Members/Member.js';
 
-    export default {
-      data: function() {
-          return {
-              bulkFiles: null,
-          }
-      },
-      methods: {
-          bulkUpload: function() {
-              if (this.bulkFiles === null || this.bulkFiles.length < 1) {
-                  return;
-              }
+let Vue = Site.Vue
+let VueHelper = Site.VueHelper
 
-              let file = this.bulkFiles[0];
-              let reader = new FileReader();
+export default {
+  data: function () {
+    return {
+      bulkFiles: null,
+    }
+  },
+  methods: {
+    bulkUpload: function () {
+      if (this.bulkFiles === null || this.bulkFiles.length < 1) {
+        return;
+      }
 
-              // Closure to capture the file information.
-              reader.onload = (e) => {
-                  const member = this.$store.state.user.user.member;
-                  let data = {
-                      file: e.target.result,
-                      semester: member.semester,
-                      section: member.section
-                  }
+      let file = this.bulkFiles[0];
+      let reader = new FileReader();
 
-                  Site.api.post('/api/course/members/bulk', data)
-                      .then((response) => {
-                          if(!response.hasError()) {
-                              let drops = response.getData('drops');
-                              if(drops !== null && drops.attributes.length > 0) {
-                                  let dropsForVue = [];
-                                  drops.attributes.forEach((drop) => {
-                                      console.log(drop);
-                                      let user = new Site.User(drop);
-                                      user.drop = false;
-                                      dropsForVue.push(user);
-                                  });
+      // Closure to capture the file information.
+      reader.onload = (e) => {
+        const member = this.$store.state.user.user.member;
+        let data = {
+          file: e.target.result,
+          semester: member.semester,
+          section: member.section
+        }
 
-                                  new Dialog({
-                                      title: 'Dropped Course Members',
-                                      content: '<div id="drops"></div>',
-                                      addClass: 'cl-bulk-upload-dlg',
-                                      buttons: [
-                                          {
-                                              contents: 'Drop',
-                                              focus: true,
-                                              click: (dialog) => {
-                                                  dialog.close();
+        Site.api.post('/api/course/members/bulk', data)
+            .then((response) => {
+              if (!response.hasError()) {
+                let drops = response.getData('drops');
+                if (drops !== null && drops.attributes.length > 0) {
+                  let dropsForVue = [];
+                  drops.attributes.forEach((drop) => {
+                    console.log(drop);
+                    let user = new Site.User(drop);
+                    user.drop = false;
+                    dropsForVue.push(user);
+                  });
 
-                                                  let ids = [];
-                                                  dropsForVue.forEach((user) => {
-                                                     if(user.drop) {
-                                                         ids.push(user.member.id);
-                                                     }
-                                                  });
-                                                  if(ids.length > 0) {
-                                                      Site.api.post('/api/course/members/drops', {drops: ids})
-                                                          .then((response) => {
-                                                              if(!response.hasError()) {
-                                                                  window.history.go();
+                  new Dialog({
+                    title: 'Dropped Course Members',
+                    content: '<div id="drops"></div>',
+                    addClass: 'cl-bulk-upload-dlg',
+                    buttons: [
+                      {
+                        contents: 'Drop',
+                        focus: true,
+                        click: (dialog) => {
+                          dialog.close();
 
-                                                              } else {
-                                                                  console.log(response);
-                                                                  Site.toast(this, response);
-                                                              }
+                          let ids = [];
+                          dropsForVue.forEach((user) => {
+                            if (user.drop) {
+                              ids.push(user.member.id);
+                            }
+                          });
+                          if (ids.length > 0) {
+                            Site.api.post('/api/course/members/drops', {drops: ids})
+                                .then((response) => {
+                                  if (!response.hasError()) {
+                                    window.history.go();
 
-                                                          })
-                                                          .catch((error) => {
-                                                              console.log(error);
-                                                              Site.toast(this, error);
-                                                          });
-                                                  } else {
-                                                      window.history.go();
-                                                  }
+                                  } else {
+                                    console.log(response);
+                                    Site.toast(this, response);
+                                  }
 
-                                              }
-                                          },
-                                          {
-                                              contents: 'Cancel',
-                                              focus: true,
-                                              click: (dialog) => {
-                                                  dialog.close();
-
-                                              }
-                                          }
-                                      ]
-
-
-                                  });
-
-                                  // Create a Vue inside the dialog box
-                                  new Vue({
-                                      el: '#drops',
-                                      data: function() {
-                                          return {
-                                              drops: dropsForVue
-                                          }
-                                      },
-                                      template: `<drops :drops="drops"></drops>`,
-                                      components: {
-                                          'drops': MemberDropsComponent
-                                      }
-                                  })
-                              } else {
-                                  window.history.go();
-                              }
-
+                                })
+                                .catch((error) => {
+                                  console.log(error);
+                                  Site.toast(this, error);
+                                });
                           } else {
-                              console.log(response);
-                              Site.toast(this, response);
+                            window.history.go();
                           }
 
-                      })
-                      .catch((error) => {
-                          console.log(error);
-                          Site.toast(this, error);
-                      });
+                        }
+                      },
+                      {
+                        contents: 'Cancel',
+                        focus: true,
+                        click: (dialog) => {
+                          dialog.close();
+
+                        }
+                      }
+                    ]
 
 
-              };
+                  });
 
-              reader.onerror = function (e) {
-                  Site.toast(this, "Error reading file");
-              };
+                  // Create a Vue inside the dialog box
+                  const app = VueHelper.createApp({
+                    data: function () {
+                      return {
+                        drops: dropsForVue
+                      }
+                    },
+                    template: `
+                      <drops :drops="drops"></drops>`,
+                    components: {
+                      'drops': MemberDropsComponent
+                    }
+                  })
 
-              reader.onabort = function (e) {
-                  Site.toast(this, "File read aborted");
-              };
+                  app.config.globalProperties.$site = this.$site
+                  app.mount('#drops')
+                } else {
+                  window.history.go();
+                }
 
-              // Read in the file
-              reader.readAsText(file);
-          }
-      }
+              } else {
+                console.log(response);
+                Site.toast(this, response);
+              }
+
+            })
+            .catch((error) => {
+              console.log(error);
+              Site.toast(this, error);
+            });
+
+
+      };
+
+      reader.onerror = function (e) {
+        Site.toast(this, "Error reading file");
+      };
+
+      reader.onabort = function (e) {
+        Site.toast(this, "File read aborted");
+      };
+
+      // Read in the file
+      reader.readAsText(file);
+    }
   }
+}
 </script>
 
 // Notice: Not scoped!
