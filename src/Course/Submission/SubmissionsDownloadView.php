@@ -11,6 +11,7 @@ use CL\Course\View;
 use CL\Site\System\Server;
 use CL\Course\Member;
 use CL\Course\Members;
+use ZipArchive; //dep
 
 /**
  * View class for downloading submissions in bulk.
@@ -110,6 +111,10 @@ class SubmissionsDownloadView extends View {
 		mkdir($submissions_dir);
 
 		$cnt = 0;
+		
+		$zip = new ZipArchive();	//dep
+		$zip->open($temp_dir . "/submissions.zip", ZIPARCHIVE::CREATE); //dep
+		
 		foreach($all as $user) {
 		    if(($from !== null && strtolower($user->userId) < $from) || ($to !== null && strtolower($user->userId) > $to)) {
 		        continue;
@@ -132,9 +137,13 @@ class SubmissionsDownloadView extends View {
 					$ext = pathinfo($name, PATHINFO_EXTENSION);
 					$name = $user->userId . '.' . $ext;
 					file_put_contents($submissions_dir . "/" . $name, $bin);
+					$zip->addFile($submissions_dir . "/" . $name, $name);	//dep
+
 				} else {
 					mkdir($submissions_dir . "/" . $user->userId);
 					file_put_contents($submissions_dir . "/" . $user->userId . "/" . $name, $bin);
+					$zip->addFile($submissions_dir . "/" . $user->userId . "/" . $name, $user->userId . "/" . $name);	//dep
+
 				}
 
 				$cnt++;
@@ -146,6 +155,7 @@ class SubmissionsDownloadView extends View {
 
 		}
 
+		/* dep
 		error_reporting(E_ERROR | E_PARSE);
         $output = [];
         $resultCode = 0;
@@ -154,6 +164,8 @@ class SubmissionsDownloadView extends View {
             echo "zip is not available on the server.";
             return "";
         }
+		*/
+		$zip->close();
 
         $fp = fopen($temp_dir . "/submissions.zip", 'rb');
         if($fp === false) {

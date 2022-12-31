@@ -110,6 +110,19 @@ class Course extends \CL\Site\Plugin {
     }
 
 
+    /**
+     * Constructor
+     *
+     * Provides basic course information.
+     * @param string $account The course account (like 'cse335')
+     * @param string $name The course name (like 'CSE 335')
+     * @param string $desc Course description (like "Object-Oriented Programming")
+     */
+    public function __construct($account=null, $name=null, $desc = '') {
+        echo "\nconstruct\n";
+        $this->define($account, $name, $desc);
+    }
+
 	/**
 	 * Define the course
 	 *
@@ -122,10 +135,6 @@ class Course extends \CL\Site\Plugin {
 		$this->account = $account;
 		$this->name = $name;
 		$this->desc = $desc;
-
-		if($this->site !== null) {
-			$this->site->siteName = $name;
-		}
 	}
 
 

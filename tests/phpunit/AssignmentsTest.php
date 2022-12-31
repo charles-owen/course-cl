@@ -5,16 +5,20 @@
  */
 
 require_once __DIR__ . '/init.php';
-require_once __DIR__ . '/cls/CourseTestBase.php';
+require_once __DIR__ . '/cls/CourseDatabaseTestBase.php';
 
 use CL\Course\Assignment;
 use CL\Course\Assignments;
 use CL\Course\Member;
 use CL\Users\User;
 use CL\Course\Test\DummyMember;
+use CL\Course\Settings;
 
-class AssignmentsTest extends CourseTestBase {
+class AssignmentsTest extends CourseDatabaseTestBase {
 
+    protected function setUp() : void {
+        $this->ensureTable(new Settings($this->site->db));
+    }
 
 	public function test_add_category() {
 		$assignments = new Assignments();

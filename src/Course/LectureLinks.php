@@ -65,7 +65,9 @@ HTML;
 					$link = $this->powerpoint_link($child['powerpoint'], $child['title']);
 				} else if(array_key_exists('video', $child)) {
 					$link = $this->video_link($child['video'], $child['title']);
-				}
+				} else if(array_key_exists('file', $child)) {	// dep
+                    $link = $this->file_link($child['file'], $child['title']);	// dep
+                }
 				
 				if($link !== null) {
 					if(!$any) {
@@ -274,7 +276,36 @@ HTML;
 			$last['children'][] = array('video' => $file, 'title' => $title);
 		}
 	}
-	
+    /** dep
+     * Add additional file content to a lecture
+     * @param string $file The name of the file
+     * @param string $title The title of the presentation
+     */
+    public function ffile($file, $title) {
+        $last = &$this->lecture;
+        if($last !== null) {
+            $last['children'][] = array('file' => $file, 'title' => $title);
+        }
+    }
+    /** dep
+     * Create HTML for a file link
+     * @param string $file The name of the file
+     * @param string $title The title of the presentation
+     * @return string HTML
+     */
+    private function file_link($file, $title) {
+        $path = $this->dir . '/' . $file;
+
+        //
+        // This is a file link
+        //
+        $html = <<<HTML
+ <li class="star">
+ <a href="$path">$title</a></li>
+HTML;
+
+        return $html;
+    }
 	private $site;      // The Site object
 	private $user;      // User home page is for
     private $time;      ///< Time we display the page
