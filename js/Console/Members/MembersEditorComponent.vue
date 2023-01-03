@@ -34,11 +34,15 @@
         </div>
         <p v-else class="centerbox comp center">
           There are currently no members enrolled in this section.</p>
-        <bulk-upload v-if="management"></bulk-upload>
-
       </div>
 
       <fetcher :fetcher="fetcher"></fetcher>
+
+      <div v-if="fetcher.fetched">
+        <bulk-upload v-if="management"></bulk-upload>
+      </div>
+
+
     </div>
   </div>
 </template>
@@ -120,8 +124,12 @@
       fetcher: state => state.members.fetcher
     }),
     watch: {
-      users: function (to, fm) {
-        this.computeStats();
+      users: {
+        handler(to, fm) {
+            this.computeStats()
+        },
+        immediate: true,
+        deep: true
       }
     },
     components: {
@@ -151,7 +159,6 @@
       }
 
       this.$store.dispatch('members/fetch');
-      this.computeStats();
     },
     beforeUnmount() {
       this.$root.console.components.removeNav2(this, this.addComponent);
