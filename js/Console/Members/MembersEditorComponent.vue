@@ -142,6 +142,8 @@
         this.addComponent = this.$root.console.components.addNav2Link(this, 'Add Member', 5, () => {
           this.$router.push(this.$site.root + '/cl/console/management/course/member/new');
         });
+      } else {
+        this.addComponent = null
       }
 
       const member = this.$store.state.user.user.member;
@@ -161,7 +163,9 @@
       this.$store.dispatch('members/fetch');
     },
     beforeUnmount() {
-      this.$root.console.components.removeNav2(this, this.addComponent);
+      if(this.addComponent) {
+        this.$root.console.components.removeNav2(this, this.addComponent);
+      }
     }
   }
 </script>
