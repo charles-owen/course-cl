@@ -4,11 +4,10 @@
   "description": "CourseLib Website base Course components",
   "main": "js/Course.js",
   "keywords": [
-    "Education",
-    "LTI"
+    "Education"
   ],
   "scripts": {
-    "build:docs": "documentation build js/**/*.vue js/**/*.js --sort-order alpha -f html -o doc/js"
+    "build:docs": "yarn documentation build js/**/*.vue js/**/*.js --sort-order alpha -f html -o doc/js"
   },
   "author": "Charles B. Owen",
   "license": "MIT",
@@ -30,6 +29,7 @@
     "webpack": "^5.75.0"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "11.0.0"
+    "copy-webpack-plugin": "11.0.0",
+    "documentation": "^14.0.1"
   }
 }

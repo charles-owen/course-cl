@@ -1,16 +1,20 @@
+/**
+ * Install the course console components
+ * @file
+ */
 
 import {CourseConsole} from './CourseConsole';
 
 import PrevNextMemberVue from './Members/PrevNextMember.vue';
-import MemberFetcherComponentVue from './Members/MemberFetcherComponent.vue';
+import MemberFetcherComponent from './Members/MemberFetcherComponent.vue';
 import SubmissionsAssignmentMemberComponentVue from './SubmissionsAssignmentMemberComponent.vue';
-import MembersFetcherComponentVue from './Members/MembersFetcherComponent.vue';
+import MembersFetcherComponent from './Members/MembersFetcherComponent.vue';
 import SubmissionsLinksVue from './SubmissionsLinks.vue';
 
 Site.PrevNextMemberVue = PrevNextMemberVue;
-Site.MemberFetcherComponentVue = MemberFetcherComponentVue;
+Site.MemberFetcherComponentVue = MemberFetcherComponent;
 Site.SubmissionsAssignmentMemberComponentVue = SubmissionsAssignmentMemberComponentVue;
-Site.MembersFetcherComponentVue = MembersFetcherComponentVue;
+Site.MembersFetcherComponentVue = MembersFetcherComponent;
 Site.SubmissionsLinksVue = SubmissionsLinksVue;
 
 if(!Site.CourseConsole) {
@@ -19,3 +23,5 @@ if(!Site.CourseConsole) {
     Site.Console.course = Site.CourseConsole
 }
 
+export {MemberFetcherComponent}
+export {MembersFetcherComponent}
