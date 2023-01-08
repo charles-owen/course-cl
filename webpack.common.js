@@ -21,6 +21,14 @@ module.exports = {
 			patterns: [
 				{
 					from: path.resolve(__dirname, 'course.css'),
+					to: path.resolve(__dirname, 'cl')
+				},
+				{
+					from: path.resolve(__dirname, 'course.css.map'),
+					to: path.resolve(__dirname, 'cl')
+				},
+				{
+					from: path.resolve(__dirname, 'course.css'),
 					to: path.resolve(__dirname, '../../../cl')
 				},
 				{
