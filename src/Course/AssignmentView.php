@@ -140,6 +140,8 @@ class AssignmentView extends \CL\Course\View {
 			$submitted = $submissions->get_submissions($user->member->id, $assignment->tag,
 				$submission->tag, true);
 
+			if (!count($submitted)) return $html;
+
 			$data = $submission->data();
 			$data['id'] = $submitted[0]['id'];
 			$data['date'] = $submitted[0]['date'];
