@@ -3,12 +3,13 @@
  * @file
  * View class for assignments
  */
- 
+
 namespace CL\Course;
 
 use CL\Site\Site;
 use CL\Site\System\Server;
 use CL\Users\User;
+use CL\Course\Submission\Submissions;
 
 /**
  * View class for assignments
@@ -133,11 +134,35 @@ class AssignmentView extends \CL\Course\View {
 			$html .= $submission->present($this, $user);
 		}
 
+		$submissions = new Submissions($this->site->db);
+		$submissionsData = [];
+		foreach($assignment->submissions->submissions as $submission) {
+			$submitted = $submissions->get_submissions($user->member->id, $assignment->tag,
+				$submission->tag, true);
+
+			if (!count($submitted)) return $html;
+
+			$data = $submission->data();
+			$data['id'] = $submitted[0]['id'];
+			$data['date'] = $submitted[0]['date'];
+			$data['type'] = $submission->type;
+
+			switch($submission->type) {
+				case 'text':
+					$text = $submissions->get_text($submitted[0]['id']);
+					$data['text'] = $text['text'];
+					break;
+			}
+
+			$submissionsData[] = $data;
+		}
+
+
 		/*
 		 * Display any peer reviews
 		 */
 		if($assignment->reviewing !== null) {
-			$html .= $assignment->reviewing->presentReviews($user);
+			$html .= $assignment->reviewing->presentReviews($user, $submissionsData);
 		}
 
 		return $html;
