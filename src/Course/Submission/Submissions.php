@@ -144,7 +144,8 @@ SQL;
 		$stmt->bindColumn(7, $date, \PDO::PARAM_STR);
 		$stmt->fetch(\PDO::FETCH_BOUND);
 
-		$data = $bin;
+        $data = fread($bin, 100000000);
+        fclose($bin);
 
 		return ['type' => $type,
 			'binary' => $data,
