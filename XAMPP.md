@@ -40,7 +40,7 @@ Using the terminal, type these commands:
 
 ```
 composer install
-# (for developers: composer --perfer-install=source install)
+# (for developers: composer install --prefer-source)
 composer update
 composer update
 composer run cl-installer
