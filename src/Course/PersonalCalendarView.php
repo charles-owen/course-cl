@@ -11,7 +11,7 @@ use CL\Site\Site;
 /**
  * The personal calendar view for the site.
  *
- * /cl/calenadr
+ * /cl/calendar
  */
 class PersonalCalendarView extends View {
 	/**
