@@ -60,7 +60,7 @@ class CLSubmissionAnalysis extends Analysis {
 		}
 
         if(!$hasCMakeLists) {
-            throw new AnalysisException("Submission is not a properly formatted CMake project. ". $d);
+            throw new AnalysisException('Submission is not a properly formatted CMake project. See <a href="https://cse335.egr.msu.edu/commonissues/submission/">Submission Issues</a> for how to fix this.');
         }
 	}
 
